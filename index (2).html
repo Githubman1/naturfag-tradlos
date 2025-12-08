@@ -1,0 +1,2472 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trådløs Kommunikasjon - VG1 Naturfag</title>
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+const { useState, useEffect, useRef } = React;
+
+
+
+// ===== HOVEDAPP MED INDEKS =====
+function TradlosKommunikasjonApp() {
+  const [currentModule, setCurrentModule] = useState(null);
+  const [studentName, setStudentName] = useState('');
+  const [showNameInput, setShowNameInput] = useState(true);
+  const [moduleProgress, setModuleProgress] = useState({});
+  const [homeworkAnswers, setHomeworkAnswers] = useState({});
+
+  const modules = [
+    { 
+      id: 'okt1', 
+      number: 1,
+      title: 'Bølger og EM-stråling', 
+      subtitle: 'Grunnlaget for trådløs kommunikasjon',
+      icon: '🌊',
+      color: '#0ea5e9',
+      available: true,
+      topics: ['Hva er bølger?', 'Bølgeegenskaper', 'EM-spekteret', 'Gjennomtrenging', 'Bruksområder', 'Stråling og helse']
+    },
+    { 
+      id: 'okt2', 
+      number: 2,
+      title: 'Kommunikasjonssystem', 
+      subtitle: 'Sender, mottaker og signaler',
+      icon: '📡',
+      color: '#f59e0b',
+      available: false,
+      topics: ['Sender og mottaker', 'Modulasjon', 'Digital vs analog', 'Signalkoding']
+    },
+    { 
+      id: 'okt3', 
+      number: 3,
+      title: 'Nettverk og adresser', 
+      subtitle: 'Rutere, IP-adresser, internett',
+      icon: '🌐',
+      color: '#8b5cf6',
+      available: false,
+      topics: ['Rutere', 'IP-adresser', 'DNS', 'Basestasjoner', 'Dekning']
+    },
+    { 
+      id: 'okt4', 
+      number: 4,
+      title: 'Anvendelser', 
+      subtitle: 'Praktisk bruk og sammenheng',
+      icon: '💡',
+      color: '#10b981',
+      available: false,
+      topics: ['WiFi, 4G, 5G', 'Bluetooth, NFC', 'Binær kode', 'Samfunnsbruk']
+    }
+  ];
+
+  // Startskjerm med navn
+  if (showNameInput) {
+    return (
+      <div style={{
+        minHeight: '100vh',
+        background: 'linear-gradient(135deg, #0c1929 0%, #1e1b4b 50%, #1e3a5f 100%)',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontFamily: "'Segoe UI', system-ui, sans-serif",
+        padding: '20px'
+      }}>
+        <div style={{
+          background: 'rgba(255,255,255,0.08)',
+          backdropFilter: 'blur(20px)',
+          borderRadius: '24px',
+          padding: '48px',
+          maxWidth: '520px',
+          textAlign: 'center',
+          border: '1px solid rgba(255,255,255,0.15)'
+        }}>
+          <div style={{ fontSize: '72px', marginBottom: '16px' }}>📡</div>
+          <h1 style={{ color: 'white', fontSize: '32px', marginBottom: '8px', fontWeight: '700' }}>
+            Trådløs Kommunikasjon
+          </h1>
+          <p style={{ color: 'rgba(255,255,255,0.7)', fontSize: '18px', marginBottom: '8px' }}>
+            VG1 Naturfag
+          </p>
+          <p style={{ color: 'rgba(255,255,255,0.5)', fontSize: '14px', marginBottom: '32px' }}>
+            4 dobbelttimer • Interaktivt undervisningsopplegg
+          </p>
+          <input
+            type="text"
+            placeholder="Skriv inn navnet ditt..."
+            value={studentName}
+            onChange={(e) => setStudentName(e.target.value)}
+            onKeyPress={(e) => e.key === 'Enter' && studentName && setShowNameInput(false)}
+            style={{
+              width: '100%',
+              padding: '16px 24px',
+              fontSize: '18px',
+              borderRadius: '12px',
+              border: '2px solid rgba(255,255,255,0.3)',
+              background: 'rgba(255,255,255,0.1)',
+              color: 'white',
+              marginBottom: '16px',
+              outline: 'none',
+              boxSizing: 'border-box'
+            }}
+          />
+          <button
+            onClick={() => studentName && setShowNameInput(false)}
+            disabled={!studentName}
+            style={{
+              width: '100%',
+              padding: '16px 32px',
+              fontSize: '18px',
+              fontWeight: '600',
+              borderRadius: '12px',
+              border: 'none',
+              background: studentName 
+                ? 'linear-gradient(135deg, #8b5cf6 0%, #6366f1 100%)' 
+                : 'rgba(255,255,255,0.1)',
+              color: 'white',
+              cursor: studentName ? 'pointer' : 'not-allowed'
+            }}
+          >
+            Start læring →
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Vis modul-innhold eller indeks
+  if (currentModule === 'okt1') {
+    return (
+      <Okt1Content 
+        studentName={studentName}
+        onBack={() => setCurrentModule(null)}
+        homeworkAnswers={homeworkAnswers}
+        setHomeworkAnswers={setHomeworkAnswers}
+        moduleProgress={moduleProgress}
+        setModuleProgress={setModuleProgress}
+      />
+    );
+  }
+
+  // Indeks-visning
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      color: 'white'
+    }}>
+      {/* Header */}
+      <header style={{
+        background: 'rgba(0,0,0,0.4)',
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        padding: '20px 24px'
+      }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', display: 'flex', alignItems: 'center', gap: '16px' }}>
+          <span style={{ fontSize: '36px' }}>📡</span>
+          <div>
+            <h1 style={{ margin: 0, fontSize: '24px', fontWeight: '700' }}>Trådløs Kommunikasjon</h1>
+            <p style={{ margin: '4px 0 0', fontSize: '14px', opacity: 0.7 }}>VG1 Naturfag • {studentName}</p>
+          </div>
+        </div>
+      </header>
+
+      {/* Modul-oversikt */}
+      <main style={{ padding: '32px 24px', maxWidth: '1000px', margin: '0 auto' }}>
+        <div style={{ marginBottom: '32px' }}>
+          <h2 style={{ fontSize: '28px', marginBottom: '8px' }}>Velg økt</h2>
+          <p style={{ opacity: 0.7 }}>Klikk på en økt for å starte</p>
+        </div>
+
+        <div style={{ display: 'grid', gap: '20px' }}>
+          {modules.map((module) => (
+            <div
+              key={module.id}
+              onClick={() => module.available && setCurrentModule(module.id)}
+              style={{
+                background: module.available 
+                  ? `linear-gradient(135deg, ${module.color}22, ${module.color}11)`
+                  : 'rgba(255,255,255,0.03)',
+                borderRadius: '16px',
+                padding: '24px',
+                border: module.available 
+                  ? `2px solid ${module.color}44`
+                  : '2px solid rgba(255,255,255,0.1)',
+                cursor: module.available ? 'pointer' : 'not-allowed',
+                opacity: module.available ? 1 : 0.5,
+                transition: 'all 0.2s ease',
+                display: 'grid',
+                gridTemplateColumns: '80px 1fr auto',
+                gap: '20px',
+                alignItems: 'center'
+              }}
+            >
+              {/* Icon */}
+              <div style={{
+                width: '70px',
+                height: '70px',
+                borderRadius: '16px',
+                background: module.available ? module.color : 'rgba(255,255,255,0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '32px'
+              }}>
+                {module.icon}
+              </div>
+
+              {/* Info */}
+              <div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '4px' }}>
+                  <span style={{
+                    background: module.available ? module.color : 'rgba(255,255,255,0.2)',
+                    padding: '2px 10px',
+                    borderRadius: '12px',
+                    fontSize: '12px',
+                    fontWeight: '600'
+                  }}>
+                    Økt {module.number}
+                  </span>
+                  {!module.available && (
+                    <span style={{ fontSize: '12px', opacity: 0.6 }}>🔒 Kommer snart</span>
+                  )}
+                  {moduleProgress[module.id]?.completed && (
+                    <span style={{ color: '#10b981', fontSize: '14px' }}>✓ Fullført</span>
+                  )}
+                </div>
+                <h3 style={{ margin: '0 0 4px', fontSize: '20px', color: module.available ? module.color : 'inherit' }}>
+                  {module.title}
+                </h3>
+                <p style={{ margin: '0 0 8px', opacity: 0.7, fontSize: '14px' }}>{module.subtitle}</p>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+                  {module.topics.map((topic, i) => (
+                    <span key={i} style={{
+                      padding: '3px 8px',
+                      background: 'rgba(255,255,255,0.1)',
+                      borderRadius: '4px',
+                      fontSize: '11px',
+                      opacity: 0.8
+                    }}>
+                      {topic}
+                    </span>
+                  ))}
+                </div>
+              </div>
+
+              {/* Arrow */}
+              {module.available && (
+                <div style={{ fontSize: '24px', opacity: 0.5 }}>→</div>
+              )}
+            </div>
+          ))}
+        </div>
+
+        {/* Kompetansemål */}
+        <div style={{
+          marginTop: '40px',
+          background: 'rgba(255,255,255,0.05)',
+          borderRadius: '16px',
+          padding: '24px'
+        }}>
+          <h3 style={{ marginBottom: '16px', opacity: 0.9 }}>📋 Kompetansemål (LK20)</h3>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            {[
+              'Utforske og beskrive noen sentrale bølgefenomener',
+              'Utforske og beskrive elektromagnetisk og ioniserende stråling, og vurdere informasjon om stråling og helseeffekter',
+              'Forklare hovedprinsippene for trådløs kommunikasjon og gi eksempler på hva slik teknologi brukes til'
+            ].map((km, i) => (
+              <p key={i} style={{
+                margin: 0,
+                padding: '12px 16px',
+                background: 'rgba(0,0,0,0.2)',
+                borderRadius: '8px',
+                fontSize: '14px',
+                fontStyle: 'italic',
+                lineHeight: '1.5'
+              }}>
+                "{km}"
+              </p>
+            ))}
+          </div>
+        </div>
+      </main>
+    </div>
+  );
+}
+
+
+// ===== ØKT 1 INNHOLD =====
+function Okt1Content({ studentName, onBack, homeworkAnswers, setHomeworkAnswers, moduleProgress, setModuleProgress }) {
+  const [activeSection, setActiveSection] = useState('intro');
+  const [predictions, setPredictions] = useState({});
+  const [completedSections, setCompletedSections] = useState([]);
+
+  const color = '#0ea5e9';
+
+  const sections = [
+    { id: 'intro', label: 'Introduksjon', icon: '📖' },
+    { id: 'waves', label: 'Hva er bølger?', icon: '🌊' },
+    { id: 'properties', label: 'Bølgeegenskaper', icon: '📐' },
+    { id: 'formula', label: 'Bølgeformelen', icon: '🧮' },
+    { id: 'em-spectrum', label: 'EM-spekteret', icon: '🌈' },
+    { id: 'penetration', label: 'Gjennom veggen?', icon: '🧱' },
+    { id: 'uses', label: 'Bruksområder', icon: '📡' },
+    { id: 'health', label: 'Stråling og helse', icon: '⚕️' },
+    { id: 'practical', label: 'Praktisk forsøk', icon: '🔬' },
+    { id: 'flashcards', label: 'Begreper', icon: '🃏' },
+    { id: 'homework', label: 'Hjemmeoppgave', icon: '📝' }
+  ];
+
+  const markComplete = (sectionId) => {
+    if (!completedSections.includes(sectionId)) {
+      setCompletedSections([...completedSections, sectionId]);
+    }
+  };
+
+  return (
+    <div style={{
+      minHeight: '100vh',
+      background: 'linear-gradient(135deg, #0f172a 0%, #1e293b 100%)',
+      fontFamily: "'Segoe UI', system-ui, sans-serif",
+      color: 'white'
+    }}>
+      {/* Header */}
+      <header style={{
+        background: 'rgba(0,0,0,0.4)',
+        borderBottom: '1px solid rgba(255,255,255,0.1)',
+        padding: '12px 24px',
+        position: 'sticky',
+        top: 0,
+        zIndex: 100,
+        backdropFilter: 'blur(10px)'
+      }}>
+        <div style={{ 
+          maxWidth: '1200px', 
+          margin: '0 auto',
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center'
+        }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <button
+              onClick={onBack}
+              style={{
+                padding: '8px 12px',
+                borderRadius: '8px',
+                border: 'none',
+                background: 'rgba(255,255,255,0.1)',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '14px'
+              }}
+            >
+              ← Tilbake
+            </button>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+              <span style={{ fontSize: '28px' }}>🌊</span>
+              <div>
+                <h1 style={{ margin: 0, fontSize: '18px', fontWeight: '700' }}>
+                  Økt 1: Bølger og EM-stråling
+                </h1>
+                <p style={{ margin: 0, fontSize: '12px', opacity: 0.7 }}>
+                  Dobbelttime (90 min) • {studentName}
+                </p>
+              </div>
+            </div>
+          </div>
+          <div style={{ fontSize: '14px', opacity: 0.7 }}>
+            ✓ {completedSections.length}/{sections.length - 1}
+          </div>
+        </div>
+      </header>
+
+      {/* Navigation */}
+      <nav style={{
+        background: 'rgba(0,0,0,0.2)',
+        borderBottom: '1px solid rgba(255,255,255,0.05)',
+        padding: '12px 24px',
+        overflowX: 'auto'
+      }}>
+        <div style={{
+          maxWidth: '1200px',
+          margin: '0 auto',
+          display: 'flex',
+          gap: '6px'
+        }}>
+          {sections.map((s) => (
+            <button
+              key={s.id}
+              onClick={() => setActiveSection(s.id)}
+              style={{
+                padding: '8px 14px',
+                borderRadius: '20px',
+                border: activeSection === s.id 
+                  ? `2px solid ${color}` 
+                  : '2px solid transparent',
+                background: activeSection === s.id 
+                  ? `${color}22` 
+                  : completedSections.includes(s.id)
+                    ? 'rgba(16,185,129,0.2)'
+                    : 'rgba(255,255,255,0.05)',
+                color: 'white',
+                cursor: 'pointer',
+                fontSize: '13px',
+                whiteSpace: 'nowrap',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
+              }}
+            >
+              {completedSections.includes(s.id) && s.id !== 'intro' ? '✓' : s.icon}
+              {s.label}
+            </button>
+          ))}
+        </div>
+      </nav>
+
+      {/* Main Content */}
+      <main style={{ padding: '24px', maxWidth: '1000px', margin: '0 auto' }}>
+        {activeSection === 'intro' && <IntroSection color={color} setActiveSection={setActiveSection} />}
+        {activeSection === 'waves' && <WavesSection color={color} markComplete={() => markComplete('waves')} />}
+        {activeSection === 'properties' && <PropertiesSection color={color} markComplete={() => markComplete('properties')} />}
+        {activeSection === 'formula' && <FormulaSection color={color} markComplete={() => markComplete('formula')} />}
+        {activeSection === 'em-spectrum' && <EMSpectrumSection color={color} markComplete={() => markComplete('em-spectrum')} />}
+        {activeSection === 'penetration' && <PenetrationSection color={color} predictions={predictions} setPredictions={setPredictions} markComplete={() => markComplete('penetration')} />}
+        {activeSection === 'uses' && <UsesSection color={color} markComplete={() => markComplete('uses')} />}
+        {activeSection === 'health' && <HealthSection color={color} markComplete={() => markComplete('health')} />}
+        {activeSection === 'practical' && <PracticalSection color={color} markComplete={() => markComplete('practical')} />}
+        {activeSection === 'flashcards' && <FlashcardsSection color={color} markComplete={() => markComplete('flashcards')} />}
+        {activeSection === 'homework' && <HomeworkSection color={color} answers={homeworkAnswers} setAnswers={setHomeworkAnswers} studentName={studentName} />}
+      </main>
+    </div>
+  );
+}
+
+
+// ===== GJENBRUKBARE KOMPONENTER =====
+
+function ContentCard({ children, color = 'rgba(255,255,255,0.05)' }) {
+  return (
+    <div style={{
+      background: color,
+      borderRadius: '16px',
+      padding: '24px',
+      marginBottom: '24px'
+    }}>
+      {children}
+    </div>
+  );
+}
+
+function DiscussionBox({ question, helpText, color }) {
+  return (
+    <div style={{
+      background: `linear-gradient(135deg, ${color}22, ${color}11)`,
+      border: `2px solid ${color}`,
+      borderRadius: '12px',
+      padding: '20px',
+      marginBottom: '20px'
+    }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+        <span style={{ fontSize: '24px' }}>💬</span>
+        <div>
+          <p style={{ fontWeight: '600', fontSize: '16px', marginBottom: '8px' }}>
+            Diskuter med sidemannen:
+          </p>
+          <p style={{ fontSize: '16px', marginBottom: helpText ? '8px' : '0' }}>{question}</p>
+          {helpText && (
+            <p style={{ fontSize: '14px', opacity: 0.7, fontStyle: 'italic' }}>{helpText}</p>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+// ===== INTRODUKSJON =====
+function IntroSection({ color, setActiveSection }) {
+  return (
+    <>
+      <ContentCard>
+        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+          <span style={{ fontSize: '64px' }}>🌊</span>
+          <h2 style={{ color: color, fontSize: '28px', marginTop: '16px', marginBottom: '8px' }}>
+            Velkommen til bølgenes verden!
+          </h2>
+          <p style={{ fontSize: '18px', opacity: 0.8 }}>
+            I dag skal vi utforske elektromagnetiske bølger - grunnlaget for all trådløs kommunikasjon
+          </p>
+        </div>
+        
+        <div style={{
+          background: 'rgba(0,0,0,0.3)',
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '24px'
+        }}>
+          <h3 style={{ color: color, marginBottom: '12px' }}>📋 Kompetansemål (LK20)</h3>
+          <p style={{ fontStyle: 'italic', lineHeight: '1.7', marginBottom: '12px' }}>
+            "Utforske og beskrive noen sentrale bølgefenomener"
+          </p>
+          <p style={{ fontStyle: 'italic', lineHeight: '1.7', marginBottom: '12px' }}>
+            "Utforske og beskrive elektromagnetisk og ioniserende stråling"
+          </p>
+          <p style={{ fontStyle: 'italic', lineHeight: '1.7' }}>
+            "Forklare hovedprinsippene for trådløs kommunikasjon og gi eksempler på hva slik teknologi brukes til"
+          </p>
+        </div>
+      </ContentCard>
+
+      <ContentCard>
+        <h3 style={{ color: color, marginBottom: '16px' }}>🎯 Læringsmål for denne økten</h3>
+        <div style={{ display: 'grid', gap: '10px' }}>
+          {[
+            'Forstå hva en bølge er og hvordan den overfører energi',
+            'Kunne forklare bølgelengde, frekvens og amplitude',
+            'Bruke bølgeformelen v = f × λ',
+            'Kjenne til det elektromagnetiske spekteret',
+            'Vite hvilke bølger som brukes til WiFi, 4G, Bluetooth osv.',
+            'Forstå hvorfor radiobølger går gjennom vegger, men infrarød ikke gjør det',
+            'Skille mellom ioniserende og ikke-ioniserende stråling'
+          ].map((goal, i) => (
+            <div key={i} style={{
+              display: 'flex',
+              alignItems: 'flex-start',
+              gap: '12px',
+              padding: '12px',
+              background: 'rgba(0,0,0,0.2)',
+              borderRadius: '8px'
+            }}>
+              <span style={{
+                background: color,
+                color: 'white',
+                minWidth: '28px',
+                height: '28px',
+                borderRadius: '50%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                fontSize: '14px',
+                fontWeight: '600'
+              }}>{i + 1}</span>
+              <span style={{ lineHeight: '1.5' }}>{goal}</span>
+            </div>
+          ))}
+        </div>
+      </ContentCard>
+
+      <DiscussionBox
+        color={color}
+        question="Hvor mange usynlige bølger tror du det er i dette rommet akkurat nå? Hva sender dem?"
+        helpText="Tenk på alle elektroniske enheter rundt deg..."
+      />
+
+      <div style={{ textAlign: 'center' }}>
+        <button
+          onClick={() => setActiveSection('waves')}
+          style={{
+            padding: '16px 32px',
+            fontSize: '18px',
+            fontWeight: '600',
+            borderRadius: '12px',
+            border: 'none',
+            background: `linear-gradient(135deg, ${color} 0%, #0284c7 100%)`,
+            color: 'white',
+            cursor: 'pointer'
+          }}
+        >
+          La oss begynne! →
+        </button>
+      </div>
+    </>
+  );
+}
+
+
+// ===== HVA ER BØLGER? =====
+function WavesSection({ color, markComplete }) {
+  useEffect(() => { markComplete(); }, []);
+
+  return (
+    <>
+      <ContentCard>
+        <h2 style={{ color: color, marginBottom: '16px' }}>🌊 Hva er egentlig en bølge?</h2>
+        <p style={{ fontSize: '17px', lineHeight: '1.8', marginBottom: '20px' }}>
+          Tenk på når du kaster en stein i et stille vann. Ringene sprer seg utover, 
+          men <strong>vannet selv flytter seg ikke</strong> med bølgen - det bare beveger seg 
+          opp og ned. Det som flytter seg er <strong>energi</strong>.
+        </p>
+        
+        <div style={{
+          background: 'rgba(0,0,0,0.3)',
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '20px'
+        }}>
+          <h3 style={{ color: color, marginBottom: '12px' }}>📌 Definisjon</h3>
+          <p style={{ fontSize: '18px', fontWeight: '500' }}>
+            En <strong>bølge</strong> er en forstyrrelse som transporterer <strong>energi</strong> fra 
+            ett sted til et annet, uten at materie flyttes permanent.
+          </p>
+        </div>
+      </ContentCard>
+
+      {/* TVERRBØLGER */}
+      <ContentCard>
+        <h3 style={{ color: '#0ea5e9', marginBottom: '16px' }}>↕️ Tverrbølger</h3>
+        <p style={{ fontSize: '16px', lineHeight: '1.8', marginBottom: '20px' }}>
+          I en tverrbølge svinger partiklene <strong>vinkelrett</strong> (90°) på retningen 
+          bølgen beveger seg. Tenk på en bølge på et tau - du rister tauet opp og ned, 
+          men bølgen beveger seg bortover langs tauet.
+        </p>
+        
+        <WaveBasicAnimation color={color} />
+        
+        <div style={{ marginTop: '16px', display: 'grid', gap: '8px' }}>
+          <p style={{ fontSize: '14px' }}><strong>Eksempler på tverrbølger:</strong></p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {['Bølger på vann', 'Bølger på tau/streng', 'Lysbølger', 'Radiobølger', 'Alle EM-bølger'].map((ex, i) => (
+              <span key={i} style={{ padding: '6px 12px', background: 'rgba(14,165,233,0.2)', borderRadius: '16px', fontSize: '13px' }}>{ex}</span>
+            ))}
+          </div>
+        </div>
+      </ContentCard>
+
+      {/* LANGSGÅENDE BØLGER */}
+      <ContentCard>
+        <h3 style={{ color: '#f59e0b', marginBottom: '16px' }}>↔️ Langsgående bølger (Lydbølger)</h3>
+        <p style={{ fontSize: '16px', lineHeight: '1.8', marginBottom: '20px' }}>
+          I en langsgående bølge svinger partiklene <strong>parallelt</strong> med retningen 
+          bølgen beveger seg. Partiklene presses sammen (kompresjon) og trekkes fra 
+          hverandre (fortynning) i en rytme.
+        </p>
+        
+        <LongitudinalWaveAnimation />
+        
+        <div style={{
+          background: 'rgba(245,158,11,0.1)',
+          borderRadius: '12px',
+          padding: '20px',
+          marginTop: '20px',
+          border: '2px solid rgba(245,158,11,0.3)'
+        }}>
+          <h4 style={{ color: '#f59e0b', marginBottom: '12px' }}>🔊 Hvordan lyd dannes og høres</h4>
+          <div style={{ display: 'grid', gap: '12px' }}>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <span style={{ fontSize: '24px' }}>🔔</span>
+              <div>
+                <strong>1. Lydkilden vibrerer</strong>
+                <p style={{ margin: '4px 0 0', fontSize: '14px', opacity: 0.9 }}>
+                  En høyttaler, stemmeband, gitarstreng eller bjelle vibrerer frem og tilbake
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <span style={{ fontSize: '24px' }}>💨</span>
+              <div>
+                <strong>2. Luften presses sammen og trekkes fra hverandre</strong>
+                <p style={{ margin: '4px 0 0', fontSize: '14px', opacity: 0.9 }}>
+                  Når lydkilden beveger seg utover, presser den luftmolekylene sammen (kompresjon). 
+                  Når den beveger seg innover, blir det mindre tett (fortynning).
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <span style={{ fontSize: '24px' }}>🌊</span>
+              <div>
+                <strong>3. Kompresjonen sprer seg gjennom luften</strong>
+                <p style={{ margin: '4px 0 0', fontSize: '14px', opacity: 0.9 }}>
+                  Områdene med høyt og lavt trykk forplanter seg utover med ~343 m/s (lydens hastighet i luft).
+                  Luftmolekylene selv flytter seg ikke langt - de bare dytter på nabomolekylene!
+                </p>
+              </div>
+            </div>
+            <div style={{ display: 'flex', alignItems: 'flex-start', gap: '12px' }}>
+              <span style={{ fontSize: '24px' }}>👂</span>
+              <div>
+                <strong>4. Trommehinnen vibrerer</strong>
+                <p style={{ margin: '4px 0 0', fontSize: '14px', opacity: 0.9 }}>
+                  Når trykkbølgen treffer øret ditt, får den trommehinnen til å vibrere i samme rytme. 
+                  Hjernen tolker dette som lyd!
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+        
+        <SoundWaveDemo />
+        
+        <div style={{ marginTop: '16px', display: 'grid', gap: '8px' }}>
+          <p style={{ fontSize: '14px' }}><strong>Eksempler på langsgående bølger:</strong></p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+            {['Lydbølger i luft', 'Lydbølger i vann', 'Lydbølger i metall', 'P-bølger (jordskjelv)'].map((ex, i) => (
+              <span key={i} style={{ padding: '6px 12px', background: 'rgba(245,158,11,0.2)', borderRadius: '16px', fontSize: '13px' }}>{ex}</span>
+            ))}
+          </div>
+        </div>
+      </ContentCard>
+
+      {/* SAMMENLIGNING */}
+      <ContentCard>
+        <h3 style={{ color: color, marginBottom: '16px' }}>⚖️ Sammenligning</h3>
+        <div style={{ overflowX: 'auto' }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14px' }}>
+            <thead>
+              <tr style={{ background: 'rgba(255,255,255,0.1)' }}>
+                <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid rgba(255,255,255,0.2)' }}></th>
+                <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid rgba(255,255,255,0.2)', color: '#0ea5e9' }}>↕️ Tverrbølge</th>
+                <th style={{ padding: '12px', textAlign: 'left', borderBottom: '2px solid rgba(255,255,255,0.2)', color: '#f59e0b' }}>↔️ Langsgående</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><strong>Svingningsretning</strong></td>
+                <td style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Vinkelrett på bevegelsen</td>
+                <td style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Parallelt med bevegelsen</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><strong>Trenger medium?</strong></td>
+                <td style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Nei (EM-bølger går i vakuum)</td>
+                <td style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Ja (trenger stoff å presse sammen)</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}><strong>Eksempel</strong></td>
+                <td style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Lys, radiobølger, tau</td>
+                <td style={{ padding: '10px', borderBottom: '1px solid rgba(255,255,255,0.1)' }}>Lyd i luft/vann</td>
+              </tr>
+              <tr>
+                <td style={{ padding: '10px' }}><strong>I verdensrommet?</strong></td>
+                <td style={{ padding: '10px' }}>✅ Ja</td>
+                <td style={{ padding: '10px' }}>❌ Nei (ingen luft!)</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        
+        <div style={{
+          background: 'rgba(139,92,246,0.1)',
+          borderRadius: '8px',
+          padding: '16px',
+          marginTop: '16px',
+          borderLeft: '4px solid #8b5cf6'
+        }}>
+          <strong>🎬 Filmmyte avslørt!</strong>
+          <p style={{ margin: '8px 0 0', fontSize: '14px' }}>
+            I Star Wars og andre filmer hører vi eksplosjoner i verdensrommet. Men det er fysisk umulig! 
+            Lyd er langsgående bølger som trenger et medium (luft, vann, etc.) å bevege seg gjennom. 
+            I verdensrommet er det vakuum - ingen luft - så ingen lyd kan forplante seg der.
+          </p>
+        </div>
+      </ContentCard>
+
+      <ContentCard>
+        <h3 style={{ color: color, marginBottom: '12px' }}>💡 Viktig om EM-bølger</h3>
+        <p style={{ lineHeight: '1.7' }}>
+          Elektromagnetiske bølger er <strong>tverrbølger</strong>. Men de er spesielle - 
+          de trenger ikke noe medium å bevege seg gjennom! Lydbølger trenger luft, 
+          vannbølger trenger vann, men EM-bølger kan reise gjennom <strong>vakuum</strong> 
+          (tomt rom). Det er derfor lys fra solen kan nå oss gjennom verdensrommet.
+        </p>
+      </ContentCard>
+
+      <DiscussionBox
+        color={color}
+        question="Hvorfor kan du se astronauter på månen, men ikke høre dem uten radio?"
+        helpText="Tenk på hvilken type bølge lys er vs. lyd, og hva de trenger for å bevege seg..."
+      />
+    </>
+  );
+}
+
+// Animasjon for langsgående bølger
+function LongitudinalWaveAnimation() {
+  const canvasRef = useRef(null);
+  const animationRef = useRef(null);
+  const timeRef = useRef(0);
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    const animate = () => {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      const numParticles = 40;
+      const baseSpacing = canvas.width / numParticles;
+      const centerY = canvas.height / 2;
+      
+      // Tegn partikler
+      for (let i = 0; i < numParticles; i++) {
+        const baseX = i * baseSpacing + 20;
+        // Partiklene beveger seg frem og tilbake (parallelt med bølgeretningen)
+        const displacement = 15 * Math.sin((i * 0.3) - timeRef.current * 0.05);
+        const x = baseX + displacement;
+        
+        // Farge basert på kompresjon (tettere = mørkere oransje)
+        const density = Math.cos((i * 0.3) - timeRef.current * 0.05);
+        const alpha = 0.5 + density * 0.3;
+        
+        ctx.fillStyle = `rgba(245, 158, 11, ${alpha})`;
+        ctx.beginPath();
+        ctx.arc(x, centerY, 6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // Tekst
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.font = '12px sans-serif';
+      ctx.fillText('Kompresjon (tett)', 50, 30);
+      ctx.fillText('Fortynning (spredt)', 50, canvas.height - 15);
+      ctx.fillText('← Partiklene svinger frem og tilbake →', canvas.width - 220, 30);
+      
+      timeRef.current += 1;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    animate();
+    return () => cancelAnimationFrame(animationRef.current);
+  }, []);
+  
+  return (
+    <div style={{ background: '#0f172a', borderRadius: '12px', padding: '16px' }}>
+      <canvas ref={canvasRef} width={700} height={120} style={{ width: '100%', height: 'auto' }} />
+      <p style={{ textAlign: 'center', marginTop: '8px', fontSize: '13px', opacity: 0.7 }}>
+        Se hvordan partiklene beveger seg frem og tilbake (ikke opp og ned!)
+      </p>
+    </div>
+  );
+}
+
+// Interaktiv lyd-demo
+function SoundWaveDemo() {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const canvasRef = useRef(null);
+  const animationRef = useRef(null);
+  const timeRef = useRef(0);
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    const animate = () => {
+      ctx.fillStyle = '#1e293b';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      // Høyttaler
+      ctx.fillStyle = '#64748b';
+      ctx.fillRect(30, 40, 30, 60);
+      ctx.fillStyle = '#475569';
+      ctx.beginPath();
+      ctx.arc(45, 70, 15, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Høyttaler-membran bevegelse
+      const speakerDisp = isPlaying ? 5 * Math.sin(timeRef.current * 0.1) : 0;
+      ctx.fillStyle = '#94a3b8';
+      ctx.beginPath();
+      ctx.arc(45 + speakerDisp, 70, 10, 0, Math.PI * 2);
+      ctx.fill();
+      
+      // Lydbølger (sirkler)
+      if (isPlaying) {
+        for (let i = 0; i < 5; i++) {
+          const radius = ((timeRef.current * 2 + i * 40) % 200) + 30;
+          const alpha = Math.max(0, 1 - radius / 230);
+          ctx.strokeStyle = `rgba(245, 158, 11, ${alpha})`;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.arc(60, 70, radius, -Math.PI/3, Math.PI/3);
+          ctx.stroke();
+        }
+      }
+      
+      // Øre
+      ctx.fillStyle = '#fbbf24';
+      ctx.font = '36px sans-serif';
+      ctx.fillText('👂', canvas.width - 70, 82);
+      
+      // Trommehinne-visualisering
+      if (isPlaying) {
+        const earDisp = 3 * Math.sin(timeRef.current * 0.1 - 3);
+        ctx.fillStyle = 'rgba(245, 158, 11, 0.5)';
+        ctx.beginPath();
+        ctx.arc(canvas.width - 50 + earDisp, 70, 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      // Labels
+      ctx.fillStyle = 'white';
+      ctx.font = '12px sans-serif';
+      ctx.fillText('Høyttaler', 25, 120);
+      ctx.fillText('Trykkbølger i luft', canvas.width/2 - 50, 120);
+      ctx.fillText('Trommehinne', canvas.width - 85, 120);
+      
+      if (isPlaying) timeRef.current += 1;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    animate();
+    return () => cancelAnimationFrame(animationRef.current);
+  }, [isPlaying]);
+  
+  return (
+    <div style={{ 
+      background: '#1e293b', 
+      borderRadius: '12px', 
+      padding: '16px',
+      marginTop: '16px'
+    }}>
+      <canvas ref={canvasRef} width={500} height={140} style={{ width: '100%', height: 'auto' }} />
+      <div style={{ textAlign: 'center', marginTop: '12px' }}>
+        <button
+          onClick={() => setIsPlaying(!isPlaying)}
+          style={{
+            padding: '10px 24px',
+            borderRadius: '8px',
+            border: 'none',
+            background: isPlaying ? '#ef4444' : '#10b981',
+            color: 'white',
+            cursor: 'pointer',
+            fontWeight: '500',
+            fontSize: '14px'
+          }}
+        >
+          {isPlaying ? '⏹️ Stopp' : '▶️ Spill av lyd'}
+        </button>
+        <p style={{ marginTop: '8px', fontSize: '13px', opacity: 0.7 }}>
+          Se hvordan trykkbølgene sprer seg fra høyttaleren til øret
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function WaveBasicAnimation({ color }) {
+  const canvasRef = useRef(null);
+  const animationRef = useRef(null);
+  const timeRef = useRef(0);
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    const animate = () => {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      
+      const numParticles = 20;
+      for (let i = 0; i < numParticles; i++) {
+        const x = (canvas.width / numParticles) * i + 30;
+        const y = canvas.height / 2 + 40 * Math.sin((x * 0.02) - timeRef.current * 0.03);
+        
+        ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+        ctx.beginPath();
+        ctx.moveTo(x, canvas.height / 2 - 50);
+        ctx.lineTo(x, canvas.height / 2 + 50);
+        ctx.stroke();
+        
+        ctx.fillStyle = color;
+        ctx.beginPath();
+        ctx.arc(x, y, 8, 0, Math.PI * 2);
+        ctx.fill();
+      }
+      
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let x = 0; x < canvas.width; x++) {
+        const y = canvas.height / 2 + 40 * Math.sin((x * 0.02) - timeRef.current * 0.03);
+        if (x === 0) ctx.moveTo(x, y);
+        else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      ctx.fillStyle = '#10b981';
+      ctx.font = '14px sans-serif';
+      ctx.fillText('Bølgen beveger seg →', canvas.width - 150, 30);
+      ctx.fillText('Partiklene beveger seg ↕', 10, 30);
+      
+      timeRef.current += 1;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    animate();
+    return () => cancelAnimationFrame(animationRef.current);
+  }, [color]);
+  
+  return (
+    <div style={{ background: '#0f172a', borderRadius: '12px', padding: '16px' }}>
+      <canvas ref={canvasRef} width={700} height={200} style={{ width: '100%', height: 'auto' }} />
+      <p style={{ textAlign: 'center', marginTop: '12px', fontSize: '14px', opacity: 0.7 }}>
+        Se hvordan partiklene beveger seg opp og ned, mens bølgen beveger seg til høyre
+      </p>
+    </div>
+  );
+}
+
+
+// ===== BØLGEEGENSKAPER =====
+function PropertiesSection({ color, markComplete }) {
+  const [amplitude, setAmplitude] = useState(50);
+  const [frequency, setFrequency] = useState(2);
+  
+  useEffect(() => { markComplete(); }, []);
+
+  return (
+    <>
+      <ContentCard>
+        <h2 style={{ color: color, marginBottom: '16px' }}>📐 Bølgens egenskaper</h2>
+        <p style={{ fontSize: '17px', lineHeight: '1.8', marginBottom: '24px' }}>
+          For å beskrive en bølge trenger vi tre viktige begreper: 
+          <strong> amplitude</strong>, <strong>bølgelengde</strong> og <strong>frekvens</strong>.
+        </p>
+
+        <WavePropertiesSimulation amplitude={amplitude} frequency={frequency} color={color} />
+        
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginTop: '20px' }}>
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px' }}>
+              <span style={{ color: '#10b981' }}>■</span> Amplitude (A): {amplitude} px
+            </label>
+            <input type="range" min="20" max="80" value={amplitude} onChange={(e) => setAmplitude(parseInt(e.target.value))} style={{ width: '100%' }} />
+          </div>
+          <div>
+            <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px' }}>
+              <span style={{ color: '#f59e0b' }}>■</span> Frekvens (f): {frequency} Hz
+            </label>
+            <input type="range" min="1" max="5" step="0.5" value={frequency} onChange={(e) => setFrequency(parseFloat(e.target.value))} style={{ width: '100%' }} />
+          </div>
+        </div>
+      </ContentCard>
+
+      <ContentCard>
+        <h3 style={{ color: color, marginBottom: '16px' }}>📚 De tre viktige begrepene</h3>
+        <div style={{ display: 'grid', gap: '16px' }}>
+          {[
+            { term: 'Amplitude (A)', color: '#10b981', def: 'Størst avstand fra hvilestillingen', meaning: 'Beskriver bølgens styrke eller intensitet', ex: 'Høy lydbølge = høyt volum' },
+            { term: 'Bølgelengde (λ)', color: '#f59e0b', def: 'Avstanden mellom to identiske punkter (topp til topp)', meaning: 'Måles i meter (m) eller nanometer (nm)', ex: 'Rødt lys: ~700 nm. WiFi: ~12 cm' },
+            { term: 'Frekvens (f)', color: '#8b5cf6', def: 'Antall svingninger per sekund', meaning: 'Måles i Hertz (Hz)', ex: 'WiFi: 2,4 GHz. Lys: ~500 THz' }
+          ].map((item, i) => (
+            <div key={i} style={{ background: 'rgba(0,0,0,0.2)', borderRadius: '12px', padding: '16px', borderLeft: `4px solid ${item.color}` }}>
+              <h4 style={{ color: item.color, marginBottom: '8px' }}>{item.term}</h4>
+              <p style={{ margin: '0 0 4px' }}><strong>Definisjon:</strong> {item.def}</p>
+              <p style={{ margin: '0 0 4px', fontSize: '14px', opacity: 0.9 }}><strong>Betydning:</strong> {item.meaning}</p>
+              <p style={{ margin: 0, fontSize: '14px', opacity: 0.8 }}><strong>Eksempel:</strong> {item.ex}</p>
+            </div>
+          ))}
+        </div>
+      </ContentCard>
+
+      <DiscussionBox
+        color={color}
+        question="Hvis du øker frekvensen på simuleringen - hva skjer med bølgelengden? Hvorfor tror du det er slik?"
+      />
+    </>
+  );
+}
+
+function WavePropertiesSimulation({ amplitude, frequency, color }) {
+  const canvasRef = useRef(null);
+  const animationRef = useRef(null);
+  const timeRef = useRef(0);
+  const wavelength = 150 / frequency;
+  
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    const animate = () => {
+      ctx.fillStyle = '#0f172a';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      const centerY = canvas.height / 2;
+      
+      // Grid
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)';
+      ctx.lineWidth = 1;
+      for (let x = 0; x < canvas.width; x += 50) {
+        ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, canvas.height); ctx.stroke();
+      }
+      
+      // Center line
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+      ctx.setLineDash([5, 5]);
+      ctx.beginPath(); ctx.moveTo(0, centerY); ctx.lineTo(canvas.width, centerY); ctx.stroke();
+      ctx.setLineDash([]);
+      
+      // Wave
+      ctx.strokeStyle = color;
+      ctx.lineWidth = 3;
+      ctx.beginPath();
+      for (let x = 0; x < canvas.width; x++) {
+        const y = centerY + amplitude * Math.sin((x / wavelength) * 2 * Math.PI - timeRef.current * 0.05);
+        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+      }
+      ctx.stroke();
+      
+      // Amplitude indicator
+      ctx.strokeStyle = '#10b981';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(80, centerY);
+      ctx.lineTo(80, centerY - amplitude);
+      ctx.stroke();
+      ctx.fillStyle = '#10b981';
+      ctx.font = 'bold 14px sans-serif';
+      ctx.fillText('A', 90, centerY - amplitude/2 + 5);
+      
+      // Wavelength indicator
+      ctx.strokeStyle = '#f59e0b';
+      ctx.lineWidth = 2;
+      const wlY = centerY - amplitude - 25;
+      ctx.beginPath();
+      ctx.moveTo(150, wlY); ctx.lineTo(150 + wavelength, wlY);
+      ctx.moveTo(150, wlY - 10); ctx.lineTo(150, wlY + 10);
+      ctx.moveTo(150 + wavelength, wlY - 10); ctx.lineTo(150 + wavelength, wlY + 10);
+      ctx.stroke();
+      ctx.fillStyle = '#f59e0b';
+      ctx.fillText('λ', 150 + wavelength/2 - 5, wlY - 10);
+      
+      // Info
+      ctx.fillStyle = 'rgba(0,0,0,0.6)';
+      ctx.fillRect(canvas.width - 170, 10, 160, 50);
+      ctx.fillStyle = 'white';
+      ctx.font = '13px sans-serif';
+      ctx.fillText(`Bølgelengde: ${wavelength.toFixed(0)} px`, canvas.width - 160, 32);
+      ctx.fillText(`Frekvens: ${frequency} Hz`, canvas.width - 160, 52);
+      
+      timeRef.current += 1;
+      animationRef.current = requestAnimationFrame(animate);
+    };
+    
+    animate();
+    return () => cancelAnimationFrame(animationRef.current);
+  }, [amplitude, frequency, wavelength, color]);
+  
+  return (
+    <div style={{ background: '#0f172a', borderRadius: '12px', padding: '16px' }}>
+      <canvas ref={canvasRef} width={700} height={220} style={{ width: '100%', height: 'auto' }} />
+    </div>
+  );
+}
+
+
+// ===== BØLGEFORMELEN =====
+function FormulaSection({ color, markComplete }) {
+  useEffect(() => { markComplete(); }, []);
+
+  return (
+    <>
+      <ContentCard>
+        <h2 style={{ color: color, marginBottom: '16px' }}>🧮 Bølgeformelen</h2>
+        
+        <div style={{
+          background: 'linear-gradient(135deg, rgba(14,165,233,0.2), rgba(59,130,246,0.2))',
+          borderRadius: '16px',
+          padding: '32px',
+          textAlign: 'center',
+          marginBottom: '24px'
+        }}>
+          <div style={{ fontSize: '48px', fontFamily: 'Georgia, serif', marginBottom: '16px' }}>
+            v = f × λ
+          </div>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '32px', flexWrap: 'wrap' }}>
+            <span><strong>v</strong> = hastighet (m/s)</span>
+            <span><strong>f</strong> = frekvens (Hz)</span>
+            <span><strong>λ</strong> = bølgelengde (m)</span>
+          </div>
+        </div>
+        
+        <div style={{
+          background: 'rgba(16,185,129,0.1)',
+          borderRadius: '12px',
+          padding: '16px',
+          borderLeft: '4px solid #10b981'
+        }}>
+          <p style={{ margin: 0 }}>
+            <strong>💡 Viktig:</strong> Alle EM-bølger har samme hastighet i vakuum: 
+            <strong> c = 3 × 10⁸ m/s</strong>. Hvis frekvensen øker, må bølgelengden bli kortere!
+          </p>
+        </div>
+      </ContentCard>
+
+      <ContentCard>
+        <h3 style={{ color: color, marginBottom: '16px' }}>🔢 Interaktiv kalkulator</h3>
+        <FormulaCalculator color={color} />
+      </ContentCard>
+    </>
+  );
+}
+
+function FormulaCalculator({ color }) {
+  const [frequency, setFrequency] = useState('2.4e9');
+  const [result, setResult] = useState(null);
+  
+  const calculate = () => {
+    const f = parseFloat(frequency);
+    if (f > 0) {
+      const wavelength = 3e8 / f;
+      setResult(wavelength);
+    }
+  };
+  
+  const formatWavelength = (w) => {
+    if (w >= 1) return `${w.toFixed(2)} m`;
+    if (w >= 0.01) return `${(w * 100).toFixed(2)} cm`;
+    if (w >= 0.001) return `${(w * 1000).toFixed(2)} mm`;
+    if (w >= 1e-6) return `${(w * 1e6).toFixed(2)} μm`;
+    return `${(w * 1e9).toFixed(2)} nm`;
+  };
+  
+  return (
+    <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '12px', padding: '20px' }}>
+      <p style={{ marginBottom: '16px' }}>Skriv inn frekvens for å beregne bølgelengde (bruker c = 3 × 10⁸ m/s):</p>
+      
+      <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', marginBottom: '16px' }}>
+        <input
+          type="text"
+          value={frequency}
+          onChange={(e) => setFrequency(e.target.value)}
+          placeholder="F.eks. 2.4e9"
+          style={{
+            flex: 1,
+            minWidth: '200px',
+            padding: '12px',
+            borderRadius: '8px',
+            border: '1px solid rgba(255,255,255,0.2)',
+            background: 'rgba(255,255,255,0.05)',
+            color: 'white',
+            fontSize: '16px'
+          }}
+        />
+        <button
+          onClick={calculate}
+          style={{
+            padding: '12px 24px',
+            borderRadius: '8px',
+            border: 'none',
+            background: color,
+            color: 'white',
+            cursor: 'pointer',
+            fontWeight: '500'
+          }}
+        >
+          Beregn λ
+        </button>
+      </div>
+      
+      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
+        <span style={{ opacity: 0.7, alignSelf: 'center' }}>Hurtigvalg:</span>
+        {[
+          { label: 'WiFi 2.4 GHz', value: '2.4e9' },
+          { label: 'WiFi 5 GHz', value: '5e9' },
+          { label: 'FM-radio 100 MHz', value: '100e6' },
+          { label: 'Rødt lys', value: '4.3e14' }
+        ].map((preset) => (
+          <button
+            key={preset.value}
+            onClick={() => { setFrequency(preset.value); }}
+            style={{
+              padding: '6px 12px',
+              borderRadius: '6px',
+              border: 'none',
+              background: 'rgba(255,255,255,0.1)',
+              color: 'white',
+              cursor: 'pointer',
+              fontSize: '13px'
+            }}
+          >
+            {preset.label}
+          </button>
+        ))}
+      </div>
+      
+      {result && (
+        <div style={{
+          background: `${color}22`,
+          borderRadius: '8px',
+          padding: '16px',
+          textAlign: 'center'
+        }}>
+          <p style={{ margin: 0, fontSize: '14px', opacity: 0.7 }}>Bølgelengde:</p>
+          <p style={{ margin: '8px 0 0', fontSize: '28px', fontWeight: '600', color: color }}>
+            λ = {formatWavelength(result)}
+          </p>
+        </div>
+      )}
+    </div>
+  );
+}
+
+
+// ===== EM-SPEKTERET (FORBEDRET) =====
+function EMSpectrumSection({ color, markComplete }) {
+  useEffect(() => { markComplete(); }, []);
+
+  return (
+    <>
+      <ContentCard>
+        <h2 style={{ color: color, marginBottom: '16px' }}>🌈 Det elektromagnetiske spekteret</h2>
+        <p style={{ fontSize: '17px', lineHeight: '1.8', marginBottom: '24px' }}>
+          Alle elektromagnetiske bølger er egentlig samme fenomen - bare med forskjellig 
+          bølgelengde og frekvens. Dra i slideren for å utforske spekteret!
+        </p>
+      </ContentCard>
+
+      <ContentCard>
+        <h3 style={{ color: color, marginBottom: '16px' }}>🔍 Interaktiv spektrum-utforsker</h3>
+        <EMSpectrumExplorer />
+      </ContentCard>
+
+      <ContentCard>
+        <h3 style={{ color: color, marginBottom: '16px' }}>📊 Visuell sammenligning av bølgelengder</h3>
+        <WavelengthComparison />
+      </ContentCard>
+
+      <DiscussionBox
+        color={color}
+        question="Hvorfor tror du vi bruker radiobølger til kommunikasjon, og ikke f.eks. røntgen?"
+        helpText="Tenk på energi, gjennomtrenging og sikkerhet..."
+      />
+    </>
+  );
+}
+
+function EMSpectrumExplorer() {
+  const [position, setPosition] = useState(50); // 0-100
+  const canvasRef = useRef(null);
+  
+  // Konverter posisjon til frekvens (logaritmisk skala)
+  // 0 = 10^3 Hz (1 kHz), 100 = 10^20 Hz
+  const minLog = 3;
+  const maxLog = 20;
+  const logFreq = minLog + (position / 100) * (maxLog - minLog);
+  const frequency = Math.pow(10, logFreq);
+  const wavelength = 3e8 / frequency;
+  
+  const getWaveType = () => {
+    if (logFreq < 9) return { name: 'Radiobølger', color: '#ef4444', icon: '📻', safe: true };
+    if (logFreq < 11.5) return { name: 'Mikrobølger', color: '#f97316', icon: '📡', safe: true };
+    if (logFreq < 14.5) return { name: 'Infrarød', color: '#eab308', icon: '🔥', safe: true };
+    if (logFreq < 14.9) return { name: 'Synlig lys', color: '#22c55e', icon: '💡', safe: true };
+    if (logFreq < 16.5) return { name: 'Ultrafiolett', color: '#8b5cf6', icon: '🔮', safe: false };
+    if (logFreq < 19) return { name: 'Røntgen', color: '#06b6d4', icon: '🩻', safe: false };
+    return { name: 'Gammastråling', color: '#ec4899', icon: '☢️', safe: false };
+  };
+  
+  const getUses = () => {
+    if (logFreq < 7) return ['AM-radio', 'Langbølge'];
+    if (logFreq < 8.5) return ['FM-radio', 'TV-signaler'];
+    if (logFreq < 9.5) return ['WiFi', 'Bluetooth', '4G/5G'];
+    if (logFreq < 11) return ['Radar', 'Satellitt', 'Mikrobølgeovn'];
+    if (logFreq < 14) return ['Fjernkontroll', 'Varmekamera', 'Nattbriller'];
+    if (logFreq < 14.9) return ['Syn', 'Fotografering', 'Fiberoptikk'];
+    if (logFreq < 16) return ['Solarium', 'Desinfeksjon', 'Pengesjekk'];
+    if (logFreq < 19) return ['Medisinsk røntgen', 'Sikkerhetsskanning'];
+    return ['Strålebehandling', 'Sterilisering'];
+  };
+  
+  const formatFreq = () => {
+    if (frequency < 1e3) return `${frequency.toFixed(0)} Hz`;
+    if (frequency < 1e6) return `${(frequency/1e3).toFixed(1)} kHz`;
+    if (frequency < 1e9) return `${(frequency/1e6).toFixed(1)} MHz`;
+    if (frequency < 1e12) return `${(frequency/1e9).toFixed(1)} GHz`;
+    if (frequency < 1e15) return `${(frequency/1e12).toFixed(1)} THz`;
+    if (frequency < 1e18) return `${(frequency/1e15).toFixed(1)} PHz`;
+    return `${(frequency/1e18).toFixed(1)} EHz`;
+  };
+  
+  const formatWavelength = () => {
+    if (wavelength >= 1000) return `${(wavelength/1000).toFixed(1)} km`;
+    if (wavelength >= 1) return `${wavelength.toFixed(2)} m`;
+    if (wavelength >= 0.01) return `${(wavelength*100).toFixed(1)} cm`;
+    if (wavelength >= 0.001) return `${(wavelength*1000).toFixed(2)} mm`;
+    if (wavelength >= 1e-6) return `${(wavelength*1e6).toFixed(2)} μm`;
+    if (wavelength >= 1e-9) return `${(wavelength*1e9).toFixed(2)} nm`;
+    return `${(wavelength*1e12).toFixed(2)} pm`;
+  };
+  
+  const waveType = getWaveType();
+  const uses = getUses();
+  
+  // Tegn bølge med riktig relativ bølgelengde
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    const ctx = canvas.getContext('2d');
+    
+    ctx.fillStyle = '#0f172a';
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    
+    // Beregn visuell bølgelengde (logaritmisk for å vise forskjeller)
+    const visualWavelength = Math.max(5, Math.min(200, 200 - (logFreq - minLog) * 12));
+    
+    ctx.strokeStyle = waveType.color;
+    ctx.lineWidth = 3;
+    ctx.beginPath();
+    
+    for (let x = 0; x < canvas.width; x++) {
+      const y = canvas.height / 2 + 30 * Math.sin((x / visualWavelength) * 2 * Math.PI);
+      if (x === 0) ctx.moveTo(x, y);
+      else ctx.lineTo(x, y);
+    }
+    ctx.stroke();
+    
+    // Vis bølgelengde-markør
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([5, 5]);
+    ctx.beginPath();
+    ctx.moveTo(50, 20);
+    ctx.lineTo(50, canvas.height - 20);
+    ctx.moveTo(50 + visualWavelength, 20);
+    ctx.lineTo(50 + visualWavelength, canvas.height - 20);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    
+    ctx.fillStyle = 'white';
+    ctx.font = '12px sans-serif';
+    ctx.fillText('λ', 50 + visualWavelength/2 - 5, 15);
+    
+  }, [position, waveType.color, logFreq]);
+  
+  return (
+    <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '12px', padding: '20px' }}>
+      {/* Spektrum-bar */}
+      <div style={{
+        height: '40px',
+        borderRadius: '8px',
+        background: 'linear-gradient(90deg, #ef4444 0%, #f97316 15%, #eab308 30%, #22c55e 45%, #3b82f6 50%, #8b5cf6 55%, #a855f7 60%, #06b6d4 75%, #ec4899 100%)',
+        position: 'relative',
+        marginBottom: '8px'
+      }}>
+        {/* Markør */}
+        <div style={{
+          position: 'absolute',
+          left: `${position}%`,
+          top: '-8px',
+          transform: 'translateX(-50%)',
+          width: '4px',
+          height: '56px',
+          background: 'white',
+          borderRadius: '2px',
+          boxShadow: '0 0 10px rgba(255,255,255,0.5)'
+        }} />
+      </div>
+      
+      {/* Slider */}
+      <input
+        type="range"
+        min="0"
+        max="100"
+        value={position}
+        onChange={(e) => setPosition(parseInt(e.target.value))}
+        style={{ width: '100%', marginBottom: '16px' }}
+      />
+      
+      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '11px', opacity: 0.6, marginBottom: '20px' }}>
+        <span>Radiobølger</span>
+        <span>Mikro</span>
+        <span>IR</span>
+        <span>Lys</span>
+        <span>UV</span>
+        <span>Røntgen</span>
+        <span>Gamma</span>
+      </div>
+      
+      {/* Bølgevisning */}
+      <canvas
+        ref={canvasRef}
+        width={600}
+        height={100}
+        style={{ width: '100%', height: 'auto', borderRadius: '8px', marginBottom: '16px' }}
+      />
+      
+      {/* Info-panel */}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+        gap: '12px',
+        marginBottom: '16px'
+      }}>
+        <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
+          <p style={{ fontSize: '12px', opacity: 0.7, margin: '0 0 4px' }}>Type</p>
+          <p style={{ fontSize: '18px', fontWeight: '600', color: waveType.color, margin: 0 }}>
+            {waveType.icon} {waveType.name}
+          </p>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
+          <p style={{ fontSize: '12px', opacity: 0.7, margin: '0 0 4px' }}>Frekvens</p>
+          <p style={{ fontSize: '18px', fontWeight: '600', color: '#f59e0b', margin: 0 }}>{formatFreq()}</p>
+        </div>
+        <div style={{ background: 'rgba(255,255,255,0.1)', borderRadius: '8px', padding: '12px', textAlign: 'center' }}>
+          <p style={{ fontSize: '12px', opacity: 0.7, margin: '0 0 4px' }}>Bølgelengde</p>
+          <p style={{ fontSize: '18px', fontWeight: '600', color: '#10b981', margin: 0 }}>{formatWavelength()}</p>
+        </div>
+      </div>
+      
+      {/* Bruksområder */}
+      <div style={{ marginBottom: '12px' }}>
+        <p style={{ fontSize: '14px', opacity: 0.7, marginBottom: '8px' }}>Brukes til:</p>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px' }}>
+          {uses.map((use, i) => (
+            <span key={i} style={{
+              padding: '4px 12px',
+              background: `${waveType.color}33`,
+              borderRadius: '12px',
+              fontSize: '13px'
+            }}>
+              {use}
+            </span>
+          ))}
+        </div>
+      </div>
+      
+      {/* Sikkerhetsindikator */}
+      <div style={{
+        padding: '12px',
+        borderRadius: '8px',
+        background: waveType.safe ? 'rgba(16,185,129,0.2)' : 'rgba(239,68,68,0.2)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px'
+      }}>
+        <span style={{ fontSize: '20px' }}>{waveType.safe ? '✅' : '☢️'}</span>
+        <span style={{ fontSize: '14px' }}>
+          {waveType.safe 
+            ? 'Ikke-ioniserende stråling - trygt ved normal bruk'
+            : 'Ioniserende stråling - kan skade celler og DNA!'
+          }
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function WavelengthComparison() {
+  const comparisons = [
+    { name: 'FM-radio (100 MHz)', wavelength: 3, unit: 'm', visual: 300, comparison: 'Som en bil' },
+    { name: 'WiFi (2.4 GHz)', wavelength: 12.5, unit: 'cm', visual: 125, comparison: 'Som en hånd' },
+    { name: 'WiFi (5 GHz)', wavelength: 6, unit: 'cm', visual: 60, comparison: 'Som et kredittkort' },
+    { name: '5G (28 GHz)', wavelength: 1.1, unit: 'cm', visual: 11, comparison: 'Som en fingernegl' },
+    { name: 'Infrarød (fjernkontroll)', wavelength: 950, unit: 'nm', visual: 3, comparison: 'Usynlig lite!' },
+    { name: 'Rødt lys', wavelength: 700, unit: 'nm', visual: 2.5, comparison: 'Usynlig lite!' },
+    { name: 'Blått lys', wavelength: 450, unit: 'nm', visual: 1.5, comparison: 'Usynlig lite!' },
+  ];
+  
+  return (
+    <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '12px', padding: '20px' }}>
+      <p style={{ marginBottom: '16px', opacity: 0.8 }}>
+        Se hvor stor forskjell det er på bølgelengdene! Bredden på strekene viser relativ størrelse:
+      </p>
+      
+      <div style={{ display: 'grid', gap: '12px' }}>
+        {comparisons.map((item, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <div style={{ minWidth: '160px', fontSize: '13px' }}>{item.name}</div>
+            <div style={{
+              height: '20px',
+              width: `${Math.max(item.visual, 4)}px`,
+              background: `hsl(${200 - i * 25}, 70%, 50%)`,
+              borderRadius: '4px',
+              minWidth: '4px'
+            }} />
+            <div style={{ fontSize: '14px', opacity: 0.8 }}>
+              {item.wavelength} {item.unit}
+              <span style={{ fontSize: '12px', opacity: 0.6, marginLeft: '8px' }}>({item.comparison})</span>
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      <p style={{ marginTop: '16px', fontSize: '13px', opacity: 0.7, fontStyle: 'italic' }}>
+        💡 Legg merke til at WiFi har mye lengre bølgelengde enn infrarød fra fjernkontrollen - 
+        det er derfor WiFi går gjennom vegger, men fjernkontrollen ikke gjør det!
+      </p>
+    </div>
+  );
+}
+
+
+// ===== GJENNOM VEGGEN? =====
+function PenetrationSection({ color, predictions, setPredictions, markComplete }) {
+  useEffect(() => { markComplete(); }, []);
+
+  return (
+    <>
+      <ContentCard>
+        <h2 style={{ color: color, marginBottom: '16px' }}>🧱 Hvorfor går noen bølger gjennom vegger?</h2>
+        <p style={{ fontSize: '17px', lineHeight: '1.8', marginBottom: '20px' }}>
+          Hvorfor fungerer WiFi i et annet rom, men fjernkontrollen bare når du peker mot TV-en?
+        </p>
+        
+        <div style={{
+          background: 'rgba(0,0,0,0.3)',
+          borderRadius: '12px',
+          padding: '20px',
+          marginBottom: '20px'
+        }}>
+          <h3 style={{ color: color, marginBottom: '12px' }}>💡 Svaret: Bølgelengden!</h3>
+          <p style={{ lineHeight: '1.7', marginBottom: '16px' }}>
+            Generelt: <strong>Bølger kan "gå rundt" eller trenge gjennom hindringer som er 
+            mindre enn bølgelengden deres</strong>.
+          </p>
+          
+          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+            <div style={{ background: 'rgba(16,185,129,0.1)', borderRadius: '8px', padding: '16px', border: '2px solid rgba(16,185,129,0.3)' }}>
+              <h4 style={{ color: '#10b981', marginBottom: '8px' }}>📶 WiFi (2,4 GHz)</h4>
+              <p style={{ fontSize: '14px' }}>Bølgelengde: <strong>~12 cm</strong></p>
+              <p style={{ fontSize: '13px', opacity: 0.8, marginTop: '8px' }}>
+                Mye større enn strukturene i veggen → går gjennom, men svekkes
+              </p>
+            </div>
+            <div style={{ background: 'rgba(239,68,68,0.1)', borderRadius: '8px', padding: '16px', border: '2px solid rgba(239,68,68,0.3)' }}>
+              <h4 style={{ color: '#ef4444', marginBottom: '8px' }}>🎮 Fjernkontroll (IR)</h4>
+              <p style={{ fontSize: '14px' }}>Bølgelengde: <strong>~950 nm</strong></p>
+              <p style={{ fontSize: '13px', opacity: 0.8, marginTop: '8px' }}>
+                Veldig kort → stoppes av nesten alle materialer
+              </p>
+            </div>
+          </div>
+        </div>
+      </ContentCard>
+
+      <ContentCard>
+        <h3 style={{ color: color, marginBottom: '16px' }}>🎮 Test: Hva går gjennom hva?</h3>
+        <PenetrationSimulator />
+      </ContentCard>
+    </>
+  );
+}
+
+function PenetrationSimulator() {
+  const [waveType, setWaveType] = useState('wifi24');
+  const [material, setMaterial] = useState('wood');
+  
+  const waves = {
+    wifi24: { name: 'WiFi 2.4 GHz', wavelength: '12 cm', color: '#10b981' },
+    wifi5: { name: 'WiFi 5 GHz', wavelength: '6 cm', color: '#3b82f6' },
+    bluetooth: { name: 'Bluetooth', wavelength: '12 cm', color: '#8b5cf6' },
+    ir: { name: 'Infrarød', wavelength: '950 nm', color: '#ef4444' },
+    light: { name: 'Synlig lys', wavelength: '500 nm', color: '#eab308' }
+  };
+  
+  const materials = {
+    wood: { name: 'Trevegg', icon: '🪵' },
+    brick: { name: 'Murvegg', icon: '🧱' },
+    concrete: { name: 'Betong', icon: '🏗️' },
+    glass: { name: 'Glass', icon: '🪟' },
+    metal: { name: 'Metall', icon: '🔩' }
+  };
+  
+  const penetration = {
+    wifi24: { wood: 85, brick: 50, concrete: 30, glass: 90, metal: 5 },
+    wifi5: { wood: 75, brick: 35, concrete: 15, glass: 85, metal: 5 },
+    bluetooth: { wood: 80, brick: 45, concrete: 25, glass: 85, metal: 5 },
+    ir: { wood: 0, brick: 0, concrete: 0, glass: 0, metal: 0 },
+    light: { wood: 0, brick: 0, concrete: 0, glass: 90, metal: 0 }
+  };
+  
+  const p = penetration[waveType][material];
+  
+  return (
+    <div style={{ background: 'rgba(0,0,0,0.3)', borderRadius: '12px', padding: '20px' }}>
+      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '20px' }}>
+        <div>
+          <p style={{ marginBottom: '8px', fontSize: '14px', opacity: 0.7 }}>Velg bølgetype:</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {Object.entries(waves).map(([key, val]) => (
+              <button
+                key={key}
+                onClick={() => setWaveType(key)}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: waveType === key ? `2px solid ${val.color}` : '2px solid transparent',
+                  background: waveType === key ? `${val.color}22` : 'rgba(255,255,255,0.1)',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
+              >
+                {val.name}
+              </button>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p style={{ marginBottom: '8px', fontSize: '14px', opacity: 0.7 }}>Velg materiale:</p>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
+            {Object.entries(materials).map(([key, val]) => (
+              <button
+                key={key}
+                onClick={() => setMaterial(key)}
+                style={{
+                  padding: '8px 12px',
+                  borderRadius: '6px',
+                  border: material === key ? '2px solid white' : '2px solid transparent',
+                  background: material === key ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.1)',
+                  color: 'white',
+                  cursor: 'pointer',
+                  fontSize: '12px'
+                }}
+              >
+                {val.icon} {val.name}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Visualisering */}
+      <div style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        gap: '16px',
+        padding: '24px',
+        background: 'rgba(0,0,0,0.2)',
+        borderRadius: '8px',
+        marginBottom: '16px'
+      }}>
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '32px' }}>📡</div>
+          <div style={{ fontSize: '12px', marginTop: '4px' }}>Sender</div>
+        </div>
+        
+        {/* Bølger før */}
+        <div style={{ display: 'flex' }}>
+          {[1,2,3].map(i => (
+            <div key={i} style={{
+              width: '30px',
+              height: '4px',
+              background: waves[waveType].color,
+              marginRight: '4px',
+              borderRadius: '2px'
+            }} />
+          ))}
+        </div>
+        
+        {/* Vegg */}
+        <div style={{
+          width: '40px',
+          height: '80px',
+          background: material === 'glass' ? 'rgba(135,206,235,0.5)' : 
+                      material === 'metal' ? '#71717a' :
+                      material === 'concrete' ? '#6b7280' :
+                      material === 'brick' ? '#b45309' : '#92400e',
+          borderRadius: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '28px'
+        }}>
+          {materials[material].icon}
+        </div>
+        
+        {/* Bølger etter */}
+        <div style={{ display: 'flex' }}>
+          {[1,2,3].map(i => (
+            <div key={i} style={{
+              width: '30px',
+              height: `${Math.max(1, 4 * (p/100))}px`,
+              background: waves[waveType].color,
+              marginRight: '4px',
+              borderRadius: '2px',
+              opacity: p > 0 ? 0.7 : 0.1
+            }} />
+          ))}
+        </div>
+        
+        <div style={{ textAlign: 'center' }}>
+          <div style={{ fontSize: '32px' }}>📱</div>
+          <div style={{ fontSize: '12px', marginTop: '4px' }}>Mottaker</div>
+        </div>
+      </div>
+      
+      {/* Resultat */}
+      <div style={{
+        padding: '16px',
+        borderRadius: '8px',
+        background: p > 60 ? 'rgba(16,185,129,0.2)' : p > 20 ? 'rgba(245,158,11,0.2)' : 'rgba(239,68,68,0.2)',
+        textAlign: 'center'
+      }}>
+        <p style={{ fontSize: '18px', fontWeight: '600', marginBottom: '4px' }}>
+          {p === 0 && '❌ Stoppes helt!'}
+          {p > 0 && p <= 20 && '⚠️ Svært svakt signal'}
+          {p > 20 && p <= 60 && '📶 Svekket signal'}
+          {p > 60 && '✅ Godt signal'}
+        </p>
+        <p style={{ fontSize: '14px', opacity: 0.8 }}>
+          Ca. {p}% av signalet kommer gjennom {materials[material].name.toLowerCase()}
+        </p>
+      </div>
+    </div>
+  );
+}
+
+
+// ===== BRUKSOMRÅDER =====
+function UsesSection({ color, markComplete }) {
+  useEffect(() => { markComplete(); }, []);
+  
+  const techs = [
+    { name: 'WiFi', icon: '📶', freq: '2,4 / 5 GHz', range: '~50 m innendørs', color: '#10b981' },
+    { name: '4G LTE', icon: '📱', freq: '700 MHz - 2,6 GHz', range: 'Opptil 35 km', color: '#3b82f6' },
+    { name: '5G', icon: '🚀', freq: '600 MHz - 86 GHz', range: '100 m - flere km', color: '#8b5cf6' },
+    { name: 'Bluetooth', icon: '🎧', freq: '2,4 GHz', range: '~10-100 m', color: '#0ea5e9' },
+    { name: 'NFC', icon: '💳', freq: '13,56 MHz', range: '< 20 cm', color: '#f59e0b' },
+    { name: 'GPS', icon: '🛰️', freq: '1,2-1,6 GHz', range: 'Fra satellitt!', color: '#ef4444' },
+    { name: 'FM-radio', icon: '📻', freq: '87,5-108 MHz', range: 'Opptil 100 km', color: '#ec4899' },
+    { name: 'Fjernkontroll', icon: '🎮', freq: '~300 THz (IR)', range: '< 10 m, fri sikt', color: '#f97316' }
+  ];
+  
+  return (
+    <>
+      <ContentCard>
+        <h2 style={{ color: color, marginBottom: '16px' }}>📡 Hva brukes bølgene til?</h2>
+        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '12px' }}>
+          {techs.map((tech, i) => (
+            <div key={i} style={{
+              background: `${tech.color}11`,
+              borderRadius: '12px',
+              padding: '16px',
+              border: `1px solid ${tech.color}44`
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
+                <span style={{ fontSize: '28px' }}>{tech.icon}</span>
+                <span style={{ fontWeight: '600', color: tech.color }}>{tech.name}</span>
+              </div>
+              <p style={{ fontSize: '13px', margin: '4px 0' }}><strong>Frekvens:</strong> {tech.freq}</p>
+              <p style={{ fontSize: '13px', margin: 0, opacity: 0.8 }}><strong>Rekkevidde:</strong> {tech.range}</p>
+            </div>
+          ))}
+        </div>
+      </ContentCard>
+    </>
+  );
+}
+
+
+// ===== STRÅLING OG HELSE =====
+function HealthSection({ color, markComplete }) {
+  useEffect(() => { markComplete(); }, []);
+  
+  return (
+    <>
+      <ContentCard>
+        <h2 style={{ color: color, marginBottom: '16px' }}>⚕️ Stråling og helse</h2>
+        
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', marginBottom: '20px' }}>
+          <div style={{ background: 'rgba(239,68,68,0.1)', borderRadius: '12px', padding: '20px', border: '2px solid rgba(239,68,68,0.3)' }}>
+            <h3 style={{ color: '#ef4444', marginBottom: '12px' }}>☢️ Ioniserende</h3>
+            <p style={{ marginBottom: '8px' }}>Kan løsrive elektroner → skader DNA</p>
+            <p style={{ fontSize: '14px', opacity: 0.8 }}>UV, røntgen, gammastråling</p>
+          </div>
+          <div style={{ background: 'rgba(16,185,129,0.1)', borderRadius: '12px', padding: '20px', border: '2px solid rgba(16,185,129,0.3)' }}>
+            <h3 style={{ color: '#10b981', marginBottom: '12px' }}>✅ Ikke-ioniserende</h3>
+            <p style={{ marginBottom: '8px' }}>Kan ikke skade DNA direkte</p>
+            <p style={{ fontSize: '14px', opacity: 0.8 }}>Radio, WiFi, 4G/5G, lys, infrarød</p>
+          </div>
+        </div>
+        
+        <div style={{ background: 'rgba(59,130,246,0.1)', borderRadius: '8px', padding: '16px' }}>
+          <p style={{ margin: 0 }}>
+            <strong>💡 Konklusjon:</strong> WiFi, mobilstråling og Bluetooth er ikke-ioniserende og trygt ved normal bruk. 
+            Det er ingen vitenskapelig dokumentasjon for helsefare fra disse teknologiene.
+          </p>
+        </div>
+      </ContentCard>
+    </>
+  );
+}
+
+
+// ===== PRAKTISK FORSØK =====
+function PracticalSection({ color, markComplete }) {
+  const [results, setResults] = useState({});
+  
+  useEffect(() => { markComplete(); }, []);
+  
+  const materials = [
+    { id: 'hand', name: 'Hånd', icon: '✋' },
+    { id: 'paper', name: 'Papir (1 ark)', icon: '📄' },
+    { id: 'paper3', name: 'Papir (3 ark)', icon: '📑' },
+    { id: 'plastic', name: 'Plastpose', icon: '🛍️' },
+    { id: 'fabric', name: 'Tøystoff', icon: '👕' },
+    { id: 'cardboard', name: 'Papp/kartong', icon: '📦' },
+    { id: 'glass', name: 'Glass', icon: '🥛' },
+    { id: 'book', name: 'Bok', icon: '📕' },
+    { id: 'water', name: 'Vannflaske', icon: '💧' }
+  ];
+  
+  return (
+    <>
+      <ContentCard color="rgba(14,165,233,0.1)">
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+          <span style={{ fontSize: '48px' }}>📱</span>
+          <div>
+            <h3 style={{ color: color, marginBottom: '12px' }}>🔬 Forsøk 1: Se infrarød med mobilen!</h3>
+            <p style={{ marginBottom: '16px' }}>Mobilkameraet kan se lys øynene dine ikke kan se!</p>
+            
+            <div style={{ display: 'grid', gap: '8px', marginBottom: '16px' }}>
+              {[
+                'Åpne kamera-appen (prøv frontkamera hvis bakkamera ikke viser det)',
+                'Pek en fjernkontroll mot kameraet',
+                'Trykk på en knapp mens du ser på skjermen',
+                'Du ser et blålig/hvitt lys fra fjernkontrollen!',
+                'Prøv å se med øynene - kan du se det? (Nei!)'
+              ].map((step, i) => (
+                <div key={i} style={{
+                  display: 'flex', gap: '10px', padding: '10px', background: 'rgba(0,0,0,0.2)', borderRadius: '6px'
+                }}>
+                  <span style={{
+                    background: color, color: 'white', minWidth: '22px', height: '22px',
+                    borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '12px'
+                  }}>{i + 1}</span>
+                  <span style={{ fontSize: '14px' }}>{step}</span>
+                </div>
+              ))}
+            </div>
+            
+            <div style={{ background: 'rgba(245,158,11,0.2)', borderRadius: '8px', padding: '12px' }}>
+              <strong>💡 Forklaring:</strong> Fjernkontrollen sender infrarød (~950 nm), 
+              som er utenfor synlig lys. Kamerasensoren kan fange det opp!
+            </div>
+          </div>
+        </div>
+      </ContentCard>
+
+      <ContentCard color="rgba(139,92,246,0.1)">
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+          <span style={{ fontSize: '48px' }}>🧪</span>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ color: '#8b5cf6', marginBottom: '12px' }}>🔬 Forsøk 2: Hva stopper infrarød?</h3>
+            <p style={{ marginBottom: '16px' }}>
+              Nå skal du teste hva som blokkerer IR-signalet! Hold ulike materialer 
+              mellom fjernkontrollen og TV-en (eller mobilkameraet).
+            </p>
+            
+            <div style={{
+              background: 'rgba(0,0,0,0.2)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <h4 style={{ marginBottom: '12px' }}>📋 Fremgangsmåte:</h4>
+              <ol style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8' }}>
+                <li>Sjekk først at fjernkontrollen virker på TV-en</li>
+                <li>Hold et materiale mellom fjernkontroll og TV</li>
+                <li>Trykk på en knapp - reagerer TV-en?</li>
+                <li>Registrer resultatet under</li>
+                <li>Gjenta med alle materialene</li>
+              </ol>
+            </div>
+            
+            <h4 style={{ marginBottom: '12px' }}>📊 Registrer resultatene:</h4>
+            <div style={{ display: 'grid', gap: '8px', marginBottom: '16px' }}>
+              {materials.map((mat) => (
+                <div key={mat.id} style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  padding: '10px 12px',
+                  background: results[mat.id] 
+                    ? results[mat.id] === 'through' 
+                      ? 'rgba(16,185,129,0.2)' 
+                      : results[mat.id] === 'weak'
+                        ? 'rgba(245,158,11,0.2)'
+                        : 'rgba(239,68,68,0.2)'
+                    : 'rgba(255,255,255,0.05)',
+                  borderRadius: '8px'
+                }}>
+                  <span style={{ fontSize: '20px', width: '30px' }}>{mat.icon}</span>
+                  <span style={{ flex: 1, fontSize: '14px' }}>{mat.name}</span>
+                  <div style={{ display: 'flex', gap: '6px' }}>
+                    {[
+                      { id: 'through', label: '✅ Går gjennom', color: '#10b981' },
+                      { id: 'weak', label: '⚠️ Svakt', color: '#f59e0b' },
+                      { id: 'blocked', label: '❌ Stoppes', color: '#ef4444' }
+                    ].map((opt) => (
+                      <button
+                        key={opt.id}
+                        onClick={() => setResults({ ...results, [mat.id]: opt.id })}
+                        style={{
+                          padding: '4px 10px',
+                          borderRadius: '4px',
+                          border: results[mat.id] === opt.id ? `2px solid ${opt.color}` : '2px solid transparent',
+                          background: results[mat.id] === opt.id ? `${opt.color}33` : 'rgba(255,255,255,0.1)',
+                          color: 'white',
+                          cursor: 'pointer',
+                          fontSize: '11px'
+                        }}
+                      >
+                        {opt.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+            
+            {Object.keys(results).length >= 5 && (
+              <div style={{
+                background: 'rgba(16,185,129,0.2)',
+                borderRadius: '8px',
+                padding: '16px',
+                marginBottom: '16px'
+              }}>
+                <strong>🎯 Analyse av resultatene:</strong>
+                <p style={{ margin: '8px 0 0', fontSize: '14px' }}>
+                  Materialer som stoppet IR: {materials.filter(m => results[m.id] === 'blocked').map(m => m.name).join(', ') || 'Ingen'}
+                </p>
+                <p style={{ margin: '4px 0 0', fontSize: '14px' }}>
+                  Materialer som slapp gjennom: {materials.filter(m => results[m.id] === 'through').map(m => m.name).join(', ') || 'Ingen'}
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+      </ContentCard>
+
+      <ContentCard color="rgba(16,185,129,0.1)">
+        <div style={{ display: 'flex', alignItems: 'flex-start', gap: '16px' }}>
+          <span style={{ fontSize: '48px' }}>📶</span>
+          <div style={{ flex: 1 }}>
+            <h3 style={{ color: '#10b981', marginBottom: '12px' }}>🔬 Forsøk 3: Sammenlign med WiFi/Bluetooth</h3>
+            <p style={{ marginBottom: '16px' }}>
+              Nå skal du sammenligne! Gå bak de samme materialene med mobilen og sjekk om 
+              WiFi og Bluetooth fortsatt fungerer.
+            </p>
+            
+            <div style={{
+              background: 'rgba(0,0,0,0.2)',
+              borderRadius: '12px',
+              padding: '16px',
+              marginBottom: '16px'
+            }}>
+              <h4 style={{ marginBottom: '12px' }}>📋 Fremgangsmåte:</h4>
+              <ol style={{ margin: 0, paddingLeft: '20px', lineHeight: '1.8' }}>
+                <li>Koble til Bluetooth-hodetelefoner eller høyttaler</li>
+                <li>Legg mobilen bak/under samme materialer som før</li>
+                <li>Spill musikk - fungerer Bluetooth fortsatt?</li>
+                <li>Sjekk WiFi-signalstyrken med mobilen bak materialet</li>
+              </ol>
+            </div>
+            
+            <div style={{
+              background: 'rgba(59,130,246,0.2)',
+              borderRadius: '8px',
+              padding: '16px'
+            }}>
+              <strong>🤔 Refleksjonsspørsmål:</strong>
+              <p style={{ margin: '8px 0 4px', fontSize: '14px' }}>
+                • Hvilke materialer stoppet IR men <em>ikke</em> WiFi/Bluetooth?
+              </p>
+              <p style={{ margin: '4px 0', fontSize: '14px' }}>
+                • Hvorfor er det slik? (Hint: bølgelengde!)
+              </p>
+              <p style={{ margin: '4px 0 0', fontSize: '14px' }}>
+                • IR: ~950 nm | WiFi/Bluetooth: ~12 cm - hvor mye større er WiFi?
+              </p>
+            </div>
+          </div>
+        </div>
+      </ContentCard>
+
+      <DiscussionBox
+        color={color}
+        question="Basert på forsøkene: Hvorfor bruker vi radiobølger til WiFi og Bluetooth, men infrarød til fjernkontroller?"
+        helpText="Tenk på gjennomtrenging, rekkevidde, strømforbruk og om man trenger å nå enheter i andre rom..."
+      />
+    </>
+  );
+}
+
+
+// ===== FLASHCARDS =====
+function FlashcardsSection({ color, markComplete }) {
+  const [currentCard, setCurrentCard] = useState(0);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [known, setKnown] = useState([]);
+  
+  useEffect(() => { if (known.length >= 8) markComplete(); }, [known]);
+  
+  const cards = [
+    // Grunnleggende bølger
+    { front: 'Hva er en bølge?', back: 'En forstyrrelse som transporterer energi fra ett sted til et annet, uten at materie flyttes permanent.' },
+    { front: 'Hva er en tverrbølge?', back: 'En bølge der partiklene svinger vinkelrett (90°) på bølgens bevegelsesretning. Eksempel: lys, radiobølger, bølger på tau.' },
+    { front: 'Hva er en langsgående bølge?', back: 'En bølge der partiklene svinger parallelt med bølgens bevegelsesretning. Eksempel: lydbølger i luft.' },
+    { front: 'Hva er kompresjon og fortynning?', back: 'Kompresjon = område der partikler er presset sammen (høyt trykk). Fortynning = område der partikler er spredt (lavt trykk). Brukes om lydbølger.' },
+    
+    // Bølgeegenskaper
+    { front: 'Bølgelengde (λ)', back: 'Avstanden mellom to identiske punkter på bølgen (f.eks. topp til topp). Måles i meter (m) eller nanometer (nm).' },
+    { front: 'Frekvens (f)', back: 'Antall svingninger per sekund. Måles i Hertz (Hz). 1 Hz = 1 svingning per sekund.' },
+    { front: 'Amplitude', back: 'Størst avstand fra hvilestillingen (midtlinjen). Beskriver bølgens styrke/intensitet.' },
+    { front: 'Bølgeformelen', back: 'v = f × λ (hastighet = frekvens × bølgelengde)' },
+    { front: 'Lysets hastighet (c)', back: 'c = 3 × 10⁸ m/s = 300 000 km/s. Alle EM-bølger har denne hastigheten i vakuum.' },
+    
+    // EM-spekteret
+    { front: 'Hva er det elektromagnetiske spekteret?', back: 'Hele området av EM-stråling ordnet etter bølgelengde/frekvens: radiobølger → mikrobølger → infrarød → synlig lys → UV → røntgen → gamma.' },
+    { front: 'Hvilke EM-bølger har lengst bølgelengde?', back: 'Radiobølger (kan være flere kilometer lange).' },
+    { front: 'Hvilke EM-bølger har kortest bølgelengde?', back: 'Gammastråling (kortere enn 0,01 nm).' },
+    
+    // Teknologi
+    { front: 'WiFi-frekvens og bølgelengde', back: '2,4 GHz (~12 cm) eller 5 GHz (~6 cm). Ligger i mikrobølge/radiobølge-området.' },
+    { front: 'Hvorfor går WiFi gjennom vegger?', back: 'Bølgelengden (~12 cm) er mye større enn strukturene i veggen, så bølgen "ser" veggen som delvis gjennomsiktig. Men signalet svekkes.' },
+    { front: 'Hvorfor går ikke infrarød (fjernkontroll) gjennom vegger?', back: 'Bølgelengden (~950 nm) er så kort at den absorberes eller reflekteres av de fleste faste materialer.' },
+    
+    // Stråling og helse
+    { front: 'Hva er ioniserende stråling?', back: 'Stråling med nok energi til å slå løs elektroner fra atomer. Kan skade DNA. Inkluderer: UV, røntgen, gammastråling.' },
+    { front: 'Hva er ikke-ioniserende stråling?', back: 'Stråling som IKKE kan ionisere atomer. Trygt ved normal bruk. Inkluderer: radiobølger, mikrobølger, infrarød, synlig lys.' },
+    { front: 'Er WiFi og 4G/5G farlig?', back: 'Nei - de bruker ikke-ioniserende stråling. Ingen vitenskapelig dokumentasjon for helsefare ved normal bruk.' },
+    
+    // Lyd
+    { front: 'Hvordan dannes lyd?', back: '1) Lydkilde vibrerer → 2) Luftmolekyler presses sammen/fra hverandre → 3) Trykkbølgen forplanter seg → 4) Trommehinnen vibrerer → hjernen tolker som lyd.' },
+    { front: 'Lydens hastighet i luft', back: 'Ca. 343 m/s (ved 20°C). Mye saktere enn lys!' },
+    { front: 'Kan lyd bevege seg i vakuum?', back: 'Nei! Lyd er langsgående bølger som trenger et medium (luft, vann, etc.) å bevege seg gjennom. Derfor ingen lyd i verdensrommet.' }
+  ];
+
+  const next = (isKnown) => {
+    if (isKnown && !known.includes(currentCard)) setKnown([...known, currentCard]);
+    setIsFlipped(false);
+    setTimeout(() => setCurrentCard((currentCard + 1) % cards.length), 150);
+  };
+  
+  const goToCard = (index) => {
+    setIsFlipped(false);
+    setCurrentCard(index);
+  };
+
+  return (
+    <ContentCard>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px' }}>
+        <h2 style={{ margin: 0, color: color }}>🃏 Flashcards ({cards.length} kort)</h2>
+        <span style={{ color: '#10b981' }}>✓ {known.length}/{cards.length} kan</span>
+      </div>
+      
+      {/* Kort-nummer */}
+      <p style={{ textAlign: 'center', fontSize: '14px', opacity: 0.6, marginBottom: '12px' }}>
+        Kort {currentCard + 1} av {cards.length}
+      </p>
+      
+      {/* Flashcard */}
+      <div
+        onClick={() => setIsFlipped(!isFlipped)}
+        style={{
+          background: isFlipped ? 'rgba(16,185,129,0.2)' : `${color}22`,
+          borderRadius: '16px',
+          padding: '40px 24px',
+          minHeight: '180px',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          cursor: 'pointer',
+          border: isFlipped ? '2px solid #10b981' : `2px solid ${color}`,
+          marginBottom: '20px',
+          textAlign: 'center'
+        }}
+      >
+        <p style={{ fontSize: '12px', opacity: 0.6, marginBottom: '12px' }}>
+          {isFlipped ? '✓ SVAR' : '❓ SPØRSMÅL'} • Klikk for å snu
+        </p>
+        <p style={{ fontSize: '18px', fontWeight: isFlipped ? '400' : '600', lineHeight: '1.6' }}>
+          {isFlipped ? cards[currentCard].back : cards[currentCard].front}
+        </p>
+      </div>
+      
+      {/* Navigasjonsknapper */}
+      <div style={{ display: 'flex', gap: '12px', justifyContent: 'center', marginBottom: '20px' }}>
+        <button 
+          onClick={() => goToCard((currentCard - 1 + cards.length) % cards.length)}
+          style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}
+        >
+          ← Forrige
+        </button>
+        <button onClick={() => next(false)} style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: 'rgba(239,68,68,0.2)', color: '#ef4444', cursor: 'pointer', fontWeight: '500' }}>
+          Øv mer
+        </button>
+        <button onClick={() => next(true)} style={{ padding: '10px 24px', borderRadius: '8px', border: 'none', background: 'rgba(16,185,129,0.2)', color: '#10b981', cursor: 'pointer', fontWeight: '500' }}>
+          Kan dette ✓
+        </button>
+        <button 
+          onClick={() => goToCard((currentCard + 1) % cards.length)}
+          style={{ padding: '10px 16px', borderRadius: '8px', border: 'none', background: 'rgba(255,255,255,0.1)', color: 'white', cursor: 'pointer' }}
+        >
+          Neste →
+        </button>
+      </div>
+      
+      {/* Kort-oversikt */}
+      <div style={{ 
+        display: 'flex', 
+        gap: '4px', 
+        justifyContent: 'center', 
+        flexWrap: 'wrap',
+        padding: '12px',
+        background: 'rgba(0,0,0,0.2)',
+        borderRadius: '8px'
+      }}>
+        {cards.map((_, i) => (
+          <div
+            key={i}
+            onClick={() => goToCard(i)}
+            style={{
+              width: '20px',
+              height: '20px',
+              borderRadius: '4px',
+              background: known.includes(i) 
+                ? '#10b981' 
+                : i === currentCard 
+                  ? color 
+                  : 'rgba(255,255,255,0.2)',
+              cursor: 'pointer',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              fontSize: '10px',
+              color: 'white'
+            }}
+            title={`Kort ${i + 1}`}
+          >
+            {known.includes(i) ? '✓' : i + 1}
+          </div>
+        ))}
+      </div>
+      
+      {/* Fremgang */}
+      {known.length > 0 && (
+        <div style={{ marginTop: '16px', textAlign: 'center' }}>
+          <div style={{
+            height: '8px',
+            background: 'rgba(255,255,255,0.1)',
+            borderRadius: '4px',
+            overflow: 'hidden'
+          }}>
+            <div style={{
+              height: '100%',
+              width: `${(known.length / cards.length) * 100}%`,
+              background: '#10b981',
+              transition: 'width 0.3s ease'
+            }} />
+          </div>
+          <p style={{ fontSize: '13px', opacity: 0.7, marginTop: '8px' }}>
+            {known.length === cards.length 
+              ? '🎉 Gratulerer! Du kan alle kortene!' 
+              : `${Math.round((known.length / cards.length) * 100)}% fullført`}
+          </p>
+        </div>
+      )}
+    </ContentCard>
+  );
+}
+
+
+// ===== HJEMMEOPPGAVE =====
+function HomeworkSection({ color, answers, setAnswers, studentName }) {
+  // Hent lagrede svar fra localStorage ved oppstart
+  const [local, setLocal] = useState(() => {
+    try {
+      const saved = localStorage.getItem('tradlos_homework_okt1');
+      return saved ? JSON.parse(saved) : (answers.okt1 || {});
+    } catch {
+      return answers.okt1 || {};
+    }
+  });
+  const [saved, setSaved] = useState(false);
+  
+  // Lagre til localStorage hver gang local endres
+  useEffect(() => {
+    try {
+      localStorage.setItem('tradlos_homework_okt1', JSON.stringify(local));
+    } catch (e) {
+      console.log('Kunne ikke lagre lokalt');
+    }
+  }, [local]);
+  
+  const tasks = [
+    { 
+      id: 'sammendrag', 
+      title: '📝 Sammendrag', 
+      desc: 'Skriv et sammendrag av det du lærte i dag med dine egne ord. Skriv så mye eller lite du vil - det viktigste er at du forklarer det med egne ord!',
+      placeholder: 'I dag lærte jeg om bølger...\n\nEn bølge er...\n\nDet finnes to typer bølger:\n- Tverrbølger er...\n- Langsgående bølger er...\n\nLyd dannes ved at...\n\nEM-spekteret inneholder...\n\nWiFi går gjennom vegger fordi...\n\n(Skriv så mye du vil!)',
+      minHeight: '250px'
+    },
+    { 
+      id: 't1', 
+      title: '🔬 Materiale-forsøk hjemme', 
+      desc: 'Gjør forsøkene hjemme med flere materialer! Test hva som stopper infrarød (fjernkontroll) og sammenlign med WiFi/Bluetooth.',
+      placeholder: 'Materialer jeg testet:\n\n1. [materiale]: IR gikk/stoppet, WiFi/BT gikk/stoppet\n2. ...\n\nKonklusjon: ...',
+      minHeight: '120px'
+    },
+    { 
+      id: 't2', 
+      title: '🧮 WiFi-beregning', 
+      desc: '5 GHz WiFi - beregn bølgelengden. Vis hele utregningen med formel!',
+      placeholder: 'Gitt:\nf = 5 GHz = 5 × 10⁹ Hz\nc = 3 × 10⁸ m/s\n\nFormel: λ = c / f\n\nUtregning:\nλ = ...',
+      minHeight: '120px'
+    },
+    { 
+      id: 't3', 
+      title: '📶 WiFi-kartlegging', 
+      desc: 'Mål WiFi-signalstyrken på 4+ steder hjemme. Bruk innstillinger eller en WiFi-app. Forklar resultatene!',
+      placeholder: 'Sted 1 (ved ruter): ... dBm\nSted 2 (naborom): ... dBm\nSted 3 (bak betongvegg): ... dBm\nSted 4: ... dBm\n\nForklaring: ...',
+      minHeight: '120px'
+    }
+  ];
+  
+  const handleSave = () => {
+    setAnswers({ ...answers, okt1: local });
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+  
+  // Eksporter svar som tekstfil
+  const exportAnswers = () => {
+    const date = new Date().toLocaleDateString('no-NO');
+    let content = `HJEMMEOPPGAVE - ØKT 1: BØLGER OG EM-STRÅLING\n`;
+    content += `Navn: ${studentName || 'Ikke oppgitt'}\n`;
+    content += `Dato: ${date}\n`;
+    content += `${'='.repeat(50)}\n\n`;
+    
+    tasks.forEach((task, i) => {
+      content += `${task.title}\n`;
+      content += `${'-'.repeat(40)}\n`;
+      content += `${local[task.id] || '(Ikke besvart)'}\n\n`;
+    });
+    
+    // Lag og last ned fil
+    const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `hjemmeoppgave_okt1_${studentName || 'elev'}_${date.replace(/\./g, '-')}.txt`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+  
+  // Kopier til utklippstavle
+  const copyToClipboard = () => {
+    const date = new Date().toLocaleDateString('no-NO');
+    let content = `HJEMMEOPPGAVE - ØKT 1\nNavn: ${studentName || ''}\n\n`;
+    
+    tasks.forEach((task) => {
+      content += `${task.title}\n${local[task.id] || '(Ikke besvart)'}\n\n`;
+    });
+    
+    navigator.clipboard.writeText(content).then(() => {
+      alert('Kopiert til utklippstavle! Du kan nå lime inn i Word, Teams, epost osv.');
+    });
+  };
+
+  return (
+    <ContentCard>
+      <h2 style={{ color: color, marginBottom: '8px' }}>📝 Hjemmeoppgave</h2>
+      <p style={{ opacity: 0.7, marginBottom: '20px' }}>
+        Gjør disse oppgavene før neste økt. Svarene lagres automatisk i nettleseren.
+      </p>
+      
+      {saved && (
+        <div style={{ background: 'rgba(16,185,129,0.2)', borderRadius: '8px', padding: '12px', marginBottom: '16px' }}>
+          ✅ Svarene er lagret!
+        </div>
+      )}
+      
+      <div style={{ display: 'grid', gap: '16px' }}>
+        {tasks.map((task) => (
+          <div key={task.id} style={{ 
+            background: 'rgba(0,0,0,0.2)', 
+            borderRadius: '12px', 
+            padding: '16px'
+          }}>
+            <h4 style={{ color: color, marginBottom: '8px' }}>
+              {task.title}
+            </h4>
+            <p style={{ marginBottom: '12px', fontSize: '14px', opacity: 0.9 }}>{task.desc}</p>
+            <textarea
+              value={local[task.id] || ''}
+              onChange={(e) => setLocal({ ...local, [task.id]: e.target.value })}
+              placeholder={task.placeholder}
+              style={{
+                width: '100%', padding: '12px', borderRadius: '8px',
+                border: '1px solid rgba(255,255,255,0.2)',
+                background: 'rgba(255,255,255,0.05)', color: 'white',
+                fontSize: '14px', minHeight: task.minHeight || '100px', resize: 'vertical', boxSizing: 'border-box',
+                fontFamily: 'inherit',
+                lineHeight: '1.6'
+              }}
+            />
+            {local[task.id] && (
+              <p style={{ fontSize: '12px', opacity: 0.5, marginTop: '4px' }}>
+                {local[task.id].length} tegn
+              </p>
+            )}
+          </div>
+        ))}
+      </div>
+      
+      {/* Knapper */}
+      <div style={{ 
+        marginTop: '24px', 
+        padding: '20px', 
+        background: 'rgba(0,0,0,0.3)', 
+        borderRadius: '12px',
+        display: 'grid',
+        gap: '12px'
+      }}>
+        <p style={{ fontSize: '14px', opacity: 0.8, marginBottom: '8px' }}>
+          <strong>💾 Levere inn / ta vare på svarene:</strong>
+        </p>
+        
+        <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap' }}>
+          <button
+            onClick={exportAnswers}
+            style={{
+              padding: '12px 20px', borderRadius: '8px',
+              border: 'none', background: '#10b981', color: 'white', 
+              cursor: 'pointer', fontWeight: '600',
+              display: 'flex', alignItems: 'center', gap: '8px'
+            }}
+          >
+            📥 Last ned som fil
+          </button>
+          
+          <button
+            onClick={copyToClipboard}
+            style={{
+              padding: '12px 20px', borderRadius: '8px',
+              border: 'none', background: '#3b82f6', color: 'white', 
+              cursor: 'pointer', fontWeight: '600',
+              display: 'flex', alignItems: 'center', gap: '8px'
+            }}
+          >
+            📋 Kopier til utklippstavle
+          </button>
+        </div>
+        
+        <p style={{ fontSize: '13px', opacity: 0.6, marginTop: '8px' }}>
+          Last ned filen eller kopier teksten og lim inn i Teams/Word/epost for å levere.
+        </p>
+      </div>
+    </ContentCard>
+  );
+}
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(<TradlosKommunikasjonApp />);
+    </script>
+</body>
+</html>
