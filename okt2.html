@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Økt 2: Kommunikasjonssystem - VG1 Naturfag</title>
+    <script src="https://unpkg.com/docx@8.0.0/build/index.umd.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { 
+            font-family: 'Segoe UI', system-ui, sans-serif; 
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        .header {
+            background: rgba(0,0,0,0.4);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 12px 24px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .header-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-left { display: flex; align-items: center; gap: 16px; }
+        .back-btn {
+            padding: 8px 12px;
+            border-radius: 8px;
+            border: none;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            cursor: pointer;
+        }
+        .nav {
+            background: rgba(0,0,0,0.2);
+            padding: 12px 24px;
+            overflow-x: auto;
+        }
+        .nav-inner {
+            max-width: 1000px;
+            margin: 0 auto;
+            display: flex;
+            gap: 6px;
+        }
+        .nav-btn {
+            padding: 8px 14px;
+            border-radius: 20px;
+            border: 2px solid transparent;
+            background: rgba(255,255,255,0.05);
+            color: white;
+            cursor: pointer;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+        .nav-btn:hover { background: rgba(255,255,255,0.1); }
+        .nav-btn.active { border-color: #f59e0b; background: rgba(245,158,11,0.2); }
+        .nav-btn.done { background: rgba(16,185,129,0.2); }
+        .main { padding: 24px; max-width: 1000px; margin: 0 auto; }
+        .section { display: none; }
+        .section.active { display: block; }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 24px;
+        }
+        .card.orange { background: rgba(245,158,11,0.1); }
+        .card.green { background: rgba(16,185,129,0.1); }
+        .card.purple { background: rgba(139,92,246,0.1); }
+        .card.blue { background: rgba(14,165,233,0.1); }
+        h2 { color: #f59e0b; margin-bottom: 16px; }
+        h3 { color: #f59e0b; margin-bottom: 12px; }
+        p { margin-bottom: 12px; }
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 14px;
+        }
+        .btn-orange { background: #f59e0b; color: white; }
+        .btn-green { background: #10b981; color: white; }
+        .btn-red { background: rgba(239,68,68,0.2); color: #ef4444; }
+        .btn-ghost { background: rgba(255,255,255,0.1); color: white; }
+        .diagram {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            padding: 24px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 12px;
+            margin: 20px 0;
+        }
+        .diagram-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 36px;
+            margin: 0 auto 12px;
+        }
+        .steps { display: grid; gap: 12px; }
+        .step {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+        }
+        .step-num {
+            background: #f59e0b;
+            color: white;
+            min-width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        .textarea {
+            width: 100%;
+            padding: 16px;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 15px;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 120px;
+        }
+        .textarea:focus { outline: none; border-color: #f59e0b; }
+        .input {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-size: 16px;
+        }
+        .input:focus { outline: none; border-color: #f59e0b; }
+        .discussion {
+            background: rgba(139,92,246,0.1);
+            border-left: 4px solid #8b5cf6;
+            border-radius: 0 12px 12px 0;
+            padding: 20px;
+            margin: 24px 0;
+        }
+        .discussion h4 { color: #8b5cf6; margin-bottom: 8px; }
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 16px 0;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .table th { background: rgba(255,255,255,0.1); }
+        .flashcard {
+            border-radius: 16px;
+            padding: 40px 24px;
+            min-height: 200px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .flashcard.question { background: rgba(245,158,11,0.2); border: 2px solid #f59e0b; }
+        .flashcard.answer { background: rgba(16,185,129,0.2); border: 2px solid #10b981; }
+        .card-grid {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            padding: 12px;
+            background: rgba(0,0,0,0.2);
+            border-radius: 8px;
+            margin-top: 16px;
+        }
+        .card-dot {
+            width: 24px;
+            height: 24px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.2);
+        }
+        .card-dot.current { background: #f59e0b; }
+        .card-dot.known { background: #10b981; }
+        .progress-bar {
+            height: 8px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+            overflow: hidden;
+            margin-top: 16px;
+        }
+        .progress-fill { height: 100%; background: #10b981; transition: width 0.3s; }
+        .quiz-option {
+            display: block;
+            width: 100%;
+            padding: 16px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            cursor: pointer;
+            text-align: left;
+            font-size: 15px;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.1); border-color: #f59e0b; }
+        .quiz-option.correct { background: rgba(16,185,129,0.3); border-color: #10b981; pointer-events: none; }
+        .quiz-option.wrong { background: rgba(239,68,68,0.3); border-color: #ef4444; pointer-events: none; }
+        .quiz-option.disabled { pointer-events: none; opacity: 0.6; }
+        .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 16px; }
+        .tag {
+            display: inline-block;
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 16px;
+            font-size: 13px;
+            margin: 4px;
+        }
+        .tag.orange { background: rgba(245,158,11,0.3); }
+        .tag.green { background: rgba(16,185,129,0.3); }
+        .hidden { display: none !important; }
+        .canvas-container {
+            background: #1e293b;
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        canvas { width: 100%; height: 100px; display: block; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.5} }
+        .pulse { animation: pulse 2s infinite; }
+        @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-10px)} }
+        .bounce { animation: bounce 1s infinite; }
+        @keyframes glow { 0%,100%{box-shadow:0 0 5px currentColor} 50%{box-shadow:0 0 20px currentColor} }
+        .glow { animation: glow 2s infinite; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-inner">
+            <div class="header-left">
+                <button class="back-btn" onclick="window.location.href='index.html'">← Tilbake</button>
+                <div>
+                    <span style="font-size: 28px;">📡</span>
+                    <span style="font-size: 18px; font-weight: 700; color: #f59e0b; margin-left: 8px;">Økt 2: Kommunikasjonssystem</span>
+                </div>
+            </div>
+            <div id="progress-text" style="font-size: 14px; opacity: 0.7;">✓ 0/11</div>
+        </div>
+    </header>
+
+    <nav class="nav">
+        <div class="nav-inner">
+            <button class="nav-btn active" data-section="intro" onclick="showSection('intro')">📖 Intro</button>
+            <button class="nav-btn" data-section="system" onclick="showSection('system')">📡 System</button>
+            <button class="nav-btn" data-section="analog" onclick="showSection('analog')">🔄 Analog/Digital</button>
+            <button class="nav-btn" data-section="modulation" onclick="showSection('modulation')">📻 Modulasjon</button>
+            <button class="nav-btn" data-section="binary" onclick="showSection('binary')">💻 Binær</button>
+            <button class="nav-btn" data-section="protocols" onclick="showSection('protocols')">🔐 Protokoller</button>
+            <button class="nav-btn" data-section="practical" onclick="showSection('practical')">🔬 Forsøk</button>
+            <button class="nav-btn" data-section="pairwork" onclick="showSection('pairwork')">👥 Test hverandre</button>
+            <button class="nav-btn" data-section="quiz" onclick="showSection('quiz')">❓ Quiz</button>
+            <button class="nav-btn" data-section="flashcards" onclick="showSection('flashcards')">🃏 Flashcards</button>
+            <button class="nav-btn" data-section="homework" onclick="showSection('homework')">📝 Hjemmeoppgave</button>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- INTRO -->
+        <div id="section-intro" class="section active">
+            <div class="card orange">
+                <h2>👋 Velkommen til Økt 2!</h2>
+                <p style="font-size: 17px;">I forrige økt lærte du om bølger og EM-stråling. Nå skal vi se hvordan vi bruker dette til å <strong>sende informasjon</strong> trådløst!</p>
+            </div>
+            <div class="card">
+                <h3>📚 I dag lærer du:</h3>
+                <div class="steps">
+                    <div class="step"><span style="font-size:20px">📡</span> Hvordan et kommunikasjonssystem fungerer</div>
+                    <div class="step"><span style="font-size:20px">🔄</span> Forskjellen på analog og digital kommunikasjon</div>
+                    <div class="step"><span style="font-size:20px">📻</span> Hvordan signaler moduleres (AM, FM)</div>
+                    <div class="step"><span style="font-size:20px">💻</span> Hvordan data kodes binært (0 og 1)</div>
+                    <div class="step"><span style="font-size:20px">🔐</span> Protokoller og feilretting</div>
+                </div>
+            </div>
+            <div class="discussion">
+                <h4>🤔 Før vi starter:</h4>
+                <p>Når du sender en Snapchat, hva tror du skjer mellom "send" og "levert"?</p>
+                <textarea class="textarea" placeholder="Skriv hva du tror..."></textarea>
+            </div>
+            <div style="text-align: center; margin-top: 24px;">
+                <button class="btn btn-orange" onclick="showSection('system'); markDone('intro')">Start læringen →</button>
+            </div>
+        </div>
+
+        <!-- SYSTEM -->
+        <div id="section-system" class="section">
+            <div class="card">
+                <h2>📡 Kommunikasjonssystemets deler</h2>
+                <p style="font-size: 17px;">All trådløs kommunikasjon har tre hoveddeler: <strong>sender</strong>, <strong>kanal</strong> og <strong>mottaker</strong>.</p>
+                
+                <!-- ANIMERT DIAGRAM -->
+                <div class="canvas-container" style="padding:24px;margin:20px 0">
+                    <canvas id="system-animation" height="200"></canvas>
+                </div>
+                <p style="text-align:center;font-size:14px;opacity:0.7">Se hvordan signalet reiser fra sender til mottaker!</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card orange">
+                    <h4 style="color: #f59e0b;">1. Sender (Transmitter)</h4>
+                    <ul style="padding-left: 20px;">
+                        <li>Tar inn informasjon (tale, tekst, video)</li>
+                        <li>Konverterer til elektrisk signal</li>
+                        <li>Modulerer på bærebølge</li>
+                        <li>Sender via antenne</li>
+                    </ul>
+                </div>
+                <div class="card green">
+                    <h4 style="color: #10b981;">3. Mottaker (Receiver)</h4>
+                    <ul style="padding-left: 20px;">
+                        <li>Antennen fanger signalet</li>
+                        <li>Filtrerer bort støy</li>
+                        <li>Demodulerer</li>
+                        <li>Konverterer til lyd/bilde</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📱 Hva skjer når du ringer?</h3>
+                <button class="btn btn-orange" onclick="toggleElement('call-steps')" style="margin-bottom: 16px;">Vis stegene</button>
+                <div id="call-steps" class="hidden">
+                    <div class="steps">
+                        <div class="step"><span class="step-num">1</span>🎤 Du snakker inn i mikrofonen</div>
+                        <div class="step"><span class="step-num">2</span>⚡ Lyd → elektrisk signal</div>
+                        <div class="step"><span class="step-num">3</span>💾 Kodes digitalt (0 og 1)</div>
+                        <div class="step"><span class="step-num">4</span>📡 Moduleres og sendes som radiobølger</div>
+                        <div class="step"><span class="step-num">5</span>🗼 Basestasjon mottar og videresender</div>
+                        <div class="step"><span class="step-num">6</span>🌐 Sendes gjennom nettet</div>
+                        <div class="step"><span class="step-num">7</span>📱 Mottakerens mobil dekoder</div>
+                        <div class="step"><span class="step-num">8</span>🔊 Høyttaler → lyd</div>
+                        <div class="step"><span class="step-num">9</span>👂 Personen hører deg!</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="discussion">
+                <h4>💬 Diskusjon</h4>
+                <p>Hva kan gå galt underveis? Hvorfor får vi noen ganger dårlig dekning?</p>
+                <textarea class="textarea" placeholder="Skriv dine tanker..."></textarea>
+            </div>
+
+            <div style="text-align: right;">
+                <button class="btn btn-orange" onclick="showSection('analog'); markDone('system')">Neste: Analog vs Digital →</button>
+            </div>
+        </div>
+
+        <!-- ANALOG VS DIGITAL -->
+        <div id="section-analog" class="section">
+            <div class="card">
+                <h2>🔄 Analog vs Digital</h2>
+                <p style="font-size: 17px;">To måter å sende informasjon: <strong>analog</strong> (kontinuerlig) og <strong>digital</strong> (0 og 1).</p>
+            </div>
+
+            <div class="card orange">
+                <h3 style="color: #f59e0b;">📻 Analogt signal</h3>
+                <p>Varierer <strong>kontinuerlig</strong> - uendelig mange verdier. Som en dimmer.</p>
+                <div class="canvas-container">
+                    <canvas id="analog-canvas"></canvas>
+                </div>
+                <div>
+                    <span class="tag orange">FM-radio</span>
+                    <span class="tag orange">Vinyl</span>
+                    <span class="tag orange">Kassett</span>
+                </div>
+            </div>
+
+            <div class="card green">
+                <h3 style="color: #10b981;">💻 Digitalt signal</h3>
+                <p>Bare <strong>0 og 1</strong> - som en vanlig lysbryter (av/på).</p>
+                <div class="canvas-container">
+                    <canvas id="digital-canvas"></canvas>
+                </div>
+                <div>
+                    <span class="tag green">WiFi</span>
+                    <span class="tag green">4G/5G</span>
+                    <span class="tag green">Bluetooth</span>
+                    <span class="tag green">DAB</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>⚖️ Sammenligning</h3>
+                <table class="table">
+                    <tr><th></th><th style="color:#f59e0b">Analog</th><th style="color:#10b981">Digital</th></tr>
+                    <tr><td><strong>Støy</strong></td><td>Blir med signalet 😟</td><td>Kan filtreres bort 😊</td></tr>
+                    <tr><td><strong>Kopiering</strong></td><td>Blir dårligere</td><td>Perfekte kopier</td></tr>
+                    <tr><td><strong>Komprimering</strong></td><td>Vanskelig</td><td>Lett (MP3, JPEG)</td></tr>
+                    <tr><td><strong>Feilretting</strong></td><td>Umulig</td><td>Automatisk</td></tr>
+                    <tr><td><strong>Kryptering</strong></td><td>Vanskelig</td><td>Lett</td></tr>
+                </table>
+            </div>
+
+            <div class="card purple">
+                <h4 style="color: #8b5cf6;">💡 ADC - Analog til Digital Konvertering</h4>
+                <p>Når du tar et bilde, er lyset analogt. Mobilen konverterer til digitalt (millioner av piksler med tallverdier).</p>
+                
+                <!-- ADC ANIMASJON -->
+                <div class="canvas-container" style="margin-top:16px">
+                    <canvas id="adc-animation" height="120"></canvas>
+                </div>
+                <p style="text-align:center;font-size:13px;opacity:0.7;margin-top:8px">Se hvordan jevn bølge blir til 0 og 1!</p>
+            </div>
+
+            <div class="discussion">
+                <h4>💬 Diskusjon</h4>
+                <p>Hvorfor bruker vi fortsatt FM-radio når DAB finnes?</p>
+                <textarea class="textarea" placeholder="Tenk på dekning, utstyr, kostnad..."></textarea>
+            </div>
+
+            <div style="text-align: right;">
+                <button class="btn btn-orange" onclick="showSection('modulation'); markDone('analog')">Neste: Modulasjon →</button>
+            </div>
+        </div>
+
+        <!-- MODULASJON -->
+        <div id="section-modulation" class="section">
+            <div class="card">
+                <h2>📻 Modulasjon</h2>
+                <p style="font-size: 17px;"><strong>Modulasjon</strong> = legge informasjon på en bærebølge ved å endre noe ved den.</p>
+            </div>
+
+            <div class="card">
+                <h3>🎛️ Velg modulasjonstype:</h3>
+                <div style="display: flex; gap: 12px; margin-bottom: 16px; flex-wrap: wrap;">
+                    <button class="btn btn-ghost" onclick="setModulation('carrier')" id="btn-carrier">Bærebølge</button>
+                    <button class="btn btn-orange" onclick="setModulation('am')" id="btn-am">AM</button>
+                    <button class="btn btn-green" onclick="setModulation('fm')" id="btn-fm">FM</button>
+                </div>
+                <div class="canvas-container">
+                    <canvas id="modulation-canvas" height="120"></canvas>
+                </div>
+                <p id="modulation-text" style="text-align: center; opacity: 0.7;">Velg type over</p>
+            </div>
+
+            <div class="grid-2">
+                <div class="card orange">
+                    <h4 style="color: #f59e0b;">📻 AM - Amplitudemodulasjon</h4>
+                    <p><strong>Amplitude</strong> = styrke/høyde</p>
+                    <p>Informasjonen ligger i hvor <em>sterk</em> bølgen er.</p>
+                    <p style="font-size: 14px;"><strong>Brukes:</strong> AM-radio, flyradio</p>
+                    <p style="font-size: 14px; color: #ef4444;"><strong>Ulempe:</strong> Følsom for støy</p>
+                </div>
+                <div class="card green">
+                    <h4 style="color: #10b981;">📻 FM - Frekvensmodulasjon</h4>
+                    <p><strong>Frekvens</strong> = hvor tett toppene er</p>
+                    <p>Informasjonen ligger i hvor <em>raskt</em> bølgen svinger.</p>
+                    <p style="font-size: 14px;"><strong>Brukes:</strong> FM-radio (88-108 MHz)</p>
+                    <p style="font-size: 14px; color: #10b981;"><strong>Fordel:</strong> Mindre støy, bedre lyd</p>
+                </div>
+            </div>
+
+            <div class="card blue">
+                <h3 style="color: #0ea5e9;">💻 Digital modulasjon</h3>
+                <p>Moderne kommunikasjon bruker digitale varianter:</p>
+                <div class="grid-2" style="margin-top: 12px;">
+                    <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:8px"><strong>ASK</strong> - Amplitude Shift Keying</div>
+                    <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:8px"><strong>FSK</strong> - Frequency Shift Keying</div>
+                    <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:8px"><strong>PSK</strong> - Phase Shift Keying</div>
+                    <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:8px"><strong>QAM</strong> - Brukes i WiFi/4G</div>
+                </div>
+            </div>
+
+            <div class="discussion">
+                <h4>💬 Diskusjon</h4>
+                <p>I en tunnel mister du FM, men AM kan fungere. Hvorfor?</p>
+                <textarea class="textarea" placeholder="Hint: Bølgelengde og hindringer..."></textarea>
+            </div>
+
+            <div style="text-align: right;">
+                <button class="btn btn-orange" onclick="showSection('binary'); markDone('modulation')">Neste: Binær kode →</button>
+            </div>
+        </div>
+
+        <!-- BINÆR -->
+        <div id="section-binary" class="section">
+            <div class="card">
+                <h2>💻 Binær koding</h2>
+                <p style="font-size: 17px;">Alt digitalt er bare <strong>0</strong> og <strong>1</strong>. Men hvordan sender vi tekst og bilder?</p>
+            </div>
+
+            <div class="card">
+                <h3>🔢 Telle binært</h3>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(70px, 1fr)); gap: 8px; margin-top: 12px;">
+                    <div class="tag orange" style="text-align:center"><strong>0</strong>=0000</div>
+                    <div class="tag orange" style="text-align:center"><strong>1</strong>=0001</div>
+                    <div class="tag orange" style="text-align:center"><strong>2</strong>=0010</div>
+                    <div class="tag orange" style="text-align:center"><strong>3</strong>=0011</div>
+                    <div class="tag orange" style="text-align:center"><strong>4</strong>=0100</div>
+                    <div class="tag orange" style="text-align:center"><strong>5</strong>=0101</div>
+                    <div class="tag orange" style="text-align:center"><strong>6</strong>=0110</div>
+                    <div class="tag orange" style="text-align:center"><strong>7</strong>=0111</div>
+                    <div class="tag orange" style="text-align:center"><strong>8</strong>=1000</div>
+                    <div class="tag orange" style="text-align:center"><strong>9</strong>=1001</div>
+                    <div class="tag orange" style="text-align:center"><strong>10</strong>=1010</div>
+                    <div class="tag orange" style="text-align:center"><strong>15</strong>=1111</div>
+                </div>
+            </div>
+
+            <div class="card green">
+                <h3 style="color: #10b981;">✏️ Prøv selv: Tekst til binært</h3>
+                <input type="text" class="input" id="binary-input" placeholder="Skriv et ord..." maxlength="8" oninput="convertToBinary()">
+                <div id="binary-output" style="margin-top: 16px; font-family: monospace;"></div>
+            </div>
+
+            <div class="card">
+                <h3>📊 Bits og bytes</h3>
+                
+                <!-- BITS ANIMASJON -->
+                <div class="canvas-container" style="margin-bottom:16px">
+                    <canvas id="bits-animation" height="100"></canvas>
+                </div>
+                <p style="text-align:center;font-size:13px;opacity:0.7;margin-bottom:16px">Se hvordan bokstaven "A" ser ut som bits!</p>
+                
+                <div class="steps">
+                    <div class="step"><span style="font-size:20px">1️⃣</span> <strong>1 bit</strong> = en 0 eller 1</div>
+                    <div class="step"><span style="font-size:20px">8️⃣</span> <strong>1 byte</strong> = 8 bits (ett tegn)</div>
+                    <div class="step"><span style="font-size:20px">📱</span> <strong>1 KB</strong> = 1024 bytes ≈ kort SMS</div>
+                    <div class="step"><span style="font-size:20px">📷</span> <strong>1 MB</strong> = 1024 KB ≈ ett bilde</div>
+                    <div class="step"><span style="font-size:20px">🎬</span> <strong>1 GB</strong> = 1024 MB ≈ 1 times video</div>
+                    <div class="step"><span style="font-size:20px">💾</span> <strong>1 TB</strong> = 1024 GB ≈ 500 timers video</div>
+                </div>
+            </div>
+
+            <div class="card purple">
+                <h3 style="color: #8b5cf6;">🔤 ASCII - Bokstaver til tall</h3>
+                <table class="table">
+                    <tr><th>Tegn</th><th>ASCII</th><th>Binært</th></tr>
+                    <tr><td>A</td><td>65</td><td>01000001</td></tr>
+                    <tr><td>B</td><td>66</td><td>01000010</td></tr>
+                    <tr><td>a</td><td>97</td><td>01100001</td></tr>
+                    <tr><td>1</td><td>49</td><td>00110001</td></tr>
+                </table>
+            </div>
+
+            <div class="discussion">
+                <h4>💬 Diskusjon</h4>
+                <p>"Hei!" er 4 tegn = 32 bits. Hvor mange bits er en 10-sekunders video?</p>
+                <textarea class="textarea" placeholder="Hint: Video har mange bilder per sekund, og hvert bilde har millioner av piksler..."></textarea>
+            </div>
+
+            <div style="text-align: right;">
+                <button class="btn btn-orange" onclick="showSection('protocols'); markDone('binary')">Neste: Protokoller →</button>
+            </div>
+        </div>
+
+        <!-- PROTOKOLLER -->
+        <div id="section-protocols" class="section">
+            <div class="card">
+                <h2>🔐 Protokoller og feilretting</h2>
+                <p style="font-size: 17px;">Hvordan vet mottakeren at dataene kom riktig frem?</p>
+            </div>
+
+            <div class="card">
+                <h3>📋 Hva er en protokoll?</h3>
+                <p>Et sett med regler for hvordan data sendes. Som et språk begge sider forstår.</p>
+                <div class="grid-2" style="margin-top: 12px;">
+                    <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:8px"><strong>WiFi</strong> (802.11)</div>
+                    <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:8px"><strong>Bluetooth</strong></div>
+                    <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:8px"><strong>4G/5G</strong></div>
+                    <div style="background:rgba(0,0,0,0.2);padding:12px;border-radius:8px"><strong>TCP/IP</strong></div>
+                </div>
+            </div>
+
+            <div class="card orange">
+                <h3 style="color: #f59e0b;">🔍 Feildeteksjon: Paritet</h3>
+                <p>Legg til en ekstra bit som teller 1-ere:</p>
+                <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:8px;font-family:monospace;margin-top:12px">
+                    <p>Data: <span style="color:#10b981">1011001</span> (4 enere = partall)</p>
+                    <p>Paritetsbit: <span style="color:#f59e0b">0</span></p>
+                    <p>Sendt: <span style="color:#10b981">1011001</span><span style="color:#f59e0b">0</span></p>
+                    <p style="margin-top:8px;opacity:0.7">Hvis mottaker teller oddetall → feil!</p>
+                </div>
+            </div>
+
+            <div class="card green">
+                <h3 style="color: #10b981;">🔄 Handshaking</h3>
+                <p>Før data sendes, "hilser" sender og mottaker:</p>
+                
+                <!-- HANDSHAKING ANIMASJON -->
+                <div class="canvas-container" style="margin:16px 0">
+                    <canvas id="handshake-animation" height="150"></canvas>
+                </div>
+                
+                <div class="steps">
+                    <div class="step"><span class="step-num">1</span> Sender: "Hei, kan du høre meg?" (SYN)</div>
+                    <div class="step"><span class="step-num">2</span> Mottaker: "Ja!" (SYN-ACK)</div>
+                    <div class="step"><span class="step-num">3</span> Sender: "Flott, la oss starte!" (ACK)</div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📦 Pakker</h3>
+                <p>Store filer deles i små pakker som sendes hver for seg.</p>
+                
+                <!-- PAKKER ANIMASJON -->
+                <div class="canvas-container" style="margin:16px 0">
+                    <canvas id="packets-animation" height="120"></canvas>
+                </div>
+                <p style="text-align:center;font-size:13px;opacity:0.7">Se hvordan en fil deles opp og sendes!</p>
+            </div>
+
+            <div style="text-align: right;">
+                <button class="btn btn-orange" onclick="showSection('practical'); markDone('protocols')">Neste: Forsøk →</button>
+            </div>
+        </div>
+
+        <!-- PRAKTISK -->
+        <div id="section-practical" class="section">
+            <div class="card blue">
+                <h2>🔬 Praktiske forsøk</h2>
+            </div>
+
+            <div class="card">
+                <h3>🔦 Forsøk 1: Morsekode</h3>
+                <p>Morsekode er tidlig digital kommunikasjon - bare to symboler!</p>
+                <div style="background:rgba(0,0,0,0.3);padding:20px;border-radius:12px;margin:16px 0;text-align:center">
+                    <p>SOS i morse:</p>
+                    <div style="font-size:32px;font-family:monospace;color:#0ea5e9;letter-spacing:8px">... --- ...</div>
+                </div>
+                
+                <div class="card green" style="margin-top:16px">
+                    <h4 style="color:#10b981">✏️ Morse-oversetter</h4>
+                    <input type="text" class="input" id="morse-input" placeholder="Skriv et ord..." maxlength="10" oninput="convertToMorse()">
+                    <div id="morse-output" style="margin-top:12px;font-family:monospace;font-size:24px;letter-spacing:4px;color:#10b981"></div>
+                    
+                    <!-- MORSE LYSSIMULATOR -->
+                    <div style="margin-top:16px;text-align:center">
+                        <button class="btn btn-orange" onclick="playMorse()">🔦 Spill av med lys!</button>
+                        <div id="morse-light" style="width:80px;height:80px;border-radius:50%;background:#333;margin:16px auto;border:3px solid #555;transition:all 0.1s"></div>
+                        <p id="morse-status" style="font-size:14px;opacity:0.7">Trykk for å se meldingen blinke!</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📶 Forsøk 2: Mål signalstyrke</h3>
+                <p>Finn ut hvor sterkt mobilsignalet er på forskjellige steder!</p>
+                
+                <div class="card green" style="margin:16px 0">
+                    <h4 style="color:#10b981">📱 iPhone - Slik gjør du:</h4>
+                    <div class="steps">
+                        <div class="step"><span class="step-num">1</span> Åpne <strong>Telefon-appen</strong> (den du ringer med)</div>
+                        <div class="step"><span class="step-num">2</span> Tast inn: <code style="background:#000;padding:4px 8px;border-radius:4px">*3001#12345#*</code></div>
+                        <div class="step"><span class="step-num">3</span> Trykk <strong>ring</strong> (grønn knapp)</div>
+                        <div class="step"><span class="step-num">4</span> En app som heter <strong>"Field Test"</strong> åpnes</div>
+                        <div class="step"><span class="step-num">5</span> Trykk på <strong>"LTE"</strong> eller <strong>"Serving Cell Info"</strong></div>
+                        <div class="step"><span class="step-num">6</span> Finn <strong>"rsrp"</strong> - dette er signalstyrken i dBm!</div>
+                    </div>
+                    <p style="margin-top:12px;font-size:13px;opacity:0.8">💡 Tallet er negativt, f.eks. -85. Jo nærmere 0, jo bedre signal.</p>
+                </div>
+                
+                <div class="card orange" style="margin:16px 0">
+                    <h4 style="color:#f59e0b">🤖 Android - Slik gjør du:</h4>
+                    <div class="steps">
+                        <div class="step"><span class="step-num">1</span> Åpne <strong>Innstillinger</strong></div>
+                        <div class="step"><span class="step-num">2</span> Gå til <strong>"Om telefonen"</strong> (nederst)</div>
+                        <div class="step"><span class="step-num">3</span> Trykk <strong>"Status"</strong> eller <strong>"SIM-status"</strong></div>
+                        <div class="step"><span class="step-num">4</span> Finn <strong>"Signalstyrke"</strong> - vises i dBm!</div>
+                    </div>
+                    <p style="margin-top:12px;font-size:13px;opacity:0.8">💡 Noen Android-telefoner: Innstillinger → Nettverk → Mobilnett → Signalstyrke</p>
+                </div>
+                
+                <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:12px;margin-top:16px">
+                    <h4>📊 Hva betyr dBm-verdiene?</h4>
+                    <div style="display:grid;gap:8px;margin-top:12px">
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <span style="background:#10b981;padding:4px 12px;border-radius:4px;font-weight:bold">-50 til -70</span>
+                            <span>Utmerket signal 📶📶📶📶</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <span style="background:#84cc16;padding:4px 12px;border-radius:4px;font-weight:bold">-70 til -85</span>
+                            <span>Bra signal 📶📶📶</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <span style="background:#f59e0b;padding:4px 12px;border-radius:4px;font-weight:bold">-85 til -100</span>
+                            <span>OK signal 📶📶</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <span style="background:#ef4444;padding:4px 12px;border-radius:4px;font-weight:bold">-100 til -110</span>
+                            <span>Svakt signal 📶</span>
+                        </div>
+                        <div style="display:flex;align-items:center;gap:12px">
+                            <span style="background:#7f1d1d;padding:4px 12px;border-radius:4px;font-weight:bold">-110 til -120</span>
+                            <span>Nesten ingenting 💀</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card orange">
+                <h3 style="color: #f59e0b;">📝 Registrer resultatene</h3>
+                <textarea class="textarea" id="practical-results" placeholder="Sted 1 (ved vindu): -XX dBm
+Sted 2 (midt i rom): -XX dBm
+Sted 3 (kjeller): -XX dBm
+Sted 4 (ute): -XX dBm
+
+Forklaring:"></textarea>
+            </div>
+
+            <div style="text-align: right;">
+                <button class="btn btn-orange" onclick="showSection('pairwork'); markDone('practical')">Neste: Test hverandre →</button>
+            </div>
+        </div>
+
+        <!-- PAR-OPPGAVER: TEST HVERANDRE -->
+        <div id="section-pairwork" class="section">
+            <div class="card blue">
+                <h2>👥 Test hverandre!</h2>
+                <p>Jobb i par. Hver av dere får egne oppgaver - test hverandre!</p>
+            </div>
+
+            <!-- ASCII TABELL -->
+            <div class="card">
+                <h3>🔤 ASCII-tabellen (bruk denne som fasit!)</h3>
+                <p style="margin-bottom:16px">Hver bokstav har et tall (ASCII) som kan skrives binært:</p>
+                
+                <div style="overflow-x:auto">
+                    <table class="table" style="font-size:13px">
+                        <tr style="background:rgba(245,158,11,0.2)">
+                            <th>Bokstav</th>
+                            <th>ASCII</th>
+                            <th>Binært</th>
+                            <th style="border-left:2px solid rgba(255,255,255,0.2)">Bokstav</th>
+                            <th>ASCII</th>
+                            <th>Binært</th>
+                        </tr>
+                        <tr><td><strong>A</strong></td><td>65</td><td style="font-family:monospace">01000001</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>N</strong></td><td>78</td><td style="font-family:monospace">01001110</td></tr>
+                        <tr><td><strong>B</strong></td><td>66</td><td style="font-family:monospace">01000010</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>O</strong></td><td>79</td><td style="font-family:monospace">01001111</td></tr>
+                        <tr><td><strong>C</strong></td><td>67</td><td style="font-family:monospace">01000011</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>P</strong></td><td>80</td><td style="font-family:monospace">01010000</td></tr>
+                        <tr><td><strong>D</strong></td><td>68</td><td style="font-family:monospace">01000100</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>Q</strong></td><td>81</td><td style="font-family:monospace">01010001</td></tr>
+                        <tr><td><strong>E</strong></td><td>69</td><td style="font-family:monospace">01000101</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>R</strong></td><td>82</td><td style="font-family:monospace">01010010</td></tr>
+                        <tr><td><strong>F</strong></td><td>70</td><td style="font-family:monospace">01000110</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>S</strong></td><td>83</td><td style="font-family:monospace">01010011</td></tr>
+                        <tr><td><strong>G</strong></td><td>71</td><td style="font-family:monospace">01000111</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>T</strong></td><td>84</td><td style="font-family:monospace">01010100</td></tr>
+                        <tr><td><strong>H</strong></td><td>72</td><td style="font-family:monospace">01001000</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>U</strong></td><td>85</td><td style="font-family:monospace">01010101</td></tr>
+                        <tr><td><strong>I</strong></td><td>73</td><td style="font-family:monospace">01001001</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>V</strong></td><td>86</td><td style="font-family:monospace">01010110</td></tr>
+                        <tr><td><strong>J</strong></td><td>74</td><td style="font-family:monospace">01001010</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>W</strong></td><td>87</td><td style="font-family:monospace">01010111</td></tr>
+                        <tr><td><strong>K</strong></td><td>75</td><td style="font-family:monospace">01001011</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>X</strong></td><td>88</td><td style="font-family:monospace">01011000</td></tr>
+                        <tr><td><strong>L</strong></td><td>76</td><td style="font-family:monospace">01001100</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>Y</strong></td><td>89</td><td style="font-family:monospace">01011001</td></tr>
+                        <tr><td><strong>M</strong></td><td>77</td><td style="font-family:monospace">01001101</td>
+                            <td style="border-left:2px solid rgba(255,255,255,0.2)"><strong>Z</strong></td><td>90</td><td style="font-family:monospace">01011010</td></tr>
+                    </table>
+                </div>
+                
+                <div style="margin-top:16px;padding:12px;background:rgba(0,0,0,0.2);border-radius:8px">
+                    <p><strong>Tips:</strong> Små bokstaver (a-z) har ASCII 97-122. Forskjellen er at bit nr. 6 er 1 i stedet for 0!</p>
+                    <p style="font-family:monospace;margin-top:8px">A = 01000001 → a = 01100001</p>
+                </div>
+            </div>
+
+            <!-- GENERER OPPGAVER -->
+            <div class="card orange">
+                <h3 style="color:#f59e0b">🎲 Generer oppgaver til dere!</h3>
+                <p>Trykk på knappen for å få tilfeldige oppgaver. Elev A og B får forskjellige oppgaver!</p>
+                <button class="btn btn-orange" onclick="generatePairTasks()" style="margin-top:12px">🔄 Generer nye oppgaver</button>
+            </div>
+
+            <!-- ELEV A -->
+            <div class="card" style="border-left:4px solid #f59e0b">
+                <h3 style="color:#f59e0b">🅰️ ELEV A sine oppgaver</h3>
+                <p style="opacity:0.7;margin-bottom:16px">Gi disse til Elev B - du har fasiten!</p>
+                
+                <div id="taskA-give" style="background:rgba(245,158,11,0.1);padding:16px;border-radius:8px;margin-bottom:16px">
+                    <h4>Oppgaver du GIR til Elev B:</h4>
+                    <div id="taskA-questions"></div>
+                </div>
+                
+                <div id="taskA-answer" style="background:rgba(16,185,129,0.1);padding:16px;border-radius:8px">
+                    <h4 style="color:#10b981">FASIT (ikke vis til B!):</h4>
+                    <div id="taskA-answers"></div>
+                </div>
+            </div>
+
+            <!-- ELEV B -->
+            <div class="card" style="border-left:4px solid #10b981">
+                <h3 style="color:#10b981">🅱️ ELEV B sine oppgaver</h3>
+                <p style="opacity:0.7;margin-bottom:16px">Gi disse til Elev A - du har fasiten!</p>
+                
+                <div id="taskB-give" style="background:rgba(16,185,129,0.1);padding:16px;border-radius:8px;margin-bottom:16px">
+                    <h4>Oppgaver du GIR til Elev A:</h4>
+                    <div id="taskB-questions"></div>
+                </div>
+                
+                <div id="taskB-answer" style="background:rgba(245,158,11,0.1);padding:16px;border-radius:8px">
+                    <h4 style="color:#f59e0b">FASIT (ikke vis til A!):</h4>
+                    <div id="taskB-answers"></div>
+                </div>
+            </div>
+
+            <!-- UTFORDRING -->
+            <div class="card purple">
+                <h3 style="color:#8b5cf6">🏆 Ekstra utfordring!</h3>
+                <p>Klarer dere å sende hemmelige meldinger til hverandre i binært?</p>
+                <ol style="padding-left:20px;margin-top:12px">
+                    <li>Skriv en kort melding (3-5 bokstaver)</li>
+                    <li>Konverter til binært med tabellen</li>
+                    <li>Gi binærkoden til partneren</li>
+                    <li>Partneren må dekode meldingen!</li>
+                </ol>
+                <div style="margin-top:16px">
+                    <textarea class="textarea" placeholder="Skriv binærkoden du mottok her, og prøv å dekode den..."></textarea>
+                </div>
+            </div>
+
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-orange" onclick="showSection('quiz'); markDone('pairwork')">Neste: Quiz →</button>
+            </div>
+        </div>
+
+        <!-- QUIZ -->
+        <div id="section-quiz" class="section">
+            <div class="card">
+                <h2>❓ Quiz - Test deg selv!</h2>
+                <p>Svar på spørsmålene for å teste hva du har lært.</p>
+            </div>
+
+            <div id="quiz-container"></div>
+
+            <div id="quiz-result" class="hidden card green" style="text-align:center">
+                <h3 style="color:#10b981">🎉 Quiz fullført!</h3>
+                <p id="quiz-score"></p>
+                <button class="btn btn-orange" onclick="resetQuiz()" style="margin-top:12px">Ta quizen på nytt</button>
+            </div>
+
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-orange" onclick="showSection('flashcards'); markDone('quiz')">Neste: Flashcards →</button>
+            </div>
+        </div>
+
+        <!-- FLASHCARDS -->
+        <div id="section-flashcards" class="section">
+            <div class="card">
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+                    <h2 style="margin:0">🃏 Flashcards (21 kort)</h2>
+                    <span id="known-count" style="color:#10b981">✓ 0/21 kan</span>
+                </div>
+                
+                <p style="text-align:center;font-size:14px;opacity:0.6" id="card-counter">Kort 1 av 21</p>
+                
+                <div id="flashcard" class="flashcard question" onclick="flipCard()">
+                    <p style="font-size:12px;opacity:0.6;margin-bottom:12px" id="card-label">❓ SPØRSMÅL • Klikk for å snu</p>
+                    <p style="font-size:18px;line-height:1.6" id="card-text"></p>
+                </div>
+                
+                <div style="display:flex;gap:12px;justify-content:center;margin-top:20px;flex-wrap:wrap">
+                    <button class="btn btn-ghost" onclick="prevCard()">← Forrige</button>
+                    <button class="btn btn-red" onclick="nextCard(false)">Øv mer</button>
+                    <button class="btn btn-green" onclick="nextCard(true)">Kan dette ✓</button>
+                    <button class="btn btn-ghost" onclick="nextCardSimple()">Neste →</button>
+                </div>
+                
+                <div class="card-grid" id="card-grid"></div>
+                
+                <div class="progress-bar">
+                    <div class="progress-fill" id="flashcard-progress" style="width:0%"></div>
+                </div>
+                <p style="text-align:center;font-size:13px;opacity:0.7;margin-top:8px" id="flashcard-percent">0% fullført</p>
+            </div>
+
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-orange" onclick="showSection('homework'); markDone('flashcards')">Neste: Hjemmeoppgave →</button>
+            </div>
+        </div>
+
+        <!-- HJEMMEOPPGAVE -->
+        <div id="section-homework" class="section">
+            <div class="card">
+                <h2>📝 Hjemmeoppgave</h2>
+                <p>Gjør disse oppgavene før neste økt.</p>
+                <p style="color:#10b981;font-size:14px;margin-top:8px">💾 Svarene lagres automatisk i nettleseren din!</p>
+                <div style="margin-top:16px">
+                    <label style="font-weight:bold">Ditt navn:</label>
+                    <input type="text" class="input" id="hw-name" placeholder="Skriv navnet ditt her..." style="margin-top:8px" oninput="saveHomework()">
+                </div>
+            </div>
+
+            <div class="card">
+                <h3>📝 1. Sammendrag</h3>
+                <p>Skriv et sammendrag av det du lærte i dag med egne ord.</p>
+                <textarea class="textarea" id="hw-summary" style="min-height:200px" placeholder="I dag lærte jeg om kommunikasjonssystemer...
+
+Et kommunikasjonssystem består av...
+
+Forskjellen på analog og digital er...
+
+Modulasjon betyr...
+
+Binær kode fungerer slik..."></textarea>
+            </div>
+
+            <div class="card">
+                <h3>🔦 2. Morsekode-forsøk</h3>
+                <p>Send en melding med lommelykten til noen hjemme.</p>
+                <textarea class="textarea" id="hw-morse" placeholder="Jeg sendte meldingen...
+Det gikk..."></textarea>
+            </div>
+
+            <div class="card">
+                <h3>📶 3. Signalmåling</h3>
+                <p>Mål signalstyrken på 4 steder. Forklar forskjellene.</p>
+                <textarea class="textarea" id="hw-signal" placeholder="Sted 1: ... dBm
+Sted 2: ... dBm
+Sted 3: ... dBm
+Sted 4: ... dBm
+
+Forklaring:"></textarea>
+            </div>
+
+            <div class="card">
+                <h3>💻 4. Binær-oppgave</h3>
+                <p>Konverter navnet ditt til binært. Hvor mange bits?</p>
+                <textarea class="textarea" id="hw-binary" placeholder="Mitt navn i binært:
+...
+
+Antall bits:"></textarea>
+            </div>
+
+            <div class="card" style="background:rgba(0,0,0,0.3)">
+                <h3>💾 Levere inn</h3>
+                <p style="margin-bottom:16px;opacity:0.8">Last ned besvarelsen som Word-dokument og lever i Teams!</p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+                    <button class="btn btn-green" onclick="exportToWord()" style="font-size:16px;padding:16px 24px">
+                        📄 Last ned som Word (.docx)
+                    </button>
+                    <button class="btn btn-ghost" onclick="exportHomework()">📥 Last ned som .txt</button>
+                    <button class="btn btn-ghost" onclick="copyHomework()">📋 Kopier tekst</button>
+                </div>
+                <p style="margin-top:12px;font-size:13px;opacity:0.6">💡 Word-filen kan lastes rett opp i Teams-oppgaven!</p>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ===== STATE =====
+        let completedSections = [];
+        let currentCard = 0;
+        let isFlipped = false;
+        let knownCards = [];
+        let quizAnswered = [];
+        let quizScore = 0;
+
+        // ===== FLASHCARDS DATA (21 kort) =====
+        const flashcards = [
+            // Kommunikasjonssystem
+            { front: 'Hva er de tre delene i et kommunikasjonssystem?', back: 'Sender, kanal og mottaker.' },
+            { front: 'Hva gjør en sender (transmitter)?', back: 'Tar inn informasjon, konverterer til signal, modulerer på bærebølge, sender via antenne.' },
+            { front: 'Hva gjør en mottaker (receiver)?', back: 'Fanger signal med antenne, filtrerer støy, demodulerer, konverterer til lyd/bilde.' },
+            { front: 'Hva er kanalen i trådløs kommunikasjon?', back: 'Luften der EM-bølgene beveger seg mellom sender og mottaker.' },
+            
+            // Analog vs Digital
+            { front: 'Hva er et analogt signal?', back: 'Et signal som varierer kontinuerlig - kan ha uendelig mange verdier.' },
+            { front: 'Hva er et digitalt signal?', back: 'Et signal med diskrete verdier - vanligvis bare 0 og 1.' },
+            { front: 'Hvorfor er digital bedre enn analog?', back: 'Mindre støy, perfekte kopier, kan komprimeres, kan oppdage/rette feil, lett å kryptere.' },
+            { front: 'Hva er ADC?', back: 'Analog-til-Digital Konvertering - å gjøre om kontinuerlig signal til 0 og 1.' },
+            { front: 'Nevn eksempler på analog teknologi', back: 'FM-radio, vinyl-plater, kassettbånd, analog TV.' },
+            { front: 'Nevn eksempler på digital teknologi', back: 'WiFi, Bluetooth, 4G/5G, DAB-radio, streaming.' },
+            
+            // Modulasjon
+            { front: 'Hva er modulasjon?', back: 'Å legge informasjon på en bærebølge ved å endre amplitude, frekvens eller fase.' },
+            { front: 'Hva er AM (amplitudemodulasjon)?', back: 'Informasjonen ligger i styrken/høyden på bølgen.' },
+            { front: 'Hva er FM (frekvensmodulasjon)?', back: 'Informasjonen ligger i hvor raskt bølgen svinger (frekvensen).' },
+            { front: 'Hvorfor har FM bedre lyd enn AM?', back: 'FM er mindre følsom for støy fordi støy mest påvirker amplitude, ikke frekvens.' },
+            { front: 'Hva er en bærebølge?', back: 'En ren radiobølge med fast frekvens som informasjonen legges på.' },
+            
+            // Binær
+            { front: 'Hva er en bit?', back: 'Den minste dataenheten - en 0 eller 1.' },
+            { front: 'Hva er en byte?', back: '8 bits - nok til å lagre ett tegn/bokstav.' },
+            { front: 'Hvor mange bits er bokstaven "A"?', back: '8 bits (01000001 i ASCII).' },
+            { front: 'Hva er 1 KB, 1 MB, 1 GB?', back: '1 KB = 1024 bytes, 1 MB = 1024 KB, 1 GB = 1024 MB.' },
+            
+            // Protokoller
+            { front: 'Hva er en protokoll?', back: 'Et sett med regler for hvordan data skal sendes og mottas.' },
+            { front: 'Hva er handshaking?', back: 'En prosess der sender og mottaker bekrefter at de er klare før data sendes (SYN → SYN-ACK → ACK).' }
+        ];
+
+        // ===== QUIZ DATA =====
+        const quizQuestions = [
+            {
+                question: 'Hva er de tre delene i et kommunikasjonssystem?',
+                options: ['Sender, kabel, mottaker', 'Sender, kanal, mottaker', 'Signal, bølge, antenne', 'Mikrofon, luft, høyttaler'],
+                correct: 1
+            },
+            {
+                question: 'Hva kjennetegner et digitalt signal?',
+                options: ['Varierer kontinuerlig', 'Har bare verdiene 0 og 1', 'Er alltid trådløst', 'Går fortere enn lys'],
+                correct: 1
+            },
+            {
+                question: 'Hva betyr AM?',
+                options: ['Audio Modulation', 'Amplitude Modulation', 'Analog Modulation', 'Automatic Mixing'],
+                correct: 1
+            },
+            {
+                question: 'Hvor mange bits er det i en byte?',
+                options: ['4', '8', '16', '32'],
+                correct: 1
+            },
+            {
+                question: 'Hvorfor er FM-radio bedre enn AM-radio?',
+                options: ['FM har lengre rekkevidde', 'FM er billigere', 'FM er mindre følsom for støy', 'FM bruker mindre strøm'],
+                correct: 2
+            },
+            {
+                question: 'Hva gjør ADC?',
+                options: ['Forsterker signalet', 'Konverterer analog til digital', 'Sender data trådløst', 'Komprimerer filer'],
+                correct: 1
+            },
+            {
+                question: 'Hva er en protokoll?',
+                options: ['En type antenne', 'Regler for dataoverføring', 'Et måleverktøy', 'En krypteringsmetode'],
+                correct: 1
+            },
+            {
+                question: 'Hva representerer "01000001" i ASCII?',
+                options: ['Tallet 65', 'Bokstaven A', 'Begge deler', 'Ingen av delene'],
+                correct: 2
+            }
+        ];
+
+        // ===== MORSE CODE =====
+        const morseCode = {
+            'A':'.-','B':'-...','C':'-.-.','D':'-..','E':'.','F':'..-.','G':'--.','H':'....','I':'..','J':'.---',
+            'K':'-.-','L':'.-..','M':'--','N':'-.','O':'---','P':'.--.','Q':'--.-','R':'.-.','S':'...','T':'-',
+            'U':'..-','V':'...-','W':'.--','X':'-..-','Y':'-.--','Z':'--..',
+            '0':'-----','1':'.----','2':'..---','3':'...--','4':'....-','5':'.....',
+            '6':'-....','7':'--...','8':'---..','9':'----.', ' ': '/'
+        };
+
+        // ===== PAR-OPPGAVER =====
+        const pairWords = ['HEI', 'SOL', 'BIL', 'KAT', 'HUS', 'MAT', 'BOK', 'SKI', 'IS', 'FLY', 
+                          'DAG', 'NAT', 'VEI', 'BRO', 'TRE', 'SJO', 'BY', 'FEM', 'TI', 'EN',
+                          'TO', 'OK', 'JA', 'NEI', 'HAR', 'KAN', 'MER', 'NY', 'UT', 'INN'];
+        
+        function charToBinary(char) {
+            return char.toUpperCase().charCodeAt(0).toString(2).padStart(8, '0');
+        }
+        
+        function wordToBinary(word) {
+            return word.toUpperCase().split('').map(c => charToBinary(c)).join(' ');
+        }
+        
+        function getRandomWords(count, exclude = []) {
+            const available = pairWords.filter(w => !exclude.includes(w));
+            const result = [];
+            for (let i = 0; i < count && available.length > 0; i++) {
+                const idx = Math.floor(Math.random() * available.length);
+                result.push(available.splice(idx, 1)[0]);
+            }
+            return result;
+        }
+        
+        function generatePairTasks() {
+            // Elev A sine oppgaver (som B skal løse)
+            const wordsA = getRandomWords(3);
+            const binaryWordsA = getRandomWords(2, wordsA);
+            
+            // Elev B sine oppgaver (som A skal løse)
+            const wordsB = getRandomWords(3, [...wordsA, ...binaryWordsA]);
+            const binaryWordsB = getRandomWords(2, [...wordsA, ...binaryWordsA, ...wordsB]);
+            
+            // Generer HTML for Elev A
+            let questionsA = '<div class="steps" style="gap:8px">';
+            let answersA = '<div class="steps" style="gap:8px">';
+            
+            // Tekst til binær oppgaver
+            wordsA.forEach((word, i) => {
+                questionsA += `<div class="step"><span class="step-num">${i+1}</span> Konverter til binært: <strong>${word}</strong></div>`;
+                answersA += `<div class="step"><span class="step-num">${i+1}</span> ${word} = <code style="color:#10b981">${wordToBinary(word)}</code></div>`;
+            });
+            
+            // Binær til tekst oppgaver
+            binaryWordsA.forEach((word, i) => {
+                const binary = wordToBinary(word);
+                questionsA += `<div class="step"><span class="step-num">${i+4}</span> Hva står det? <code>${binary}</code></div>`;
+                answersA += `<div class="step"><span class="step-num">${i+4}</span> <code>${binary}</code> = <strong style="color:#10b981">${word}</strong></div>`;
+            });
+            
+            questionsA += '</div>';
+            answersA += '</div>';
+            
+            // Generer HTML for Elev B
+            let questionsB = '<div class="steps" style="gap:8px">';
+            let answersB = '<div class="steps" style="gap:8px">';
+            
+            // Tekst til binær oppgaver
+            wordsB.forEach((word, i) => {
+                questionsB += `<div class="step"><span class="step-num">${i+1}</span> Konverter til binært: <strong>${word}</strong></div>`;
+                answersB += `<div class="step"><span class="step-num">${i+1}</span> ${word} = <code style="color:#f59e0b">${wordToBinary(word)}</code></div>`;
+            });
+            
+            // Binær til tekst oppgaver
+            binaryWordsB.forEach((word, i) => {
+                const binary = wordToBinary(word);
+                questionsB += `<div class="step"><span class="step-num">${i+4}</span> Hva står det? <code>${binary}</code></div>`;
+                answersB += `<div class="step"><span class="step-num">${i+4}</span> <code>${binary}</code> = <strong style="color:#f59e0b">${word}</strong></div>`;
+            });
+            
+            questionsB += '</div>';
+            answersB += '</div>';
+            
+            // Oppdater DOM
+            document.getElementById('taskA-questions').innerHTML = questionsA;
+            document.getElementById('taskA-answers').innerHTML = answersA;
+            document.getElementById('taskB-questions').innerHTML = questionsB;
+            document.getElementById('taskB-answers').innerHTML = answersB;
+        }
+
+        // ===== NAVIGATION =====
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + id).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                btn.classList.remove('active');
+                if (btn.dataset.section === id) btn.classList.add('active');
+            });
+            
+            // Init specific sections
+            if (id === 'system') initSystemAnimation();
+            if (id === 'analog') initWaveAnimations();
+            if (id === 'modulation') initModulationCanvas();
+            if (id === 'binary') initBitsAnimation();
+            if (id === 'protocols') initProtocolAnimations();
+            if (id === 'quiz') initQuiz();
+            if (id === 'flashcards') updateFlashcard();
+            if (id === 'pairwork') generatePairTasks();
+        }
+
+        function markDone(id) {
+            if (!completedSections.includes(id)) {
+                completedSections.push(id);
+                const btn = document.querySelector(`.nav-btn[data-section="${id}"]`);
+                if (btn) btn.classList.add('done');
+                document.getElementById('progress-text').textContent = `✓ ${completedSections.length}/10`;
+            }
+        }
+
+        function toggleElement(id) {
+            document.getElementById(id).classList.toggle('hidden');
+        }
+
+        // ===== WAVE ANIMATIONS =====
+        function initWaveAnimations() {
+            // Analog wave
+            const analogCanvas = document.getElementById('analog-canvas');
+            if (analogCanvas) {
+                const ctx = analogCanvas.getContext('2d');
+                analogCanvas.width = analogCanvas.offsetWidth;
+                analogCanvas.height = 100;
+                let t = 0;
+                
+                function drawAnalog() {
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillRect(0, 0, analogCanvas.width, analogCanvas.height);
+                    ctx.strokeStyle = '#f59e0b';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    for (let x = 0; x < analogCanvas.width; x++) {
+                        const y = 50 + Math.sin((x + t) * 0.05) * 25 + Math.sin((x + t) * 0.02) * 10;
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                    t += 2;
+                    requestAnimationFrame(drawAnalog);
+                }
+                drawAnalog();
+            }
+            
+            // Digital wave
+            const digitalCanvas = document.getElementById('digital-canvas');
+            if (digitalCanvas) {
+                const ctx = digitalCanvas.getContext('2d');
+                digitalCanvas.width = digitalCanvas.offsetWidth;
+                digitalCanvas.height = 100;
+                const pattern = [1,1,0,1,0,0,1,1,1,0,1,0,0,0,1,1];
+                let offset = 0;
+                
+                function drawDigital() {
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillRect(0, 0, digitalCanvas.width, digitalCanvas.height);
+                    ctx.strokeStyle = '#10b981';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    
+                    const stepWidth = digitalCanvas.width / pattern.length;
+                    for (let i = 0; i < pattern.length; i++) {
+                        const x = i * stepWidth;
+                        const idx = (i + Math.floor(offset)) % pattern.length;
+                        const y = pattern[idx] === 1 ? 25 : 75;
+                        const prevY = pattern[(idx - 1 + pattern.length) % pattern.length] === 1 ? 25 : 75;
+                        
+                        if (i === 0) ctx.moveTo(x, y);
+                        else {
+                            if (y !== prevY) ctx.lineTo(x, prevY);
+                            ctx.lineTo(x, y);
+                        }
+                        ctx.lineTo(x + stepWidth, y);
+                    }
+                    ctx.stroke();
+                    
+                    ctx.fillStyle = 'rgba(255,255,255,0.4)';
+                    ctx.font = '12px sans-serif';
+                    ctx.fillText('1', 5, 30);
+                    ctx.fillText('0', 5, 80);
+                    
+                    offset += 0.05;
+                    requestAnimationFrame(drawDigital);
+                }
+                drawDigital();
+            }
+            
+            // ADC Animation
+            const adcCanvas = document.getElementById('adc-animation');
+            if (adcCanvas) {
+                const ctx = adcCanvas.getContext('2d');
+                adcCanvas.width = adcCanvas.offsetWidth;
+                adcCanvas.height = 120;
+                let t = 0;
+                
+                function drawADC() {
+                    ctx.fillStyle = '#1e293b';
+                    ctx.fillRect(0, 0, adcCanvas.width, adcCanvas.height);
+                    
+                    const midX = adcCanvas.width / 2;
+                    
+                    // Venstre side: Analog
+                    ctx.strokeStyle = '#f59e0b';
+                    ctx.lineWidth = 3;
+                    ctx.beginPath();
+                    for (let x = 0; x < midX - 40; x++) {
+                        const y = 60 + Math.sin((x + t) * 0.08) * 30;
+                        if (x === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                    
+                    // ADC boks
+                    ctx.fillStyle = '#8b5cf6';
+                    ctx.fillRect(midX - 40, 30, 80, 60);
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('ADC', midX, 65);
+                    
+                    // Høyre side: Digital
+                    ctx.strokeStyle = '#10b981';
+                    ctx.lineWidth = 3;
+                    const bits = [1,0,1,1,0,1,0,0];
+                    const bitWidth = (midX - 60) / bits.length;
+                    ctx.beginPath();
+                    for (let i = 0; i < bits.length; i++) {
+                        const x = midX + 50 + i * bitWidth;
+                        const bitIdx = (i + Math.floor(t/10)) % bits.length;
+                        const y = bits[bitIdx] === 1 ? 30 : 90;
+                        const prevY = bits[(bitIdx - 1 + bits.length) % bits.length] === 1 ? 30 : 90;
+                        if (i === 0) ctx.moveTo(x, y);
+                        else {
+                            ctx.lineTo(x, prevY);
+                            ctx.lineTo(x, y);
+                        }
+                        ctx.lineTo(x + bitWidth, y);
+                    }
+                    ctx.stroke();
+                    
+                    // Labels
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.font = '12px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('ANALOG', midX/2, 115);
+                    ctx.fillStyle = '#10b981';
+                    ctx.fillText('DIGITAL', midX + (midX-40)/2 + 40, 115);
+                    
+                    t += 2;
+                    requestAnimationFrame(drawADC);
+                }
+                drawADC();
+            }
+        }
+
+        // ===== SYSTEM ANIMATION =====
+        function initSystemAnimation() {
+            const canvas = document.getElementById('system-animation');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 180;
+            
+            let packets = [];
+            let t = 0;
+            
+            function spawnPacket() {
+                packets.push({ x: 80, progress: 0 });
+            }
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                const h = canvas.height;
+                
+                // Sender (venstre)
+                ctx.fillStyle = 'rgba(245,158,11,0.3)';
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.arc(60, h/2, 40, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = 'white';
+                ctx.font = '30px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📱', 60, h/2 + 10);
+                ctx.font = 'bold 12px Arial';
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillText('SENDER', 60, h/2 + 55);
+                
+                // Mottaker (høyre)
+                ctx.fillStyle = 'rgba(16,185,129,0.3)';
+                ctx.strokeStyle = '#10b981';
+                ctx.beginPath();
+                ctx.arc(w - 60, h/2, 40, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = 'white';
+                ctx.font = '30px Arial';
+                ctx.fillText('📱', w - 60, h/2 + 10);
+                ctx.font = 'bold 12px Arial';
+                ctx.fillStyle = '#10b981';
+                ctx.fillText('MOTTAKER', w - 60, h/2 + 55);
+                
+                // Kanal (midten) - bølge
+                ctx.strokeStyle = '#8b5cf6';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                for (let x = 120; x < w - 120; x++) {
+                    const y = h/2 + Math.sin((x + t * 3) * 0.05) * 15;
+                    if (x === 120) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                
+                ctx.font = 'bold 11px Arial';
+                ctx.fillStyle = '#8b5cf6';
+                ctx.fillText('KANAL (EM-bølger)', w/2, h/2 + 45);
+                
+                // Pakker som flyr
+                packets.forEach((p, i) => {
+                    p.x = 100 + p.progress * (w - 200);
+                    p.progress += 0.008;
+                    
+                    if (p.progress < 1) {
+                        ctx.fillStyle = '#f59e0b';
+                        ctx.beginPath();
+                        ctx.arc(p.x, h/2 + Math.sin((p.x + t*3) * 0.05) * 15, 8, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        // Liten hale
+                        ctx.strokeStyle = 'rgba(245,158,11,0.5)';
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x - 15, h/2 + Math.sin((p.x - 15 + t*3) * 0.05) * 15);
+                        ctx.lineTo(p.x, h/2 + Math.sin((p.x + t*3) * 0.05) * 15);
+                        ctx.stroke();
+                    } else {
+                        // Mottatt - flash effekt
+                        if (p.progress < 1.1) {
+                            ctx.fillStyle = `rgba(16,185,129,${1 - (p.progress - 1) * 10})`;
+                            ctx.beginPath();
+                            ctx.arc(w - 60, h/2, 50 + (p.progress - 1) * 200, 0, Math.PI * 2);
+                            ctx.fill();
+                        }
+                    }
+                });
+                
+                // Fjern gamle pakker
+                packets = packets.filter(p => p.progress < 1.2);
+                
+                // Spawn nye pakker
+                if (t % 60 === 0) spawnPacket();
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            
+            spawnPacket();
+            draw();
+        }
+
+        // ===== BITS ANIMATION =====
+        function initBitsAnimation() {
+            const canvas = document.getElementById('bits-animation');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 100;
+            
+            const bits = [0,1,0,0,0,0,0,1]; // "A" i ASCII
+            let highlightIndex = 0;
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const bitWidth = Math.min(50, (canvas.width - 100) / 8);
+                const startX = (canvas.width - bitWidth * 8) / 2;
+                
+                // Bokstav "A"
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 36px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('A', 35, 60);
+                
+                ctx.fillStyle = '#8b5cf6';
+                ctx.font = '14px Arial';
+                ctx.fillText('=', 70, 55);
+                
+                // Bits
+                bits.forEach((bit, i) => {
+                    const x = startX + 30 + i * bitWidth;
+                    const isHighlight = i === Math.floor(highlightIndex);
+                    
+                    // Bakgrunn
+                    ctx.fillStyle = isHighlight 
+                        ? (bit === 1 ? 'rgba(16,185,129,0.4)' : 'rgba(239,68,68,0.4)')
+                        : 'rgba(255,255,255,0.1)';
+                    ctx.fillRect(x, 20, bitWidth - 4, 60);
+                    
+                    // Border
+                    ctx.strokeStyle = isHighlight 
+                        ? (bit === 1 ? '#10b981' : '#ef4444')
+                        : 'rgba(255,255,255,0.3)';
+                    ctx.lineWidth = isHighlight ? 3 : 1;
+                    ctx.strokeRect(x, 20, bitWidth - 4, 60);
+                    
+                    // Tall
+                    ctx.fillStyle = isHighlight ? 'white' : 'rgba(255,255,255,0.7)';
+                    ctx.font = isHighlight ? 'bold 28px Arial' : '24px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(bit.toString(), x + (bitWidth - 4) / 2, 58);
+                });
+                
+                // "8 bits = 1 byte" tekst
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.font = '12px Arial';
+                ctx.fillText('8 bits = 1 byte', canvas.width / 2 + 30, 95);
+                
+                highlightIndex = (highlightIndex + 0.05) % 8;
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ===== PROTOCOL ANIMATIONS =====
+        function initProtocolAnimations() {
+            initHandshakeAnimation();
+            initPacketsAnimation();
+        }
+
+        function initHandshakeAnimation() {
+            const canvas = document.getElementById('handshake-animation');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 150;
+            
+            let phase = 0; // 0=SYN, 1=SYN-ACK, 2=ACK, 3=DATA
+            let messageX = 0;
+            let messageDir = 1; // 1=høyre, -1=venstre
+            let t = 0;
+            
+            const messages = ['SYN', 'SYN-ACK', 'ACK', 'DATA ✓'];
+            const colors = ['#f59e0b', '#10b981', '#0ea5e9', '#8b5cf6'];
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                
+                // Sender (venstre)
+                ctx.fillStyle = 'rgba(245,158,11,0.3)';
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(50, 75, 35, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('💻', 50, 82);
+                ctx.font = '11px Arial';
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillText('SENDER', 50, 125);
+                
+                // Mottaker (høyre)
+                ctx.fillStyle = 'rgba(16,185,129,0.3)';
+                ctx.strokeStyle = '#10b981';
+                ctx.beginPath();
+                ctx.arc(w - 50, 75, 35, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.stroke();
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.fillText('🖥️', w - 50, 82);
+                ctx.font = '11px Arial';
+                ctx.fillStyle = '#10b981';
+                ctx.fillText('MOTTAKER', w - 50, 125);
+                
+                // Melding som flyr
+                const startX = messageDir === 1 ? 90 : w - 90;
+                const endX = messageDir === 1 ? w - 90 : 90;
+                const currentX = startX + (endX - startX) * messageX;
+                
+                // Pil
+                ctx.strokeStyle = colors[phase];
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(startX, 75);
+                ctx.lineTo(currentX, 75);
+                ctx.stroke();
+                
+                // Pilhode
+                if (messageX > 0.1) {
+                    ctx.fillStyle = colors[phase];
+                    ctx.beginPath();
+                    if (messageDir === 1) {
+                        ctx.moveTo(currentX, 75);
+                        ctx.lineTo(currentX - 10, 70);
+                        ctx.lineTo(currentX - 10, 80);
+                    } else {
+                        ctx.moveTo(currentX, 75);
+                        ctx.lineTo(currentX + 10, 70);
+                        ctx.lineTo(currentX + 10, 80);
+                    }
+                    ctx.fill();
+                }
+                
+                // Melding-boks
+                ctx.fillStyle = colors[phase];
+                ctx.fillRect(currentX - 35, 50, 70, 25);
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(messages[phase], currentX, 67);
+                
+                // Status tekst
+                ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                ctx.font = '13px Arial';
+                const statusTexts = [
+                    'Steg 1: "Hei, er du der?"',
+                    'Steg 2: "Ja, jeg hører deg!"',
+                    'Steg 3: "Flott, la oss starte!"',
+                    'Steg 4: Data sendes trygt ✓'
+                ];
+                ctx.fillText(statusTexts[phase], w/2, 145);
+                
+                // Oppdater
+                messageX += 0.015;
+                if (messageX >= 1) {
+                    messageX = 0;
+                    phase = (phase + 1) % 4;
+                    messageDir = (phase === 1) ? -1 : 1;
+                }
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function initPacketsAnimation() {
+            const canvas = document.getElementById('packets-animation');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 120;
+            
+            let packets = [
+                { id: 1, x: 0, sent: false },
+                { id: 2, x: 0, sent: false },
+                { id: 3, x: 0, sent: false }
+            ];
+            let t = 0;
+            let assembled = [];
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                
+                // Original fil (venstre)
+                ctx.fillStyle = 'rgba(245,158,11,0.3)';
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 2;
+                ctx.fillRect(20, 25, 60, 70);
+                ctx.strokeRect(20, 25, 60, 70);
+                ctx.fillStyle = 'white';
+                ctx.font = '28px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📄', 50, 68);
+                ctx.font = '10px Arial';
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillText('STOR FIL', 50, 110);
+                
+                // Pakker i flukt
+                const colors = ['#ef4444', '#f59e0b', '#10b981'];
+                packets.forEach((p, i) => {
+                    if (p.sent && p.x < w - 120) {
+                        p.x += 2 + i * 0.5;
+                        
+                        const y = 35 + i * 25;
+                        ctx.fillStyle = colors[i];
+                        ctx.fillRect(100 + p.x, y, 40, 20);
+                        ctx.fillStyle = 'white';
+                        ctx.font = 'bold 11px Arial';
+                        ctx.textAlign = 'center';
+                        ctx.fillText('P' + p.id, 120 + p.x, y + 14);
+                    } else if (p.x >= w - 120 && !assembled.includes(p.id)) {
+                        assembled.push(p.id);
+                    }
+                });
+                
+                // Start sending
+                if (t === 30) packets[0].sent = true;
+                if (t === 60) packets[1].sent = true;
+                if (t === 90) packets[2].sent = true;
+                
+                // Mottatt fil (høyre)
+                if (assembled.length > 0) {
+                    ctx.fillStyle = `rgba(16,185,129,${0.1 + assembled.length * 0.1})`;
+                    ctx.strokeStyle = '#10b981';
+                    ctx.lineWidth = 2;
+                    ctx.fillRect(w - 80, 25, 60, 70);
+                    ctx.strokeRect(w - 80, 25, 60, 70);
+                    
+                    // Vis mottatte pakker
+                    assembled.forEach((id, i) => {
+                        ctx.fillStyle = colors[id - 1];
+                        ctx.fillRect(w - 75 + i * 15, 50, 12, 20);
+                    });
+                    
+                    if (assembled.length === 3) {
+                        ctx.fillStyle = 'white';
+                        ctx.font = '20px Arial';
+                        ctx.fillText('✓', w - 50, 45);
+                    }
+                }
+                
+                ctx.font = '10px Arial';
+                ctx.fillStyle = '#10b981';
+                ctx.textAlign = 'center';
+                ctx.fillText('MOTTATT', w - 50, 110);
+                
+                // Reset
+                if (t > 250) {
+                    t = 0;
+                    packets = [
+                        { id: 1, x: 0, sent: false },
+                        { id: 2, x: 0, sent: false },
+                        { id: 3, x: 0, sent: false }
+                    ];
+                    assembled = [];
+                }
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ===== MODULATION =====
+        let modulationType = 'carrier';
+        
+        function setModulation(type) {
+            modulationType = type;
+            document.querySelectorAll('#section-modulation .btn').forEach(b => b.classList.remove('btn-orange', 'btn-green'));
+            document.querySelectorAll('#section-modulation .btn').forEach(b => b.classList.add('btn-ghost'));
+            
+            const btn = document.getElementById('btn-' + type);
+            btn.classList.remove('btn-ghost');
+            if (type === 'am') btn.classList.add('btn-orange');
+            else if (type === 'fm') btn.classList.add('btn-green');
+            else btn.classList.add('btn-ghost');
+            
+            const texts = {
+                carrier: 'Ren bærebølge - ingen informasjon',
+                am: 'AM: Styrken (amplitude) varierer med informasjonen',
+                fm: 'FM: Frekvensen varierer med informasjonen'
+            };
+            document.getElementById('modulation-text').textContent = texts[type];
+        }
+
+        function initModulationCanvas() {
+            const canvas = document.getElementById('modulation-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 120;
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.lineWidth = 2;
+                
+                const centerY = canvas.height / 2;
+                
+                if (modulationType === 'carrier') {
+                    ctx.strokeStyle = '#64748b';
+                    ctx.beginPath();
+                    for (let x = 0; x < canvas.width; x++) {
+                        const y = centerY + Math.sin((x + t) * 0.1) * 30;
+                        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                } else if (modulationType === 'am') {
+                    ctx.strokeStyle = '#f59e0b';
+                    ctx.beginPath();
+                    for (let x = 0; x < canvas.width; x++) {
+                        const envelope = 15 + Math.sin((x + t) * 0.02) * 12;
+                        const y = centerY + Math.sin((x + t) * 0.1) * envelope;
+                        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                } else if (modulationType === 'fm') {
+                    ctx.strokeStyle = '#10b981';
+                    ctx.beginPath();
+                    let phase = 0;
+                    for (let x = 0; x < canvas.width; x++) {
+                        const freqMod = 0.1 + Math.sin((x + t) * 0.015) * 0.05;
+                        phase += freqMod;
+                        const y = centerY + Math.sin(phase) * 25;
+                        if (x === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+                    }
+                    ctx.stroke();
+                }
+                
+                t += 2;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ===== BINARY CONVERTER =====
+        function convertToBinary() {
+            const input = document.getElementById('binary-input').value.toUpperCase();
+            const output = document.getElementById('binary-output');
+            
+            if (!input) {
+                output.innerHTML = '';
+                return;
+            }
+            
+            let binary = '';
+            let visual = '';
+            for (let char of input) {
+                const code = char.charCodeAt(0);
+                const bin = code.toString(2).padStart(8, '0');
+                binary += bin + ' ';
+                visual += bin.split('').map(b => b === '1' ? '█' : '░').join('') + ' ';
+            }
+            
+            output.innerHTML = `
+                <div style="background:rgba(0,0,0,0.3);padding:16px;border-radius:8px">
+                    <p style="color:#10b981;word-break:break-all">${binary}</p>
+                    <p style="margin-top:8px;letter-spacing:1px">${visual}</p>
+                    <p style="margin-top:8px;opacity:0.6;font-size:13px">"${input}" = ${input.length * 8} bits (${input.length} bytes)</p>
+                </div>
+            `;
+        }
+
+        // ===== MORSE CONVERTER =====
+        function convertToMorse() {
+            const input = document.getElementById('morse-input').value.toUpperCase();
+            const output = document.getElementById('morse-output');
+            
+            if (!input) {
+                output.textContent = '';
+                return;
+            }
+            
+            let morse = '';
+            for (let char of input) {
+                morse += (morseCode[char] || '') + ' ';
+            }
+            output.textContent = morse;
+        }
+
+        // Morse lys-simulator
+        let morseTimeout = null;
+        function playMorse() {
+            const input = document.getElementById('morse-input').value.toUpperCase();
+            if (!input) {
+                document.getElementById('morse-status').textContent = 'Skriv noe først!';
+                return;
+            }
+            
+            // Stop eksisterende
+            if (morseTimeout) clearTimeout(morseTimeout);
+            
+            const light = document.getElementById('morse-light');
+            const status = document.getElementById('morse-status');
+            
+            // Konverter til morse
+            let morse = '';
+            for (let char of input) {
+                if (morseCode[char]) {
+                    morse += morseCode[char] + ' ';
+                }
+            }
+            
+            // Timing (ms)
+            const DOT = 150;
+            const DASH = DOT * 3;
+            const SYMBOL_GAP = DOT;
+            const LETTER_GAP = DOT * 3;
+            const WORD_GAP = DOT * 7;
+            
+            let sequence = [];
+            let currentLetter = 0;
+            
+            for (let i = 0; i < morse.length; i++) {
+                const symbol = morse[i];
+                if (symbol === '.') {
+                    sequence.push({ on: true, duration: DOT, letter: input[currentLetter] });
+                    sequence.push({ on: false, duration: SYMBOL_GAP });
+                } else if (symbol === '-') {
+                    sequence.push({ on: true, duration: DASH, letter: input[currentLetter] });
+                    sequence.push({ on: false, duration: SYMBOL_GAP });
+                } else if (symbol === ' ') {
+                    sequence.push({ on: false, duration: LETTER_GAP });
+                    currentLetter++;
+                } else if (symbol === '/') {
+                    sequence.push({ on: false, duration: WORD_GAP });
+                }
+            }
+            
+            let index = 0;
+            function playNext() {
+                if (index >= sequence.length) {
+                    light.style.background = '#333';
+                    light.style.boxShadow = 'none';
+                    status.textContent = 'Ferdig! ✓';
+                    return;
+                }
+                
+                const step = sequence[index];
+                if (step.on) {
+                    light.style.background = '#fbbf24';
+                    light.style.boxShadow = '0 0 30px #fbbf24, 0 0 60px #f59e0b';
+                    status.textContent = `Sender: "${step.letter}"`;
+                } else {
+                    light.style.background = '#333';
+                    light.style.boxShadow = 'none';
+                }
+                
+                index++;
+                morseTimeout = setTimeout(playNext, step.duration);
+            }
+            
+            status.textContent = 'Sender...';
+            playNext();
+        }
+
+        // ===== QUIZ =====
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+            quizAnswered = [];
+            quizScore = 0;
+            document.getElementById('quiz-result').classList.add('hidden');
+            
+            quizQuestions.forEach((q, i) => {
+                const div = document.createElement('div');
+                div.className = 'card';
+                div.id = 'quiz-q' + i;
+                div.innerHTML = `
+                    <h4 style="margin-bottom:12px">${i + 1}. ${q.question}</h4>
+                    ${q.options.map((opt, j) => `
+                        <button class="quiz-option" onclick="answerQuiz(${i}, ${j})">${opt}</button>
+                    `).join('')}
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function answerQuiz(qIndex, answer) {
+            if (quizAnswered.includes(qIndex)) return;
+            quizAnswered.push(qIndex);
+            
+            const q = quizQuestions[qIndex];
+            const buttons = document.querySelectorAll(`#quiz-q${qIndex} .quiz-option`);
+            
+            buttons.forEach((btn, i) => {
+                btn.classList.add('disabled');
+                if (i === q.correct) btn.classList.add('correct');
+                else if (i === answer && answer !== q.correct) btn.classList.add('wrong');
+            });
+            
+            if (answer === q.correct) quizScore++;
+            
+            if (quizAnswered.length === quizQuestions.length) {
+                document.getElementById('quiz-result').classList.remove('hidden');
+                document.getElementById('quiz-score').textContent = `Du fikk ${quizScore} av ${quizQuestions.length} riktig!`;
+            }
+        }
+
+        function resetQuiz() {
+            initQuiz();
+        }
+
+        // ===== FLASHCARDS =====
+        function updateFlashcard() {
+            const card = flashcards[currentCard];
+            document.getElementById('card-text').textContent = isFlipped ? card.back : card.front;
+            document.getElementById('card-label').textContent = isFlipped ? '✓ SVAR • Klikk for å snu' : '❓ SPØRSMÅL • Klikk for å snu';
+            document.getElementById('card-counter').textContent = `Kort ${currentCard + 1} av ${flashcards.length}`;
+            
+            const flashcardEl = document.getElementById('flashcard');
+            flashcardEl.className = 'flashcard ' + (isFlipped ? 'answer' : 'question');
+            
+            // Update grid
+            const grid = document.getElementById('card-grid');
+            grid.innerHTML = '';
+            flashcards.forEach((_, i) => {
+                const dot = document.createElement('div');
+                dot.className = 'card-dot';
+                if (knownCards.includes(i)) dot.classList.add('known');
+                else if (i === currentCard) dot.classList.add('current');
+                dot.textContent = knownCards.includes(i) ? '✓' : (i + 1);
+                dot.onclick = () => goToCard(i);
+                grid.appendChild(dot);
+            });
+            
+            // Update progress
+            document.getElementById('known-count').textContent = `✓ ${knownCards.length}/${flashcards.length} kan`;
+            const percent = Math.round((knownCards.length / flashcards.length) * 100);
+            document.getElementById('flashcard-progress').style.width = percent + '%';
+            document.getElementById('flashcard-percent').textContent = knownCards.length === flashcards.length 
+                ? '🎉 Gratulerer! Du kan alle kortene!' 
+                : percent + '% fullført';
+        }
+
+        function flipCard() {
+            isFlipped = !isFlipped;
+            updateFlashcard();
+        }
+
+        function nextCard(known) {
+            if (known && !knownCards.includes(currentCard)) {
+                knownCards.push(currentCard);
+            }
+            isFlipped = false;
+            currentCard = (currentCard + 1) % flashcards.length;
+            updateFlashcard();
+        }
+
+        function nextCardSimple() {
+            isFlipped = false;
+            currentCard = (currentCard + 1) % flashcards.length;
+            updateFlashcard();
+        }
+
+        function prevCard() {
+            isFlipped = false;
+            currentCard = (currentCard - 1 + flashcards.length) % flashcards.length;
+            updateFlashcard();
+        }
+
+        function goToCard(index) {
+            isFlipped = false;
+            currentCard = index;
+            updateFlashcard();
+        }
+
+        // ===== HOMEWORK EXPORT =====
+        function exportToWord() {
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
+            
+            const studentName = document.getElementById('hw-name').value || prompt("Skriv inn navnet ditt:") || "Elev";
+            const date = new Date().toLocaleDateString('no-NO');
+            
+            const summary = document.getElementById('hw-summary').value || '(Ikke besvart)';
+            const morse = document.getElementById('hw-morse').value || '(Ikke besvart)';
+            const signal = document.getElementById('hw-signal').value || '(Ikke besvart)';
+            const binary = document.getElementById('hw-binary').value || '(Ikke besvart)';
+            
+            // Hjelpefunksjon for å lage flere paragrafer fra tekst med linjeskift
+            function textToParagraphs(text) {
+                return text.split('\n').map(line => 
+                    new Paragraph({ 
+                        children: [new TextRun({ text: line || ' ', size: 24 })] 
+                    })
+                );
+            }
+            
+            const doc = new Document({
+                styles: {
+                    default: {
+                        document: { run: { font: "Arial", size: 24 } }
+                    }
+                },
+                sections: [{
+                    properties: {
+                        page: { margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } }
+                    },
+                    children: [
+                        // Tittel
+                        new Paragraph({
+                            heading: HeadingLevel.TITLE,
+                            alignment: AlignmentType.CENTER,
+                            children: [new TextRun({ text: "Hjemmeoppgave - Økt 2", bold: true, size: 48 })]
+                        }),
+                        new Paragraph({
+                            alignment: AlignmentType.CENTER,
+                            children: [new TextRun({ text: "Kommunikasjonssystem", size: 28, color: "666666" })]
+                        }),
+                        new Paragraph({ children: [new TextRun("")] }), // Tom linje
+                        
+                        // Elev-info
+                        new Paragraph({
+                            children: [
+                                new TextRun({ text: "Navn: ", bold: true, size: 24 }),
+                                new TextRun({ text: studentName, size: 24 })
+                            ]
+                        }),
+                        new Paragraph({
+                            children: [
+                                new TextRun({ text: "Dato: ", bold: true, size: 24 }),
+                                new TextRun({ text: date, size: 24 })
+                            ]
+                        }),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        // Oppgave 1
+                        new Paragraph({
+                            heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "1. Sammendrag", bold: true, size: 32, color: "f59e0b" })]
+                        }),
+                        ...textToParagraphs(summary),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        // Oppgave 2
+                        new Paragraph({
+                            heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "2. Morsekode-forsøk", bold: true, size: 32, color: "f59e0b" })]
+                        }),
+                        ...textToParagraphs(morse),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        // Oppgave 3
+                        new Paragraph({
+                            heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "3. Signalmåling", bold: true, size: 32, color: "f59e0b" })]
+                        }),
+                        ...textToParagraphs(signal),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        // Oppgave 4
+                        new Paragraph({
+                            heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "4. Binær-oppgave", bold: true, size: 32, color: "f59e0b" })]
+                        }),
+                        ...textToParagraphs(binary)
+                    ]
+                }]
+            });
+            
+            Packer.toBlob(doc).then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Hjemmeoppgave_Okt2_${studentName.replace(/\s+/g, '_')}_${date.replace(/\./g, '-')}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function exportHomework() {
+            const studentName = document.getElementById('hw-name').value || "Elev";
+            const date = new Date().toLocaleDateString('no-NO');
+            let content = `HJEMMEOPPGAVE - ØKT 2: KOMMUNIKASJONSSYSTEM\n`;
+            content += `Navn: ${studentName}\n`;
+            content += `Dato: ${date}\n`;
+            content += `${'='.repeat(50)}\n\n`;
+            
+            content += `📝 SAMMENDRAG\n${'-'.repeat(40)}\n`;
+            content += (document.getElementById('hw-summary').value || '(Ikke besvart)') + '\n\n';
+            
+            content += `🔦 MORSEKODE-FORSØK\n${'-'.repeat(40)}\n`;
+            content += (document.getElementById('hw-morse').value || '(Ikke besvart)') + '\n\n';
+            
+            content += `📶 SIGNALMÅLING\n${'-'.repeat(40)}\n`;
+            content += (document.getElementById('hw-signal').value || '(Ikke besvart)') + '\n\n';
+            
+            content += `💻 BINÆR-OPPGAVE\n${'-'.repeat(40)}\n`;
+            content += (document.getElementById('hw-binary').value || '(Ikke besvart)') + '\n';
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `hjemmeoppgave_okt2_${studentName.replace(/\s+/g, '_')}_${date.replace(/\./g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function copyHomework() {
+            const studentName = document.getElementById('hw-name').value || "Elev";
+            let content = `HJEMMEOPPGAVE - ØKT 2\nNavn: ${studentName}\n\n`;
+            content += `SAMMENDRAG:\n${document.getElementById('hw-summary').value || '(Ikke besvart)'}\n\n`;
+            content += `MORSEKODE:\n${document.getElementById('hw-morse').value || '(Ikke besvart)'}\n\n`;
+            content += `SIGNALMÅLING:\n${document.getElementById('hw-signal').value || '(Ikke besvart)'}\n\n`;
+            content += `BINÆR:\n${document.getElementById('hw-binary').value || '(Ikke besvart)'}\n`;
+            
+            navigator.clipboard.writeText(content).then(() => {
+                alert('Kopiert til utklippstavle!');
+            });
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFlashcard();
+            loadHomework();
+            setupAutoSave();
+        });
+        
+        // ===== HOMEWORK SAVE/LOAD =====
+        function saveHomework() {
+            const data = {
+                name: document.getElementById('hw-name') ? document.getElementById('hw-name').value : '',
+                summary: document.getElementById('hw-summary').value,
+                morse: document.getElementById('hw-morse').value,
+                signal: document.getElementById('hw-signal').value,
+                binary: document.getElementById('hw-binary').value,
+                practical: document.getElementById('practical-results') ? document.getElementById('practical-results').value : ''
+            };
+            localStorage.setItem('okt2_homework', JSON.stringify(data));
+        }
+        
+        function loadHomework() {
+            try {
+                const saved = localStorage.getItem('okt2_homework');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (document.getElementById('hw-name')) document.getElementById('hw-name').value = data.name || '';
+                    if (document.getElementById('hw-summary')) document.getElementById('hw-summary').value = data.summary || '';
+                    if (document.getElementById('hw-morse')) document.getElementById('hw-morse').value = data.morse || '';
+                    if (document.getElementById('hw-signal')) document.getElementById('hw-signal').value = data.signal || '';
+                    if (document.getElementById('hw-binary')) document.getElementById('hw-binary').value = data.binary || '';
+                    if (document.getElementById('practical-results')) document.getElementById('practical-results').value = data.practical || '';
+                }
+            } catch(e) {
+                console.log('Kunne ikke laste lagrede svar');
+            }
+        }
+        
+        function setupAutoSave() {
+            // Auto-lagre hver gang et tekstfelt endres
+            const fields = ['hw-name', 'hw-summary', 'hw-morse', 'hw-signal', 'hw-binary', 'practical-results'];
+            fields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) {
+                    el.addEventListener('input', saveHomework);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
