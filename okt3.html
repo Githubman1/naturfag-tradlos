@@ -1,0 +1,3138 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Økt 3: Nettverk og Internett - VG1 Naturfag</title>
+    <script src="https://unpkg.com/docx@8.0.0/build/index.umd.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        /* Header */
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .header h1 { font-size: 20px; color: #8b5cf6; }
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.2); }
+        
+        /* Navigation */
+        nav {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .nav-inner {
+            display: flex;
+            gap: 8px;
+            min-width: max-content;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background: rgba(139,92,246,0.3); }
+        .nav-btn.active { background: #8b5cf6; }
+        .nav-btn.done { border: 2px solid #10b981; }
+        
+        /* Main */
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        /* Cards */
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .card h2 { font-size: 24px; margin-bottom: 12px; }
+        .card h3 { font-size: 18px; margin-bottom: 12px; color: #e2e8f0; }
+        .card h4 { font-size: 16px; margin-bottom: 8px; }
+        .card p { opacity: 0.9; margin-bottom: 12px; }
+        .card.purple { border-left: 4px solid #8b5cf6; }
+        .card.green { border-left: 4px solid #10b981; }
+        .card.blue { border-left: 4px solid #0ea5e9; }
+        .card.orange { border-left: 4px solid #f59e0b; }
+        
+        /* Grid */
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        
+        /* Buttons */
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-purple { background: #8b5cf6; color: white; }
+        .btn-purple:hover { background: #7c3aed; }
+        .btn-green { background: #10b981; color: white; }
+        .btn-green:hover { background: #059669; }
+        .btn-orange { background: #f59e0b; color: white; }
+        .btn-orange:hover { background: #d97706; }
+        .btn-ghost { background: rgba(255,255,255,0.1); color: white; }
+        .btn-ghost:hover { background: rgba(255,255,255,0.2); }
+        
+        /* Input */
+        .input, .textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 16px;
+        }
+        .input:focus, .textarea:focus {
+            outline: none;
+            border-color: #8b5cf6;
+        }
+        .textarea { min-height: 100px; resize: vertical; font-family: inherit; }
+        
+        /* Canvas */
+        .canvas-container {
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        canvas { width: 100%; display: block; }
+        
+        /* Steps */
+        .steps { display: flex; flex-direction: column; gap: 12px; }
+        .step {
+            background: rgba(255,255,255,0.05);
+            padding: 16px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .step-num {
+            background: #8b5cf6;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        
+        /* Tags */
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 4px;
+        }
+        .tag.purple { background: rgba(139,92,246,0.3); color: #a78bfa; }
+        .tag.green { background: rgba(16,185,129,0.3); color: #34d399; }
+        .tag.blue { background: rgba(14,165,233,0.3); color: #38bdf8; }
+        .tag.orange { background: rgba(245,158,11,0.3); color: #fbbf24; }
+        
+        /* Table */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 12px 0;
+        }
+        .table th, .table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .table th { background: rgba(139,92,246,0.2); }
+        
+        /* Quiz */
+        .quiz-option {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.2);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .quiz-option:hover { background: rgba(255,255,255,0.1); border-color: #8b5cf6; }
+        .quiz-option.correct { background: rgba(16,185,129,0.3); border-color: #10b981; pointer-events: none; }
+        .quiz-option.wrong { background: rgba(239,68,68,0.3); border-color: #ef4444; pointer-events: none; }
+        .quiz-option.disabled { pointer-events: none; opacity: 0.6; }
+        
+        /* Flashcard */
+        .flashcard-container { perspective: 1000px; margin: 20px 0; }
+        .flashcard {
+            width: 100%;
+            height: 200px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        .flashcard.flipped { transform: rotateY(180deg); }
+        .flashcard-front, .flashcard-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 24px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .flashcard-front { background: linear-gradient(135deg, #8b5cf6, #7c3aed); }
+        .flashcard-back { background: linear-gradient(135deg, #10b981, #059669); transform: rotateY(180deg); }
+        
+        /* Discussion */
+        .discussion {
+            background: rgba(139,92,246,0.1);
+            border: 2px dashed #8b5cf6;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        
+        /* Hidden */
+        .hidden { display: none !important; }
+        
+        /* Pulse animation */
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.5; } }
+        .pulse { animation: pulse 2s infinite; }
+        
+        /* Network nodes */
+        .network-node {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 12px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            margin: 8px;
+        }
+        .network-node .icon { font-size: 32px; margin-bottom: 4px; }
+        .network-node .label { font-size: 12px; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <button class="back-btn" onclick="window.location.href='index.html'">← Tilbake</button>
+        <h1>🌐 Økt 3: Nettverk og Internett</h1>
+        <div id="progress-text" style="font-size: 14px; opacity: 0.7;">✓ 0/13</div>
+    </header>
+    
+    <nav>
+        <div class="nav-inner">
+            <button class="nav-btn active" data-section="intro" onclick="showSection('intro')">📖 Intro</button>
+            <button class="nav-btn" data-section="internet" onclick="showSection('internet')">🌐 Internett</button>
+            <button class="nav-btn" data-section="home-network" onclick="showSection('home-network')">🏠 Hjemmenettverk</button>
+            <button class="nav-btn" data-section="ip" onclick="showSection('ip')">📍 IP-adresser</button>
+            <button class="nav-btn" data-section="packets" onclick="showSection('packets')">📦 Pakker</button>
+            <button class="nav-btn" data-section="dns" onclick="showSection('dns')">🔤 DNS</button>
+            <button class="nav-btn" data-section="wifi" onclick="showSection('wifi')">📶 WiFi</button>
+            <button class="nav-btn" data-section="waves" onclick="showSection('waves')">🌊 Bølgefenomener</button>
+            <button class="nav-btn" data-section="mobile" onclick="showSection('mobile')">📱 Mobilnett</button>
+            <button class="nav-btn" data-section="cloud" onclick="showSection('cloud')">☁️ Skyen</button>
+            <button class="nav-btn" data-section="quiz" onclick="showSection('quiz')">❓ Quiz</button>
+            <button class="nav-btn" data-section="flashcards" onclick="showSection('flashcards')">🃏 Flashcards</button>
+            <button class="nav-btn" data-section="homework" onclick="showSection('homework')">📝 Hjemmeoppgave</button>
+        </div>
+    </nav>
+
+    <main class="main">
+        <!-- INTRO -->
+        <div id="section-intro" class="section active">
+            <div class="card purple">
+                <h2>👋 Velkommen til Økt 3!</h2>
+                <p>I denne økten lærer du hvordan internett faktisk fungerer - fra hjemmenettverket ditt til datasentre på andre siden av jorda!</p>
+            </div>
+            
+            <div class="card">
+                <h3>🎯 Læringsmål</h3>
+                <div class="steps">
+                    <div class="step"><span class="step-num">1</span> Forstå hva internett er og hvordan det fungerer</div>
+                    <div class="step"><span class="step-num">2</span> Kjenne til IP-adresser og DNS</div>
+                    <div class="step"><span class="step-num">3</span> Vite hvordan WiFi og mobilnett virker</div>
+                    <div class="step"><span class="step-num">4</span> Forstå hva "skyen" egentlig er</div>
+                </div>
+            </div>
+            
+            <div class="discussion">
+                <h4>💬 Startspørsmål</h4>
+                <p>Når du ser en YouTube-video på mobilen - hvor kommer videoen fra, og hvordan kommer den til deg?</p>
+                <textarea class="textarea" placeholder="Skriv det du tror..."></textarea>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('internet'); markDone('intro')">Start økten →</button>
+            </div>
+        </div>
+
+        <!-- HVA ER INTERNETT -->
+        <div id="section-internet" class="section">
+            <div class="card">
+                <h2>🌐 Hva er internett?</h2>
+                <p style="font-size: 18px;"><strong>Internett</strong> = et nettverk av nettverk. Milliarder av enheter koblet sammen!</p>
+            </div>
+            
+            <!-- ANIMERT NETTVERK -->
+            <div class="card">
+                <h3>🕸️ Et nettverk av nettverk</h3>
+                <div class="canvas-container" style="padding: 20px;">
+                    <canvas id="internet-canvas" height="250"></canvas>
+                </div>
+                <p style="text-align:center;font-size:14px;opacity:0.7;margin-top:8px">Se hvordan pakker reiser mellom nettverk!</p>
+            </div>
+            
+            <div class="grid-2">
+                <div class="card blue">
+                    <h4 style="color:#0ea5e9">📅 Kort historie</h4>
+                    <div class="steps" style="gap:8px">
+                        <div class="step"><span class="step-num">69</span> ARPANET - 4 datamaskiner</div>
+                        <div class="step"><span class="step-num">91</span> World Wide Web lages</div>
+                        <div class="step"><span class="step-num">07</span> iPhone revolusjonerer</div>
+                        <div class="step"><span class="step-num">24</span> 5+ milliarder brukere</div>
+                    </div>
+                </div>
+                <div class="card green">
+                    <h4 style="color:#10b981">🔢 Internett i tall</h4>
+                    <ul style="padding-left:20px;">
+                        <li>5.4 milliarder brukere</li>
+                        <li>1.1 milliarder nettsider</li>
+                        <li>500+ millioner tweets/dag</li>
+                        <li>95 millioner Instagram-bilder/dag</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="card orange">
+                <h4 style="color:#f59e0b">🤔 Internett ≠ World Wide Web</h4>
+                <table class="table">
+                    <tr><th>Internett</th><th>World Wide Web</th></tr>
+                    <tr><td>Infrastrukturen (kabler, rutere)</td><td>Nettsider og lenker</td></tr>
+                    <tr><td>Startet 1969</td><td>Startet 1991</td></tr>
+                    <tr><td>E-post, spill, streaming</td><td>Nettsteder (HTTP)</td></tr>
+                </table>
+                <p style="font-size:14px;opacity:0.8;margin-top:8px">Web er én tjeneste som kjører på internett!</p>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('home-network'); markDone('internet')">Neste: Hjemmenettverk →</button>
+            </div>
+        </div>
+
+        <!-- HJEMMENETTVERK -->
+        <div id="section-home-network" class="section">
+            <div class="card">
+                <h2>🏠 Hjemmenettverket</h2>
+                <p style="font-size:17px">Alt starter hjemme hos deg - la oss se på komponentene!</p>
+            </div>
+            
+            <!-- ANIMERT HJEMMENETTVERK -->
+            <div class="card">
+                <h3>🔌 Hvordan er det koblet?</h3>
+                <div class="canvas-container" style="padding:20px">
+                    <canvas id="home-network-canvas" height="280"></canvas>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="card blue">
+                    <h4>📦 Modem</h4>
+                    <p>Oversetter signalet fra internettleverandøren (fiber/koaks/DSL) til noe nettverket ditt forstår.</p>
+                    <p style="font-size:13px;opacity:0.7;margin-top:8px">MOdulator-DEModulator</p>
+                </div>
+                <div class="card purple">
+                    <h4>📡 Ruter (Router)</h4>
+                    <p>Deler ut IP-adresser og sender trafikk dit den skal. Hjernen i nettverket!</p>
+                    <p style="font-size:13px;opacity:0.7;margin-top:8px">Ofte kombinert med modem</p>
+                </div>
+                <div class="card green">
+                    <h4>📶 Aksesspunkt (WiFi)</h4>
+                    <p>Sender trådløst signal. Kan være innebygd i ruter eller separat.</p>
+                </div>
+                <div class="card orange">
+                    <h4>🔌 Switch</h4>
+                    <p>Kobler flere enheter med kabel. Som en strømfordeler for nettverk.</p>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>📊 LAN vs WAN vs WLAN</h3>
+                <table class="table">
+                    <tr><th>Type</th><th>Står for</th><th>Eksempel</th></tr>
+                    <tr><td><span class="tag blue">LAN</span></td><td>Local Area Network</td><td>Hjemmenettverket (kabel)</td></tr>
+                    <tr><td><span class="tag green">WLAN</span></td><td>Wireless LAN</td><td>WiFi hjemme</td></tr>
+                    <tr><td><span class="tag purple">WAN</span></td><td>Wide Area Network</td><td>Internett</td></tr>
+                </table>
+            </div>
+            
+            <div class="card" style="border:2px solid #8b5cf6">
+                <h3>📝 Dine notater om hjemmenettverk</h3>
+                <p style="font-size:14px;opacity:0.8">Undersøk ruteren hjemme - hvor mange porter har den? Hva heter WiFi-nettverket? Skriv ned det du finner!</p>
+                <textarea class="textarea" id="notes-network" placeholder="F.eks: Ruteren min har 4 porter. WiFi heter 'Telenor-1234'. Den står i stua..." oninput="saveAllNotes()"></textarea>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('ip'); markDone('home-network')">Neste: IP-adresser →</button>
+            </div>
+        </div>
+
+        <!-- IP-ADRESSER -->
+        <div id="section-ip" class="section">
+            <div class="card">
+                <h2>📍 IP-adresser</h2>
+                <p style="font-size:17px">Hver enhet på internett har en unik adresse - som et postnummer!</p>
+            </div>
+            
+            <div class="card green">
+                <h3 style="color:#10b981">🔢 IPv4-adresse</h3>
+                <div style="text-align:center;padding:20px">
+                    <div style="font-size:36px;font-family:monospace;color:#10b981">192.168.1.1</div>
+                    <p style="margin-top:12px;opacity:0.8">4 tall (0-255) separert med punktum</p>
+                </div>
+                <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin-top:16px">
+                    <span class="tag green">192</span>
+                    <span style="color:#10b981">.</span>
+                    <span class="tag green">168</span>
+                    <span style="color:#10b981">.</span>
+                    <span class="tag green">1</span>
+                    <span style="color:#10b981">.</span>
+                    <span class="tag green">1</span>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="card orange">
+                    <h4 style="color:#f59e0b">🏠 Privat IP</h4>
+                    <p>Brukes i lokalt nettverk</p>
+                    <div style="font-family:monospace;margin-top:8px;font-size:14px">
+                        <div>192.168.x.x</div>
+                        <div>10.x.x.x</div>
+                        <div>172.16-31.x.x</div>
+                    </div>
+                </div>
+                <div class="card blue">
+                    <h4 style="color:#0ea5e9">🌍 Offentlig IP</h4>
+                    <p>Din adresse på internett</p>
+                    <div style="margin-top:12px">
+                        <button class="btn btn-blue btn-ghost" onclick="showPublicIP()">🔍 Finn din IP</button>
+                        <div id="public-ip" style="margin-top:8px;font-family:monospace"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card purple">
+                <h3 style="color:#8b5cf6">🆕 IPv6 - Fremtiden</h3>
+                <p>IPv4 har "bare" 4.3 milliarder adresser. IPv6 har 340 undecillioner!</p>
+                <div style="text-align:center;padding:16px;background:rgba(0,0,0,0.2);border-radius:8px;margin-top:12px">
+                    <div style="font-family:monospace;font-size:14px;color:#a78bfa;word-break:break-all">2001:0db8:85a3:0000:0000:8a2e:0370:7334</div>
+                </div>
+            </div>
+            
+            <!-- IP SIMULATOR -->
+            <div class="card">
+                <h3>🎮 IP-simulator</h3>
+                <p>Se hvordan enheter får IP-adresser fra ruteren (DHCP):</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="dhcp-canvas" height="180"></canvas>
+                </div>
+                <button class="btn btn-purple" onclick="addDevice()" style="margin-top:12px">➕ Koble til ny enhet</button>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('packets'); markDone('ip')">Neste: Pakker →</button>
+            </div>
+        </div>
+
+        <!-- PAKKER OG RUTING -->
+        <div id="section-packets" class="section">
+            <div class="card">
+                <h2>📦 Pakker og ruting</h2>
+                <p style="font-size:17px">Data deles opp i små pakker som finner veien selv!</p>
+            </div>
+            
+            <div class="card green">
+                <h3 style="color:#10b981">📬 Hva er en pakke?</h3>
+                <div style="background:rgba(0,0,0,0.2);padding:16px;border-radius:8px;margin-top:12px">
+                    <div style="display:grid;grid-template-columns:100px 1fr;gap:8px;font-size:14px">
+                        <div class="tag purple">Header</div><div>Avsender, mottaker, pakkenummer</div>
+                        <div class="tag green">Data</div><div>Selve innholdet (del av fil/melding)</div>
+                        <div class="tag orange">Trailer</div><div>Feilsjekk (checksum)</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- PAKKEREISE ANIMASJON -->
+            <div class="card">
+                <h3>🗺️ Følg en pakkes reise</h3>
+                <p>Se hvordan en pakke hopper fra ruter til ruter:</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="packet-journey-canvas" height="200"></canvas>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+                    <button class="btn btn-purple" onclick="startPacketJourney()">🚀 Send pakke</button>
+                    <button class="btn btn-ghost" onclick="resetPacketJourney()">🔄 Reset</button>
+                </div>
+                <div id="hop-info" style="margin-top:12px;font-size:14px;opacity:0.8"></div>
+            </div>
+            
+            <div class="card orange">
+                <h3 style="color:#f59e0b">🔀 Hvorfor pakker?</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4>✅ Fordeler</h4>
+                        <ul style="padding-left:20px;font-size:14px">
+                            <li>Flere kan dele linjen</li>
+                            <li>Omveier ved feil</li>
+                            <li>Effektiv bruk av kapasitet</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>📊 Eksempel</h4>
+                        <p style="font-size:14px">En 1MB fil deles i ~700 pakker á 1500 bytes. Pakkene kan ta ulike veier!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card blue">
+                <h3 style="color:#0ea5e9">🧭 Ruting</h3>
+                <p>Hver ruter har en <strong>rutetabell</strong> som sier hvor pakker skal sendes videre.</p>
+                <table class="table" style="font-size:14px;margin-top:12px">
+                    <tr><th>Destinasjon</th><th>Neste hopp</th><th>Kostnad</th></tr>
+                    <tr><td>10.0.0.0/8</td><td>Ruter A</td><td>1</td></tr>
+                    <tr><td>172.16.0.0/16</td><td>Ruter B</td><td>2</td></tr>
+                    <tr><td>0.0.0.0/0</td><td>Internett</td><td>5</td></tr>
+                </table>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('dns'); markDone('packets')">Neste: DNS →</button>
+            </div>
+        </div>
+
+        <!-- DNS -->
+        <div id="section-dns" class="section">
+            <div class="card">
+                <h2>🔤 DNS - Internettets telefonkatalog</h2>
+                <p style="font-size:17px">Oversetter domenenavn til IP-adresser!</p>
+            </div>
+            
+            <div class="card green">
+                <h3 style="color:#10b981">📖 Hvorfor DNS?</h3>
+                <p>Hva er enklest å huske?</p>
+                <div style="display:flex;gap:16px;margin-top:16px;flex-wrap:wrap;justify-content:center">
+                    <div style="text-align:center">
+                        <div style="font-size:24px">😕</div>
+                        <div style="font-family:monospace;font-size:14px">142.250.74.110</div>
+                    </div>
+                    <div style="font-size:32px;color:#10b981">→</div>
+                    <div style="text-align:center">
+                        <div style="font-size:24px">😊</div>
+                        <div style="font-family:monospace;font-size:14px">google.com</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DNS SIMULATOR -->
+            <div class="card purple">
+                <h3 style="color:#8b5cf6">🔍 DNS-oppslag</h3>
+                <p>Skriv inn et domene og se IP-adressen:</p>
+                <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+                    <input type="text" class="input" id="dns-input" placeholder="f.eks. youtube.com" style="flex:1;min-width:200px">
+                    <button class="btn btn-purple" onclick="dnsLookup()">🔍 Slå opp</button>
+                </div>
+                <div id="dns-result" style="margin-top:16px"></div>
+            </div>
+            
+            <!-- DNS ANIMASJON -->
+            <div class="card">
+                <h3>🔄 DNS-prosessen</h3>
+                <div class="canvas-container" style="padding:20px">
+                    <canvas id="dns-canvas" height="200"></canvas>
+                </div>
+            </div>
+            
+            <div class="card orange">
+                <h3 style="color:#f59e0b">🏢 DNS-hierarkiet</h3>
+                <div class="steps">
+                    <div class="step"><span class="step-num">1</span> <strong>Rot-servere</strong> - 13 i verden, vet hvor alt er</div>
+                    <div class="step"><span class="step-num">2</span> <strong>TLD-servere</strong> - .no, .com, .org</div>
+                    <div class="step"><span class="step-num">3</span> <strong>Autoritative servere</strong> - Vet IP til spesifikt domene</div>
+                </div>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('wifi'); markDone('dns')">Neste: WiFi →</button>
+            </div>
+        </div>
+
+        <!-- WIFI -->
+        <div id="section-wifi" class="section">
+            <div class="card">
+                <h2>📶 WiFi - Trådløst nettverk</h2>
+                <p style="font-size:17px">Radiobølger som overfører internett!</p>
+            </div>
+            
+            <div class="card">
+                <h3>📻 WiFi-frekvenser</h3>
+                <div class="canvas-container" style="padding:20px">
+                    <canvas id="wifi-canvas" height="150"></canvas>
+                </div>
+            </div>
+            
+            <div class="grid-2">
+                <div class="card blue">
+                    <h4 style="color:#0ea5e9">2.4 GHz</h4>
+                    <ul style="padding-left:20px;font-size:14px">
+                        <li>✅ Lang rekkevidde</li>
+                        <li>✅ Går gjennom vegger</li>
+                        <li>❌ Tregere (574 Mbps)</li>
+                        <li>❌ Mye forstyrrelser</li>
+                    </ul>
+                    <p style="margin-top:8px;font-size:13px;opacity:0.7">Best for: IoT, langt unna ruter</p>
+                </div>
+                <div class="card purple">
+                    <h4 style="color:#8b5cf6">5 GHz</h4>
+                    <ul style="padding-left:20px;font-size:14px">
+                        <li>✅ Raskere (2.4 Gbps)</li>
+                        <li>✅ Mindre forstyrrelser</li>
+                        <li>❌ Kortere rekkevidde</li>
+                        <li>❌ Stopper lettere av vegger</li>
+                    </ul>
+                    <p style="margin-top:8px;font-size:13px;opacity:0.7">Best for: Gaming, streaming, nær ruter</p>
+                </div>
+            </div>
+            
+            <!-- WIFI STYRKE SIMULATOR -->
+            <div class="card green">
+                <h3 style="color:#10b981">📶 WiFi-styrke simulator</h3>
+                <p>Se hvordan signalet påvirkes av avstand og vegger:</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="wifi-strength-canvas" height="200"></canvas>
+                </div>
+                <div style="margin-top:12px">
+                    <label>Avstand: <span id="distance-value">5</span> meter</label>
+                    <input type="range" id="distance-slider" min="1" max="30" value="5" style="width:100%" oninput="updateWifiStrength()">
+                </div>
+                <div style="margin-top:8px">
+                    <label>Vegger: <span id="walls-value">0</span></label>
+                    <input type="range" id="walls-slider" min="0" max="5" value="0" style="width:100%" oninput="updateWifiStrength()">
+                </div>
+                <div id="wifi-result" style="margin-top:12px;text-align:center;font-size:18px"></div>
+            </div>
+            
+            <div class="card orange">
+                <h3 style="color:#f59e0b">📊 WiFi-standarder</h3>
+                <table class="table" style="font-size:14px">
+                    <tr><th>Standard</th><th>Navn</th><th>Maks hastighet</th></tr>
+                    <tr><td>802.11n</td><td>WiFi 4</td><td>600 Mbps</td></tr>
+                    <tr><td>802.11ac</td><td>WiFi 5</td><td>3.5 Gbps</td></tr>
+                    <tr><td>802.11ax</td><td>WiFi 6</td><td>9.6 Gbps</td></tr>
+                    <tr><td>802.11be</td><td>WiFi 7</td><td>46 Gbps</td></tr>
+                </table>
+            </div>
+            
+            <div class="card" style="border:2px solid #8b5cf6">
+                <h3>📝 Dine notater om WiFi</h3>
+                <p style="font-size:14px;opacity:0.8">Sammenlign 2.4 GHz og 5 GHz. Hvilken bruker du hjemme? Hva er forskjellen?</p>
+                <textarea class="textarea" id="notes-wifi" placeholder="F.eks: Hjemme har vi både 2.4 og 5 GHz. 2.4 GHz når lenger, men 5 GHz er raskere for streaming..." oninput="saveAllNotes()"></textarea>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('waves'); markDone('wifi')">Neste: Bølgefenomener →</button>
+            </div>
+        </div>
+
+        <!-- BØLGEFENOMENER -->
+        <div id="section-waves" class="section">
+            <div class="card">
+                <h2>🌊 Bølgefenomener</h2>
+                <p style="font-size:17px">Hvorfor oppfører WiFi-signalet seg som det gjør? Bølgefysikk forklarer!</p>
+            </div>
+            
+            <!-- REFLEKSJON -->
+            <div class="card blue">
+                <h3 style="color:#0ea5e9">🪞 Refleksjon</h3>
+                <p>Bølger spretter tilbake fra overflater - som lys i et speil!</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="reflection-canvas" height="220"></canvas>
+                </div>
+                <div style="margin-top:12px">
+                    <label>Veggvinkel: <span id="wall-angle-val">90°</span></label>
+                    <input type="range" id="wall-angle" min="45" max="135" value="90" style="width:100%" oninput="document.getElementById('wall-angle-val').textContent=this.value+'°'">
+                </div>
+                <div class="grid-2" style="margin-top:12px">
+                    <div style="background:rgba(14,165,233,0.2);padding:12px;border-radius:8px">
+                        <strong style="color:#0ea5e9">Reflekterer godt:</strong>
+                        <p style="font-size:13px">Metall, speil, vann, vinduer</p>
+                    </div>
+                    <div style="background:rgba(245,158,11,0.2);padding:12px;border-radius:8px">
+                        <strong style="color:#f59e0b">WiFi-konsekvens:</strong>
+                        <p style="font-size:13px">Signal spretter av kjøleskap, vinduer</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- DIFFRAKSJON / BØYNING -->
+            <div class="card purple">
+                <h3 style="color:#8b5cf6">🔄 Diffraksjon (bøyning)</h3>
+                <p>Bølger bøyer rundt hindringer og sprer seg gjennom åpninger!</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="diffraction-canvas" height="250"></canvas>
+                </div>
+                <div style="margin-top:12px">
+                    <label>Åpningsstørrelse: <span id="gap-size-val">Middels</span></label>
+                    <input type="range" id="gap-size" min="20" max="100" value="50" style="width:100%" oninput="updateGapLabel()">
+                </div>
+                <div style="background:rgba(139,92,246,0.2);padding:12px;border-radius:8px;margin-top:12px">
+                    <strong>💡 Regel:</strong> Jo lengre bølgelengde, jo mer bøyning. Derfor går 2.4 GHz bedre rundt hjørner enn 5 GHz!
+                </div>
+            </div>
+            
+            <!-- INTERFERENS -->
+            <div class="card green">
+                <h3 style="color:#10b981">〰️ Interferens</h3>
+                <p>Når to bølger møtes kan de forsterke eller utslukke hverandre!</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="interference-canvas" height="280"></canvas>
+                </div>
+                <div style="margin-top:12px">
+                    <label>Faseforskjell: <span id="phase-val">0°</span> <span id="phase-type" style="color:#10b981">(Konstruktiv)</span></label>
+                    <input type="range" id="phase-slider" min="0" max="360" value="0" style="width:100%" oninput="updatePhase()">
+                </div>
+                <div class="grid-2" style="margin-top:16px">
+                    <div style="background:rgba(16,185,129,0.2);padding:12px;border-radius:8px;text-align:center">
+                        <div style="font-size:24px">📈</div>
+                        <strong style="color:#10b981">Konstruktiv (0°/360°)</strong>
+                        <p style="font-size:13px">Topp + Topp = STERKERE</p>
+                    </div>
+                    <div style="background:rgba(239,68,68,0.2);padding:12px;border-radius:8px;text-align:center">
+                        <div style="font-size:24px">📉</div>
+                        <strong style="color:#ef4444">Destruktiv (180°)</strong>
+                        <p style="font-size:13px">Topp + Bunn = UTSLUKKET</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- ABSORPSJON -->
+            <div class="card orange">
+                <h3 style="color:#f59e0b">🧽 Absorpsjon</h3>
+                <p>Materialer "suger opp" bølgeenergi og gjør signalet svakere.</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="absorption-canvas" height="200"></canvas>
+                </div>
+                <div style="margin-top:12px">
+                    <label>Velg materiale:</label>
+                    <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+                        <button class="btn btn-ghost" onclick="setMaterial('air')" id="mat-air" style="border:2px solid #10b981">🌬️ Luft</button>
+                        <button class="btn btn-ghost" onclick="setMaterial('wood')" id="mat-wood">🪵 Tre</button>
+                        <button class="btn btn-ghost" onclick="setMaterial('concrete')" id="mat-concrete">🧱 Betong</button>
+                        <button class="btn btn-ghost" onclick="setMaterial('water')" id="mat-water">💧 Vann</button>
+                        <button class="btn btn-ghost" onclick="setMaterial('metal')" id="mat-metal">🔩 Metall</button>
+                    </div>
+                </div>
+                <div id="absorption-info" style="margin-top:12px;padding:12px;background:rgba(16,185,129,0.2);border-radius:8px">
+                    <strong>Luft:</strong> Nesten ingen absorpsjon - ideelt for WiFi!
+                </div>
+            </div>
+            
+            <!-- TO KILDER INTERFERENS -->
+            <div class="card blue">
+                <h3 style="color:#0ea5e9">📡📡 To kilder - Interferensmønster</h3>
+                <p>Se hvordan to WiFi-rutere kan lage områder med sterkt og svakt signal!</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="two-source-canvas" height="300"></canvas>
+                </div>
+                <div style="margin-top:12px">
+                    <label>Avstand mellom kilder: <span id="source-dist-val">100px</span></label>
+                    <input type="range" id="source-dist" min="50" max="200" value="100" style="width:100%">
+                </div>
+                <p style="font-size:13px;opacity:0.8;margin-top:8px">🟢 Grønt = sterkt signal (konstruktiv) | 🔴 Rødt = svakt signal (destruktiv)</p>
+            </div>
+            
+            <!-- STÅENDE BØLGER -->
+            <div class="card purple">
+                <h3 style="color:#8b5cf6">📍 Stående bølger</h3>
+                <p>Når bølger reflekteres kan de lage "dødsoner" med svakt signal!</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="standing-wave-canvas" height="200"></canvas>
+                </div>
+                <div style="margin-top:12px">
+                    <label>Frekvens: <span id="freq-val">3</span> bølger</label>
+                    <input type="range" id="freq-slider" min="1" max="6" value="3" style="width:100%">
+                </div>
+                <div class="grid-2" style="margin-top:12px">
+                    <div style="background:rgba(239,68,68,0.2);padding:12px;border-radius:8px;text-align:center">
+                        <div style="font-size:20px">⚫</div>
+                        <strong style="color:#ef4444">Node</strong>
+                        <p style="font-size:13px">Står stille - SVAKT signal</p>
+                    </div>
+                    <div style="background:rgba(16,185,129,0.2);padding:12px;border-radius:8px;text-align:center">
+                        <div style="font-size:20px">🟢</div>
+                        <strong style="color:#10b981">Buk (antinode)</strong>
+                        <p style="font-size:13px">Maks bevegelse - STERKT signal</p>
+                    </div>
+                </div>
+                <p style="font-size:14px;opacity:0.8;margin-top:12px">
+                    <strong>💡 WiFi-tips:</strong> Flytt ruteren noen centimeter hvis du har dårlig signal et bestemt sted!
+                </p>
+            </div>
+            
+            <div class="card" style="border:2px solid #8b5cf6">
+                <h3>📝 Dine notater om bølgefenomener</h3>
+                <p style="font-size:14px;opacity:0.8">Hva påvirker WiFi-signalet hjemme hos deg? Tenk på vegger, møbler, akvarier...</p>
+                <textarea class="textarea" id="notes-waves" placeholder="F.eks: Tror kjøleskapet blokkerer signalet fordi det er metall. Betongveggen mellom stua og soverommet gjør WiFi svakt der..." oninput="saveAllNotes()"></textarea>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('mobile'); markDone('waves')">Neste: Mobilnett →</button>
+            </div>
+        </div>
+
+        <!-- MOBILNETT -->
+        <div id="section-mobile" class="section">
+            <div class="card">
+                <h2>📱 Mobilnett</h2>
+                <p style="font-size:17px">Hvordan kan du ringe og surfe overalt? La oss se på teknologien!</p>
+            </div>
+            
+            <!-- HVA ER MOBILNETT -->
+            <div class="card green">
+                <h3 style="color:#10b981">🗼 Hva er en mobilmast?</h3>
+                <p>En <strong>mobilmast</strong> (basestasjon) er en radiosender/mottaker som kommuniserer med mobilen din via radiobølger.</p>
+                <div style="display:flex;align-items:center;justify-content:center;gap:20px;padding:20px;flex-wrap:wrap">
+                    <div style="text-align:center">
+                        <div style="font-size:48px">📱</div>
+                        <div style="font-size:12px">Din mobil</div>
+                    </div>
+                    <div style="font-size:24px">📶</div>
+                    <div style="text-align:center">
+                        <div style="font-size:48px">🗼</div>
+                        <div style="font-size:12px">Basestasjon</div>
+                    </div>
+                    <div style="font-size:24px">🔗</div>
+                    <div style="text-align:center">
+                        <div style="font-size:48px">🌐</div>
+                        <div style="font-size:12px">Internett</div>
+                    </div>
+                </div>
+                <p style="font-size:14px;opacity:0.9">Masten er koblet til internett via fiber eller mikrobølgelink, og videresender dataene dine.</p>
+            </div>
+            
+            <!-- STEG FOR STEG -->
+            <div class="card purple">
+                <h3 style="color:#8b5cf6">📞 Slik fungerer en mobilsamtale - steg for steg</h3>
+                <div class="steps">
+                    <div class="step"><span class="step-num">1</span> <div><strong>Du ringer</strong><br><span style="font-size:13px">Mobilen sender radiobølger til nærmeste basestasjon</span></div></div>
+                    <div class="step"><span class="step-num">2</span> <div><strong>Basestasjonen mottar</strong><br><span style="font-size:13px">Antennen fanger opp signalet og konverterer til digital data</span></div></div>
+                    <div class="step"><span class="step-num">3</span> <div><strong>Sentralen ruter</strong><br><span style="font-size:13px">Mobilsentralen finner ut hvor mottakeren er</span></div></div>
+                    <div class="step"><span class="step-num">4</span> <div><strong>Signal sendes videre</strong><br><span style="font-size:13px">Via fiber/internett til basestasjonen nærmest mottaker</span></div></div>
+                    <div class="step"><span class="step-num">5</span> <div><strong>Mottaker får samtalen</strong><br><span style="font-size:13px">Deres basestasjon sender radiobølger til deres mobil</span></div></div>
+                </div>
+            </div>
+            
+            <!-- ANIMASJON - FORBEDRET -->
+            <div class="card">
+                <h3>📡 Se hvordan mobilnett fungerer</h3>
+                <div class="canvas-container" style="padding:20px">
+                    <canvas id="mobile-canvas" height="280"></canvas>
+                </div>
+                <div style="display:flex;gap:8px;margin-top:12px;flex-wrap:wrap">
+                    <button class="btn btn-green" onclick="mobileAction='call'" id="mob-call">📞 Ring</button>
+                    <button class="btn btn-purple" onclick="mobileAction='data'" id="mob-data">🌐 Surf</button>
+                    <button class="btn btn-orange" onclick="mobileAction='handover'" id="mob-handover">🚗 Beveg deg</button>
+                </div>
+            </div>
+            
+            <!-- CELLER -->
+            <div class="card blue">
+                <h3 style="color:#0ea5e9">🔷 Celler - områder med dekning</h3>
+                <p>Hver basestasjon dekker et område kalt en <strong>celle</strong>. Cellene overlapper så du alltid har dekning.</p>
+                <div class="canvas-container" style="padding:20px;margin-top:12px">
+                    <canvas id="cells-canvas" height="200"></canvas>
+                </div>
+                <div class="grid-2" style="margin-top:12px">
+                    <div style="background:rgba(14,165,233,0.2);padding:12px;border-radius:8px">
+                        <strong>Stor celle (makro)</strong>
+                        <p style="font-size:13px">1-30 km radius, høye master på åser</p>
+                    </div>
+                    <div style="background:rgba(139,92,246,0.2);padding:12px;border-radius:8px">
+                        <strong>Liten celle (mikro/pico)</strong>
+                        <p style="font-size:13px">50-300m, på bygninger i byer</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- HANDOVER -->
+            <div class="card orange">
+                <h3 style="color:#f59e0b">🔄 Handover - sømløs overgang</h3>
+                <p>Når du beveger deg (f.eks. i bil), må mobilen <strong>bytte basestasjon</strong> uten at samtalen brytes!</p>
+                <div class="steps" style="margin-top:12px">
+                    <div class="step"><span class="step-num">1</span> Mobilen måler signalstyrke fra flere master</div>
+                    <div class="step"><span class="step-num">2</span> Når ny mast er sterkere, starter handover</div>
+                    <div class="step"><span class="step-num">3</span> Begge master sender samtidig i noen millisekunder</div>
+                    <div class="step"><span class="step-num">4</span> Overgang fullført - du merker ingenting!</div>
+                </div>
+            </div>
+            
+            <!-- FREKVENSER -->
+            <div class="card">
+                <h3>📻 Frekvenser - radiobølger</h3>
+                <p>Mobilnett bruker ulike frekvenser med forskjellige egenskaper:</p>
+                <table class="table" style="font-size:14px;margin-top:12px">
+                    <tr><th>Frekvens</th><th>Rekkevidde</th><th>Hastighet</th><th>Brukes til</th></tr>
+                    <tr><td style="color:#10b981">700 MHz</td><td>Lang (30+ km)</td><td>Lav</td><td>Dekning i grisgrendte strøk</td></tr>
+                    <tr><td style="color:#f59e0b">1800 MHz</td><td>Middels</td><td>Middels</td><td>Balanse mellom dekning/hastighet</td></tr>
+                    <tr><td style="color:#8b5cf6">3500 MHz (5G)</td><td>Kort (1-2 km)</td><td>Høy</td><td>Byer, høy kapasitet</td></tr>
+                    <tr><td style="color:#ef4444">26 GHz (mmWave)</td><td>Svært kort (200m)</td><td>Ekstremt høy</td><td>Stadioner, knutepunkter</td></tr>
+                </table>
+                <p style="font-size:13px;opacity:0.8;margin-top:8px">💡 Samme prinsipp som WiFi: lav frekvens = lang rekkevidde, høy frekvens = mer data</p>
+            </div>
+            
+            <!-- GENERASJONER -->
+            <div class="card purple">
+                <h3 style="color:#8b5cf6">📶 Mobilgenerasjoner - fra 1G til 5G</h3>
+                <table class="table">
+                    <tr><th>Gen</th><th>År</th><th>Hastighet</th><th>Hva det muliggjorde</th></tr>
+                    <tr><td>1G</td><td>1981</td><td>2.4 kbps</td><td>Analog tale - kun ringe</td></tr>
+                    <tr><td>2G</td><td>1991</td><td>64 kbps</td><td>Digital tale + SMS</td></tr>
+                    <tr><td>3G</td><td>2001</td><td>2 Mbps</td><td>Mobilt internett, MMS, video</td></tr>
+                    <tr><td>4G</td><td>2009</td><td>100 Mbps</td><td>HD-streaming, apper, sosiale medier</td></tr>
+                    <tr><td>5G</td><td>2019</td><td>1-10 Gbps</td><td>VR, IoT, selvkjørende biler, fjernkirurgi</td></tr>
+                </table>
+            </div>
+            
+            <!-- 5G FORDELER -->
+            <div class="card green">
+                <h3 style="color:#10b981">🚀 Hvorfor er 5G revolusjonerende?</h3>
+                <div class="grid-2">
+                    <div style="background:rgba(16,185,129,0.2);padding:16px;border-radius:8px;text-align:center">
+                        <div style="font-size:32px">⚡</div>
+                        <strong>100x raskere</strong>
+                        <p style="font-size:13px">Last ned film på 3 sekunder</p>
+                    </div>
+                    <div style="background:rgba(16,185,129,0.2);padding:16px;border-radius:8px;text-align:center">
+                        <div style="font-size:32px">⏱️</div>
+                        <strong>1 ms latens</strong>
+                        <p style="font-size:13px">Sanntid! Kritisk for kirurgi/biler</p>
+                    </div>
+                    <div style="background:rgba(16,185,129,0.2);padding:16px;border-radius:8px;text-align:center">
+                        <div style="font-size:32px">📱</div>
+                        <strong>1 million enheter/km²</strong>
+                        <p style="font-size:13px">Smarte byer med sensorer overalt</p>
+                    </div>
+                    <div style="background:rgba(16,185,129,0.2);padding:16px;border-radius:8px;text-align:center">
+                        <div style="font-size:32px">🔋</div>
+                        <strong>10 års batteri</strong>
+                        <p style="font-size:13px">IoT-sensorer som varer lenge</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- NOTATFELT -->
+            <div class="card" style="border:2px solid #8b5cf6">
+                <h3>📝 Dine notater om mobilnett</h3>
+                <p style="font-size:14px;opacity:0.8">Skriv ned det viktigste du har lært. Dette lagres automatisk og kommer med i hjemmeoppgaven!</p>
+                <textarea class="textarea" id="notes-mobile" placeholder="F.eks: Mobilmasten sender radiobølger til mobilen min. Når jeg beveger meg byttes det automatisk til nærmeste mast (handover)..." oninput="saveAllNotes()"></textarea>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('cloud'); markDone('mobile')">Neste: Skyen →</button>
+            </div>
+        </div>
+
+        <!-- SKYEN -->
+        <div id="section-cloud" class="section">
+            <div class="card">
+                <h2>☁️ Skyen</h2>
+                <p style="font-size:17px">"Skyen" er bare andres datamaskiner!</p>
+            </div>
+            
+            <div class="card green">
+                <h3 style="color:#10b981">🏢 Hva er skyen egentlig?</h3>
+                <p>Når du lagrer noe "i skyen", ligger det på servere i et <strong>datasenter</strong> - et stort bygg fullt av datamaskiner!</p>
+                <div style="text-align:center;padding:20px">
+                    <span style="font-size:48px">☁️</span>
+                    <span style="font-size:32px;margin:0 20px">=</span>
+                    <span style="font-size:48px">🏢🖥️🖥️🖥️</span>
+                </div>
+            </div>
+            
+            <!-- SKY ANIMASJON -->
+            <div class="card">
+                <h3>🌍 Hvor er dataene dine?</h3>
+                <div class="canvas-container" style="padding:20px">
+                    <canvas id="cloud-canvas" height="200"></canvas>
+                </div>
+            </div>
+            
+            <div class="card orange">
+                <h3 style="color:#f59e0b">🏭 Store skytjenester</h3>
+                <div class="grid-2">
+                    <div class="network-node">
+                        <div class="icon">🟠</div>
+                        <div class="label">Amazon AWS</div>
+                    </div>
+                    <div class="network-node">
+                        <div class="icon">🔵</div>
+                        <div class="label">Microsoft Azure</div>
+                    </div>
+                    <div class="network-node">
+                        <div class="icon">🔴</div>
+                        <div class="label">Google Cloud</div>
+                    </div>
+                    <div class="network-node">
+                        <div class="icon">🍎</div>
+                        <div class="label">Apple iCloud</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card blue">
+                <h3 style="color:#0ea5e9">📊 Typer skytjenester</h3>
+                <table class="table" style="font-size:14px">
+                    <tr><th>Type</th><th>Hva du får</th><th>Eksempel</th></tr>
+                    <tr><td>IaaS</td><td>Virtuelle maskiner</td><td>AWS EC2</td></tr>
+                    <tr><td>PaaS</td><td>Plattform å bygge på</td><td>Heroku</td></tr>
+                    <tr><td>SaaS</td><td>Ferdig programvare</td><td>Google Docs, Netflix</td></tr>
+                </table>
+            </div>
+            
+            <div class="card" style="border:2px solid #8b5cf6">
+                <h3>📝 Dine notater om skyen</h3>
+                <p style="font-size:14px;opacity:0.8">List opp 3 skytjenester du bruker. Hvor tror du dataene dine egentlig lagres?</p>
+                <textarea class="textarea" id="notes-cloud" placeholder="F.eks: Jeg bruker Google Drive, iCloud og Netflix. Dataene ligger nok i store datasentre i USA eller Europa..." oninput="saveAllNotes()"></textarea>
+            </div>
+            
+            <div style="text-align: right;">
+                <button class="btn btn-purple" onclick="showSection('quiz'); markDone('cloud')">Neste: Quiz →</button>
+            </div>
+        </div>
+
+        <!-- QUIZ -->
+        <div id="section-quiz" class="section">
+            <div class="card">
+                <h2>❓ Quiz - Test deg selv!</h2>
+                <p>Svar på spørsmålene for å teste hva du har lært.</p>
+            </div>
+
+            <div id="quiz-container"></div>
+
+            <div id="quiz-result" class="hidden card green" style="text-align:center">
+                <h3 style="color:#10b981">🎉 Quiz fullført!</h3>
+                <p id="quiz-score"></p>
+                <button class="btn btn-purple" onclick="resetQuiz()" style="margin-top:12px">Ta quizen på nytt</button>
+            </div>
+
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-purple" onclick="showSection('flashcards'); markDone('quiz')">Neste: Flashcards →</button>
+            </div>
+        </div>
+
+        <!-- FLASHCARDS -->
+        <div id="section-flashcards" class="section">
+            <div class="card">
+                <h2>🃏 Flashcards - Øv på begreper</h2>
+                <p>Klikk på kortet for å se svaret. Marker som "Kan" når du husker det!</p>
+            </div>
+
+            <div class="flashcard-container">
+                <div class="flashcard" id="flashcard" onclick="flipCard()">
+                    <div class="flashcard-front" id="card-front">Laster...</div>
+                    <div class="flashcard-back" id="card-back">Laster...</div>
+                </div>
+            </div>
+
+            <div style="display: flex; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap;">
+                <button class="btn btn-ghost" onclick="prevCard()">← Forrige</button>
+                <button class="btn btn-green" onclick="markKnown()">✓ Kan!</button>
+                <button class="btn btn-purple" onclick="nextCard()">Neste →</button>
+            </div>
+
+            <div style="text-align: center;">
+                <p id="card-progress">Kort 1 av 20</p>
+                <div style="background: rgba(255,255,255,0.1); height: 8px; border-radius: 4px; margin-top: 8px;">
+                    <div id="card-progress-bar" style="background: #8b5cf6; height: 100%; border-radius: 4px; width: 5%; transition: width 0.3s;"></div>
+                </div>
+                <p id="known-count" style="margin-top: 8px; font-size: 14px; opacity: 0.7;">Du kan: 0 av 20</p>
+            </div>
+
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-purple" onclick="showSection('homework'); markDone('flashcards')">Neste: Hjemmeoppgave →</button>
+            </div>
+        </div>
+
+        <!-- HJEMMEOPPGAVE -->
+        <div id="section-homework" class="section">
+            <div class="card">
+                <h2>📝 Hjemmeoppgave</h2>
+                <p>Dine notater fra økten er samlet her! Fyll ut det som mangler og lever inn.</p>
+                <p style="color:#10b981;font-size:14px;margin-top:8px">💾 Alt lagres automatisk!</p>
+                <div style="margin-top:16px">
+                    <label style="font-weight:bold">Ditt navn:</label>
+                    <input type="text" class="input" id="hw-name" placeholder="Skriv navnet ditt her..." style="margin-top:8px" oninput="saveAllNotes()">
+                </div>
+            </div>
+
+            <!-- Notater fra økten -->
+            <div class="card green">
+                <h3 style="color:#10b981">📚 Dine notater fra økten</h3>
+                <p style="font-size:14px;opacity:0.8">Disse notatene har du skrevet underveis. Rediger om nødvendig!</p>
+            </div>
+
+            <div class="card">
+                <h3>🏠 Notater: Hjemmenettverk</h3>
+                <p style="font-size:14px;opacity:0.7;margin-bottom:8px">Hva fant du ut om ruteren hjemme?</p>
+                <textarea class="textarea" id="hw-network" placeholder="F.eks: Ruteren min har 4 porter, WiFi heter 'Telenor-5G'..." oninput="saveAllNotes()"></textarea>
+            </div>
+
+            <div class="card">
+                <h3>📶 Notater: WiFi</h3>
+                <p style="font-size:14px;opacity:0.7;margin-bottom:8px">Sammenligning av 2.4 GHz og 5 GHz</p>
+                <textarea class="textarea" id="hw-wifi" placeholder="F.eks: 2.4 GHz når lenger men er tregere, 5 GHz er raskere men kortere rekkevidde..." oninput="saveAllNotes()"></textarea>
+            </div>
+
+            <div class="card">
+                <h3>🌊 Notater: Bølgefenomener</h3>
+                <p style="font-size:14px;opacity:0.7;margin-bottom:8px">Hva påvirker WiFi-signalet hjemme?</p>
+                <textarea class="textarea" id="hw-waves" placeholder="F.eks: Betongvegger blokkerer mye, kjøleskapet reflekterer signal..." oninput="saveAllNotes()"></textarea>
+            </div>
+
+            <div class="card">
+                <h3>📱 Notater: Mobilnett</h3>
+                <p style="font-size:14px;opacity:0.7;margin-bottom:8px">Hvordan fungerer mobilnett?</p>
+                <textarea class="textarea" id="hw-mobile" placeholder="F.eks: Mobilmasten sender radiobølger. Når jeg beveger meg skjer handover til ny mast..." oninput="saveAllNotes()"></textarea>
+            </div>
+
+            <div class="card">
+                <h3>☁️ Notater: Skytjenester</h3>
+                <p style="font-size:14px;opacity:0.7;margin-bottom:8px">Hvilke skytjenester bruker du?</p>
+                <textarea class="textarea" id="hw-cloud" placeholder="F.eks: Google Drive, iCloud, Netflix - dataene ligger i datasentre i USA/Europa..." oninput="saveAllNotes()"></textarea>
+            </div>
+
+            <!-- Ekstraoppgave -->
+            <div class="card purple">
+                <h3 style="color:#8b5cf6">🎯 Ekstraoppgave: Beskriv veien</h3>
+                <p>Forklar med egne ord hva som skjer når du skriver "youtube.com" i nettleseren og trykker Enter. Bruk ordene: DNS, IP-adresse, pakker, ruter, basestasjon (hvis mobil).</p>
+                <textarea class="textarea" id="hw-path" placeholder="Først spør nettleseren DNS-serveren om IP-adressen til youtube.com. DNS svarer med f.eks 142.250.74.110. Så deles forespørselen opp i pakker som sendes via ruteren min..." oninput="saveAllNotes()"></textarea>
+            </div>
+
+            <div class="card" style="background:rgba(0,0,0,0.3)">
+                <h3>💾 Levere inn</h3>
+                <p style="margin-bottom:16px;opacity:0.8">Last ned besvarelsen som Word-dokument og lever i Teams!</p>
+                <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:12px">
+                    <button class="btn btn-green" onclick="exportToWord()" style="font-size:16px;padding:16px 24px">
+                        📄 Last ned som Word (.docx)
+                    </button>
+                    <button class="btn btn-ghost" onclick="exportHomework()">📥 Last ned som .txt</button>
+                    <button class="btn btn-ghost" onclick="copyHomework()">📋 Kopier tekst</button>
+                </div>
+                <p style="margin-top:12px;font-size:13px;opacity:0.6">💡 Word-filen kan lastes rett opp i Teams-oppgaven!</p>
+            </div>
+
+            <div class="card green" style="text-align:center">
+                <h3 style="color:#10b981">🎉 Gratulerer!</h3>
+                <p>Du har fullført Økt 3 om nettverk og internett!</p>
+                <button class="btn btn-purple" onclick="markDone('homework')" style="margin-top:12px">✓ Marker som fullført</button>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ===== GLOBAL STATE =====
+        let completedSections = [];
+        let currentCard = 0;
+        let knownCards = [];
+        let quizAnswered = [];
+        let quizScore = 0;
+
+        // ===== FLASHCARDS DATA =====
+        const flashcards = [
+            { front: 'Hva er internett?', back: 'Et globalt nettverk av nettverk - milliarder enheter koblet sammen.' },
+            { front: 'Hva er en IP-adresse?', back: 'En unik adresse som identifiserer en enhet på nettverket.' },
+            { front: 'Hva er forskjellen på IPv4 og IPv6?', back: 'IPv4 har 4 tall (0-255), IPv6 har 8 grupper med hex-tall. IPv6 har mange flere adresser.' },
+            { front: 'Hva gjør DNS?', back: 'Oversetter domenenavn (google.com) til IP-adresser (142.250.74.110).' },
+            { front: 'Hva er en ruter?', back: 'En enhet som videresender pakker mellom nettverk og deler ut IP-adresser.' },
+            { front: 'Hva er et modem?', back: 'Oversetter signalet fra internettleverandøren til noe nettverket forstår.' },
+            { front: 'Hva betyr LAN?', back: 'Local Area Network - et lokalt nettverk, f.eks. hjemme.' },
+            { front: 'Hva betyr WAN?', back: 'Wide Area Network - et stort nettverk, f.eks. internett.' },
+            { front: 'Hva betyr WLAN?', back: 'Wireless LAN - trådløst lokalt nettverk (WiFi).' },
+            { front: 'Hva er forskjellen på 2.4 GHz og 5 GHz WiFi?', back: '2.4 GHz: lengre rekkevidde, tregere. 5 GHz: kortere rekkevidde, raskere.' },
+            { front: 'Hva er en pakke (i nettverk)?', back: 'En liten bit data med header (adresser), innhold og feilsjekk.' },
+            { front: 'Hva er ruting?', back: 'Prosessen der rutere bestemmer hvilken vei pakker skal ta.' },
+            { front: 'Hva er en basestasjon?', back: 'En sender/mottaker som gir mobildekning i et område (celle).' },
+            { front: 'Hva er forskjellen på 4G og 5G?', back: '5G er raskere (1-10 Gbps vs 100 Mbps) og har mye lavere forsinkelse.' },
+            { front: 'Hva er "skyen"?', back: 'Servere i datasentre som lagrer data og kjører tjenester over internett.' },
+            { front: 'Hva betyr SaaS?', back: 'Software as a Service - programvare du bruker over nett (Netflix, Google Docs).' },
+            { front: 'Hva er DHCP?', back: 'Protokoll der ruter automatisk deler ut IP-adresser til enheter.' },
+            { front: 'Hva er latens?', back: 'Forsinkelsen (i millisekunder) det tar for data å reise frem og tilbake.' },
+            { front: 'Hva er en TLD?', back: 'Top Level Domain - siste del av domene (.no, .com, .org).' },
+            { front: 'Hva er forskjellen på privat og offentlig IP?', back: 'Privat IP brukes lokalt (192.168.x.x), offentlig IP er synlig på internett.' },
+            { front: 'Hva er refleksjon?', back: 'Når bølger spretter tilbake fra en overflate, som lys i et speil eller WiFi fra metall.' },
+            { front: 'Hva er diffraksjon?', back: 'Bølger bøyer rundt hindringer og sprer seg gjennom åpninger.' },
+            { front: 'Hva er konstruktiv interferens?', back: 'Når bølgetopper møtes og forsterker hverandre - sterkere signal.' },
+            { front: 'Hva er destruktiv interferens?', back: 'Når bølgetopp møter bølgebunn og de utslukker hverandre - svakere signal.' },
+            { front: 'Hva er absorpsjon?', back: 'Materialer suger opp bølgeenergi og gjør signalet svakere.' },
+            { front: 'Hvilke materialer absorberer WiFi mest?', back: 'Vann og metall absorberer mest. Betong er også problematisk.' },
+            { front: 'Hva er brytning (refraksjon)?', back: 'Bølger endrer retning når de går fra ett materiale til et annet.' },
+            { front: 'Hva er en stående bølge?', back: 'Bølger som reflekteres og lager faste punkter med sterkt (buk) og svakt (node) signal.' },
+            { front: 'Hvorfor går 2.4 GHz bedre rundt hjørner?', back: 'Lengre bølgelengde gir mer diffraksjon (bøyning) rundt hindringer.' }
+        ];
+
+        // ===== QUIZ DATA =====
+        const quizQuestions = [
+            { question: 'Hva er internett?', options: ['Et program', 'Et nettverk av nettverk', 'En nettside', 'En server'], correct: 1 },
+            { question: 'Hva gjør DNS?', options: ['Krypterer data', 'Oversetter domener til IP', 'Sender e-post', 'Blokkerer virus'], correct: 1 },
+            { question: 'Hvilken WiFi-frekvens har best rekkevidde?', options: ['5 GHz', '2.4 GHz', '6 GHz', '10 GHz'], correct: 1 },
+            { question: 'Hva er en typisk privat IP-adresse?', options: ['8.8.8.8', '192.168.1.1', '1.1.1.1', '255.0.0.0'], correct: 1 },
+            { question: 'Hva betyr LAN?', options: ['Large Area Network', 'Local Area Network', 'Long Area Network', 'Linked Area Network'], correct: 1 },
+            { question: 'Hva er hovedfordelen med 5G over 4G?', options: ['Billigere', 'Lavere latens og høyere hastighet', 'Bedre batteri', 'Større dekning'], correct: 1 },
+            { question: 'Hvor lagres data "i skyen"?', options: ['I luften', 'På din PC', 'I datasentre', 'På mobilen'], correct: 2 },
+            { question: 'Hva gjør en ruter?', options: ['Lagrer filer', 'Videresender pakker', 'Skriver ut', 'Spiller musikk'], correct: 1 },
+            { question: 'Hva skjer ved konstruktiv interferens?', options: ['Signal forsvinner', 'Signal forsterkes', 'Signal bøyer', 'Signal reflekteres'], correct: 1 },
+            { question: 'Hvilket materiale blokkerer WiFi mest?', options: ['Tre', 'Glass', 'Metall', 'Plast'], correct: 2 },
+            { question: 'Hva er diffraksjon?', options: ['Bølger absorberes', 'Bølger bøyer rundt hindringer', 'Bølger reflekteres', 'Bølger forsterkes'], correct: 1 }
+        ];
+
+        // ===== NAVIGATION =====
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('section-' + id).classList.add('active');
+            document.querySelector(`[data-section="${id}"]`).classList.add('active');
+            window.scrollTo(0, 0);
+
+            // Init specific sections
+            if (id === 'internet') initInternetAnimation();
+            if (id === 'home-network') initHomeNetworkAnimation();
+            if (id === 'ip') initDHCPAnimation();
+            if (id === 'packets') initPacketJourneyAnimation();
+            if (id === 'dns') initDNSAnimation();
+            if (id === 'wifi') { initWifiAnimation(); updateWifiStrength(); }
+            if (id === 'waves') initWavePhysicsAnimations();
+            if (id === 'mobile') initMobileAnimation();
+            if (id === 'cloud') initCloudAnimation();
+            if (id === 'quiz') initQuiz();
+            if (id === 'flashcards') updateFlashcard();
+        }
+
+        function markDone(id) {
+            if (!completedSections.includes(id)) {
+                completedSections.push(id);
+                document.querySelector(`[data-section="${id}"]`).classList.add('done');
+                document.getElementById('progress-text').textContent = `✓ ${completedSections.length}/12`;
+            }
+        }
+
+        // ===== INTERNET ANIMATION =====
+        function initInternetAnimation() {
+            const canvas = document.getElementById('internet-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 250;
+            
+            let t = 0;
+            let packets = [];
+            
+            const nodes = [
+                { x: 80, y: 125, label: 'Du', color: '#10b981' },
+                { x: 200, y: 60, label: 'ISP', color: '#8b5cf6' },
+                { x: 320, y: 180, label: 'Ruter', color: '#f59e0b' },
+                { x: 440, y: 80, label: 'Server', color: '#0ea5e9' },
+                { x: 560, y: 150, label: 'Sky', color: '#ec4899' }
+            ];
+            
+            function spawnPacket() {
+                const path = [0, 1, 2, 3, 4];
+                packets.push({ pathIndex: 0, progress: 0, path });
+            }
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Draw connections
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < nodes.length - 1; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(nodes[i].x, nodes[i].y);
+                    ctx.lineTo(nodes[i+1].x, nodes[i+1].y);
+                    ctx.stroke();
+                }
+                
+                // Draw nodes
+                nodes.forEach(node => {
+                    ctx.fillStyle = node.color;
+                    ctx.beginPath();
+                    ctx.arc(node.x, node.y, 25, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'white';
+                    ctx.font = '11px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(node.label, node.x, node.y + 45);
+                });
+                
+                // Draw packets
+                packets.forEach((p, idx) => {
+                    if (p.pathIndex < p.path.length - 1) {
+                        const from = nodes[p.path[p.pathIndex]];
+                        const to = nodes[p.path[p.pathIndex + 1]];
+                        const x = from.x + (to.x - from.x) * p.progress;
+                        const y = from.y + (to.y - from.y) * p.progress;
+                        
+                        ctx.fillStyle = '#fbbf24';
+                        ctx.beginPath();
+                        ctx.arc(x, y, 8, 0, Math.PI * 2);
+                        ctx.fill();
+                        
+                        p.progress += 0.02;
+                        if (p.progress >= 1) {
+                            p.progress = 0;
+                            p.pathIndex++;
+                        }
+                    }
+                });
+                
+                packets = packets.filter(p => p.pathIndex < p.path.length - 1);
+                
+                if (t % 100 === 0) spawnPacket();
+                t++;
+                requestAnimationFrame(draw);
+            }
+            
+            spawnPacket();
+            draw();
+        }
+
+        // ===== HOME NETWORK ANIMATION =====
+        function initHomeNetworkAnimation() {
+            const canvas = document.getElementById('home-network-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 280;
+            
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                
+                // Internet cloud
+                ctx.fillStyle = 'rgba(139,92,246,0.3)';
+                ctx.beginPath();
+                ctx.arc(w/2, 40, 35, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('🌐', w/2, 48);
+                ctx.font = '11px Arial';
+                ctx.fillText('Internett', w/2, 85);
+                
+                // Modem
+                ctx.fillStyle = 'rgba(14,165,233,0.3)';
+                ctx.fillRect(w/2 - 30, 110, 60, 40);
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.fillText('📦', w/2, 138);
+                ctx.font = '11px Arial';
+                ctx.fillText('Modem', w/2, 165);
+                
+                // Router
+                ctx.fillStyle = 'rgba(245,158,11,0.3)';
+                ctx.fillRect(w/2 - 30, 180, 60, 40);
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.fillText('📡', w/2, 208);
+                ctx.font = '11px Arial';
+                ctx.fillText('Ruter', w/2, 235);
+                
+                // WiFi waves
+                const waveOffset = Math.sin(t * 0.1) * 5;
+                ctx.strokeStyle = `rgba(245,158,11,${0.3 + Math.sin(t * 0.1) * 0.2})`;
+                ctx.lineWidth = 2;
+                for (let r = 20; r <= 60; r += 20) {
+                    ctx.beginPath();
+                    ctx.arc(w/2, 200, r + waveOffset, -Math.PI * 0.8, -Math.PI * 0.2);
+                    ctx.stroke();
+                }
+                
+                // Devices
+                const devices = [
+                    { x: w/2 - 120, y: 250, icon: '💻', label: 'PC' },
+                    { x: w/2, y: 260, icon: '📱', label: 'Mobil' },
+                    { x: w/2 + 120, y: 250, icon: '🖥️', label: 'TV' }
+                ];
+                
+                devices.forEach(d => {
+                    // Connection line
+                    ctx.strokeStyle = 'rgba(16,185,129,0.5)';
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(w/2, 220);
+                    ctx.lineTo(d.x, d.y - 15);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    ctx.fillStyle = 'white';
+                    ctx.font = '24px Arial';
+                    ctx.fillText(d.icon, d.x, d.y);
+                    ctx.font = '10px Arial';
+                    ctx.fillText(d.label, d.x, d.y + 18);
+                });
+                
+                // Connection lines
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.moveTo(w/2, 75);
+                ctx.lineTo(w/2, 110);
+                ctx.moveTo(w/2, 150);
+                ctx.lineTo(w/2, 180);
+                ctx.stroke();
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ===== DHCP ANIMATION =====
+        let dhcpDevices = [];
+        function initDHCPAnimation() {
+            const canvas = document.getElementById('dhcp-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 180;
+            
+            dhcpDevices = [{ ip: '192.168.1.2', icon: '💻' }];
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Router
+                ctx.fillStyle = 'rgba(139,92,246,0.3)';
+                ctx.fillRect(20, 60, 80, 60);
+                ctx.fillStyle = 'white';
+                ctx.font = '28px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📡', 60, 100);
+                ctx.font = '10px Arial';
+                ctx.fillText('Ruter', 60, 135);
+                ctx.fillText('192.168.1.1', 60, 148);
+                
+                // Devices
+                dhcpDevices.forEach((d, i) => {
+                    const x = 150 + i * 90;
+                    ctx.fillStyle = 'rgba(16,185,129,0.3)';
+                    ctx.fillRect(x, 60, 70, 60);
+                    ctx.fillStyle = 'white';
+                    ctx.font = '24px Arial';
+                    ctx.fillText(d.icon, x + 35, 95);
+                    ctx.font = '10px Arial';
+                    ctx.fillText(d.ip, x + 35, 135);
+                    
+                    // Connection line
+                    ctx.strokeStyle = '#10b981';
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    ctx.moveTo(100, 90);
+                    ctx.lineTo(x, 90);
+                    ctx.stroke();
+                });
+                
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function addDevice() {
+            const icons = ['📱', '🖥️', '🎮', '📺', '💻'];
+            const nextIP = dhcpDevices.length + 2;
+            if (dhcpDevices.length < 5) {
+                dhcpDevices.push({
+                    ip: `192.168.1.${nextIP}`,
+                    icon: icons[dhcpDevices.length]
+                });
+            }
+        }
+
+        // ===== PACKET JOURNEY ANIMATION =====
+        let packetJourney = { active: false, hop: 0, progress: 0 };
+        const hops = [
+            { x: 50, y: 100, label: 'Din PC', ip: '192.168.1.5' },
+            { x: 150, y: 100, label: 'Ruter', ip: '192.168.1.1' },
+            { x: 280, y: 60, label: 'ISP', ip: '84.215.x.x' },
+            { x: 410, y: 120, label: 'Backbone', ip: '62.40.x.x' },
+            { x: 540, y: 80, label: 'Server', ip: '142.250.74.x' }
+        ];
+
+        function initPacketJourneyAnimation() {
+            const canvas = document.getElementById('packet-journey-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Scale hops to canvas width
+                const scale = canvas.width / 600;
+                
+                // Draw connections
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.lineWidth = 2;
+                for (let i = 0; i < hops.length - 1; i++) {
+                    ctx.beginPath();
+                    ctx.moveTo(hops[i].x * scale, hops[i].y);
+                    ctx.lineTo(hops[i+1].x * scale, hops[i+1].y);
+                    ctx.stroke();
+                }
+                
+                // Draw hops
+                hops.forEach((h, i) => {
+                    const visited = packetJourney.active && i < packetJourney.hop;
+                    const current = packetJourney.active && i === packetJourney.hop;
+                    
+                    ctx.fillStyle = visited ? 'rgba(16,185,129,0.5)' : current ? 'rgba(245,158,11,0.5)' : 'rgba(139,92,246,0.3)';
+                    ctx.beginPath();
+                    ctx.arc(h.x * scale, h.y, 25, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = 'white';
+                    ctx.font = '10px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(h.label, h.x * scale, h.y + 45);
+                    ctx.font = '9px Arial';
+                    ctx.fillStyle = 'rgba(255,255,255,0.6)';
+                    ctx.fillText(h.ip, h.x * scale, h.y + 58);
+                });
+                
+                // Draw packet
+                if (packetJourney.active && packetJourney.hop < hops.length - 1) {
+                    const from = hops[packetJourney.hop];
+                    const to = hops[packetJourney.hop + 1];
+                    const x = (from.x + (to.x - from.x) * packetJourney.progress) * scale;
+                    const y = from.y + (to.y - from.y) * packetJourney.progress;
+                    
+                    ctx.fillStyle = '#fbbf24';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'white';
+                    ctx.font = '12px Arial';
+                    ctx.fillText('📦', x, y + 4);
+                    
+                    packetJourney.progress += 0.02;
+                    if (packetJourney.progress >= 1) {
+                        packetJourney.progress = 0;
+                        packetJourney.hop++;
+                        updateHopInfo();
+                    }
+                }
+                
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        function startPacketJourney() {
+            packetJourney = { active: true, hop: 0, progress: 0 };
+            updateHopInfo();
+        }
+
+        function resetPacketJourney() {
+            packetJourney = { active: false, hop: 0, progress: 0 };
+            document.getElementById('hop-info').textContent = '';
+        }
+
+        function updateHopInfo() {
+            const info = document.getElementById('hop-info');
+            if (packetJourney.hop < hops.length) {
+                info.innerHTML = `<strong>Hopp ${packetJourney.hop + 1}:</strong> ${hops[packetJourney.hop].label} (${hops[packetJourney.hop].ip})`;
+            } else {
+                info.innerHTML = '<strong style="color:#10b981">✓ Pakken kom frem!</strong>';
+            }
+        }
+
+        // ===== DNS ANIMATION =====
+        function initDNSAnimation() {
+            const canvas = document.getElementById('dns-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            let step = 0;
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                
+                // PC
+                ctx.fillStyle = 'rgba(16,185,129,0.3)';
+                ctx.beginPath();
+                ctx.arc(60, 100, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('💻', 60, 108);
+                ctx.font = '11px Arial';
+                ctx.fillText('Din PC', 60, 145);
+                
+                // DNS Server
+                ctx.fillStyle = 'rgba(139,92,246,0.3)';
+                ctx.beginPath();
+                ctx.arc(w/2, 100, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.fillText('📖', w/2, 108);
+                ctx.font = '11px Arial';
+                ctx.fillText('DNS Server', w/2, 145);
+                
+                // Website
+                ctx.fillStyle = 'rgba(245,158,11,0.3)';
+                ctx.beginPath();
+                ctx.arc(w - 60, 100, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.fillText('🌐', w - 60, 108);
+                ctx.font = '11px Arial';
+                ctx.fillText('Nettside', w - 60, 145);
+                
+                // Animate messages
+                const phase = Math.floor(t / 80) % 4;
+                
+                if (phase >= 0) {
+                    // Step 1: Query
+                    ctx.fillStyle = '#10b981';
+                    ctx.font = '10px Arial';
+                    const x1 = 60 + Math.min((t % 80) * 3, w/2 - 90);
+                    if (phase === 0) {
+                        ctx.fillText('google.com?', x1, 70);
+                    }
+                }
+                
+                if (phase >= 1) {
+                    // Step 2: Response
+                    ctx.fillStyle = '#8b5cf6';
+                    const x2 = w/2 - Math.min(((t - 80) % 80) * 3, w/2 - 120);
+                    if (phase === 1) {
+                        ctx.fillText('142.250.74.110', x2, 70);
+                    }
+                }
+                
+                if (phase >= 2) {
+                    // Step 3: Connect
+                    ctx.fillStyle = '#f59e0b';
+                    const x3 = 60 + Math.min(((t - 160) % 80) * 5, w - 150);
+                    if (phase === 2) {
+                        ctx.fillText('→ Kobler til...', x3, 180);
+                    }
+                }
+                
+                if (phase === 3) {
+                    ctx.fillStyle = '#10b981';
+                    ctx.font = '12px Arial';
+                    ctx.fillText('✓ Tilkoblet!', w/2, 180);
+                }
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // DNS Lookup simulator
+        const dnsDatabase = {
+            'google.com': '142.250.74.110',
+            'youtube.com': '142.250.74.78',
+            'facebook.com': '157.240.1.35',
+            'instagram.com': '157.240.1.174',
+            'twitter.com': '104.244.42.1',
+            'netflix.com': '52.6.155.51',
+            'vg.no': '195.88.55.16',
+            'nrk.no': '160.68.205.20',
+            'yr.no': '160.68.205.11'
+        };
+
+        function dnsLookup() {
+            const input = document.getElementById('dns-input').value.toLowerCase().trim();
+            const result = document.getElementById('dns-result');
+            
+            if (!input) {
+                result.innerHTML = '<span style="color:#ef4444">Skriv inn et domene!</span>';
+                return;
+            }
+            
+            const ip = dnsDatabase[input] || `${Math.floor(Math.random()*200)+50}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+            
+            result.innerHTML = `
+                <div style="background:rgba(16,185,129,0.2);padding:16px;border-radius:8px">
+                    <strong>${input}</strong> → <span style="color:#10b981;font-family:monospace">${ip}</span>
+                </div>
+            `;
+        }
+
+        // ===== WIFI ANIMATION =====
+        function initWifiAnimation() {
+            const canvas = document.getElementById('wifi-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 150;
+            
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                
+                // 2.4 GHz wave
+                ctx.strokeStyle = '#0ea5e9';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                for (let x = 0; x < w/2 - 20; x++) {
+                    const y = 75 + Math.sin((x + t) * 0.03) * 30;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                ctx.fillStyle = '#0ea5e9';
+                ctx.font = '14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('2.4 GHz', w/4, 130);
+                
+                // 5 GHz wave
+                ctx.strokeStyle = '#8b5cf6';
+                ctx.beginPath();
+                for (let x = w/2 + 20; x < w; x++) {
+                    const y = 75 + Math.sin((x + t) * 0.08) * 30;
+                    if (x === w/2 + 20) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                ctx.fillStyle = '#8b5cf6';
+                ctx.fillText('5 GHz', w * 3/4, 130);
+                
+                // Divider
+                ctx.strokeStyle = 'rgba(255,255,255,0.2)';
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(w/2, 20);
+                ctx.lineTo(w/2, 120);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                t += 2;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // WiFi strength simulator
+        function updateWifiStrength() {
+            const distance = parseInt(document.getElementById('distance-slider').value);
+            const walls = parseInt(document.getElementById('walls-slider').value);
+            
+            document.getElementById('distance-value').textContent = distance;
+            document.getElementById('walls-value').textContent = walls;
+            
+            // Simple signal strength calculation
+            let strength = 100 - (distance * 2) - (walls * 15);
+            strength = Math.max(0, Math.min(100, strength));
+            
+            let quality, color;
+            if (strength >= 80) { quality = 'Utmerket 📶📶📶📶'; color = '#10b981'; }
+            else if (strength >= 60) { quality = 'Bra 📶📶📶'; color = '#84cc16'; }
+            else if (strength >= 40) { quality = 'OK 📶📶'; color = '#f59e0b'; }
+            else if (strength >= 20) { quality = 'Svakt 📶'; color = '#ef4444'; }
+            else { quality = 'Ingen signal 💀'; color = '#7f1d1d'; }
+            
+            document.getElementById('wifi-result').innerHTML = `
+                <span style="color:${color};font-weight:bold">${quality}</span>
+                <span style="opacity:0.7;margin-left:8px">(${strength}%)</span>
+            `;
+            
+            // Draw on canvas
+            const canvas = document.getElementById('wifi-strength-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // Router
+            ctx.fillStyle = '#8b5cf6';
+            ctx.beginPath();
+            ctx.arc(50, 100, 25, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = '20px Arial';
+            ctx.textAlign = 'center';
+            ctx.fillText('📡', 50, 107);
+            
+            // Walls
+            for (let i = 0; i < walls; i++) {
+                const x = 100 + i * 50;
+                ctx.fillStyle = 'rgba(255,255,255,0.3)';
+                ctx.fillRect(x, 40, 8, 120);
+            }
+            
+            // Device
+            const deviceX = Math.min(50 + distance * 15, canvas.width - 50);
+            ctx.fillStyle = color;
+            ctx.beginPath();
+            ctx.arc(deviceX, 100, 20, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = 'white';
+            ctx.font = '16px Arial';
+            ctx.fillText('📱', deviceX, 106);
+            
+            // Signal line
+            ctx.strokeStyle = `${color}80`;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]);
+            ctx.beginPath();
+            ctx.moveTo(75, 100);
+            ctx.lineTo(deviceX - 20, 100);
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        // ===== WAVE PHYSICS ANIMATIONS =====
+        let currentMaterial = 'air';
+        let phaseShift = 0;
+        
+        function initWavePhysicsAnimations() {
+            initReflectionCanvas();
+            initDiffractionCanvas();
+            initInterferenceCanvas();
+            initAbsorptionCanvas();
+            initTwoSourceCanvas();
+            initStandingWaveCanvas();
+        }
+        
+        function updateGapLabel() {
+            const val = document.getElementById('gap-size').value;
+            const label = val < 40 ? 'Liten' : val < 70 ? 'Middels' : 'Stor';
+            document.getElementById('gap-size-val').textContent = label;
+        }
+        
+        function updatePhase() {
+            phaseShift = parseInt(document.getElementById('phase-slider').value);
+            document.getElementById('phase-val').textContent = phaseShift + '°';
+            const type = document.getElementById('phase-type');
+            if (phaseShift < 45 || phaseShift > 315) {
+                type.textContent = '(Konstruktiv)';
+                type.style.color = '#10b981';
+            } else if (phaseShift > 135 && phaseShift < 225) {
+                type.textContent = '(Destruktiv)';
+                type.style.color = '#ef4444';
+            } else {
+                type.textContent = '(Delvis)';
+                type.style.color = '#f59e0b';
+            }
+        }
+        
+        function setMaterial(mat) {
+            currentMaterial = mat;
+            ['air','wood','concrete','water','metal'].forEach(m => {
+                document.getElementById('mat-'+m).style.border = m === mat ? '2px solid #10b981' : 'none';
+            });
+            const info = document.getElementById('absorption-info');
+            const infos = {
+                air: { text: 'Luft: Nesten ingen absorpsjon - ideelt for WiFi!', color: 'rgba(16,185,129,0.2)' },
+                wood: { text: 'Tre/Gips: Lite tap (~3dB). Vanlige vegger er OK.', color: 'rgba(132,204,22,0.2)' },
+                concrete: { text: 'Betong: Moderat tap (~6-10dB). Kan være problematisk.', color: 'rgba(245,158,11,0.2)' },
+                water: { text: 'Vann: Høyt tap! Akvarier og mennesker blokkerer mye.', color: 'rgba(239,68,68,0.2)' },
+                metal: { text: 'Metall: Blokkerer nesten alt! Kjøleskap er WiFi-drepere.', color: 'rgba(220,38,38,0.2)' }
+            };
+            info.innerHTML = '<strong>' + infos[mat].text + '</strong>';
+            info.style.background = infos[mat].color;
+        }
+        
+        // REFLEKSJON - Forbedret
+        function initReflectionCanvas() {
+            const canvas = document.getElementById('reflection-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 220;
+            
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                const h = canvas.height;
+                const wallX = w * 0.75;
+                
+                // Tegn vegg med vinkel
+                ctx.save();
+                ctx.fillStyle = 'rgba(100,116,139,0.8)';
+                ctx.fillRect(wallX, 20, 20, h - 40);
+                
+                // Speil-effekt på veggen
+                ctx.fillStyle = 'rgba(200,200,255,0.3)';
+                ctx.fillRect(wallX, 20, 5, h - 40);
+                ctx.restore();
+                
+                // Sender/Ruter
+                ctx.fillStyle = '#0ea5e9';
+                ctx.beginPath();
+                ctx.arc(50, h/2, 25, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📡', 50, h/2 + 7);
+                
+                // Mottaker
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath();
+                ctx.arc(50, h - 50, 20, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '16px Arial';
+                ctx.fillText('📱', 50, h - 43);
+                
+                // Tegn kontinuerlige bølgefronter fra sender
+                const numWaves = 8;
+                for (let i = 0; i < numWaves; i++) {
+                    const radius = ((t * 2 + i * 40) % 320);
+                    if (radius > 0 && radius < wallX - 50) {
+                        const alpha = 1 - radius / (wallX - 50);
+                        ctx.strokeStyle = `rgba(14,165,233,${alpha * 0.8})`;
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.arc(50, h/2, radius, -0.4, 0.4);
+                        ctx.stroke();
+                    }
+                }
+                
+                // Reflekterte bølger
+                for (let i = 0; i < numWaves; i++) {
+                    const age = (t * 2 + i * 40) - (wallX - 50);
+                    if (age > 0 && age < 300) {
+                        const alpha = 1 - age / 300;
+                        ctx.strokeStyle = `rgba(16,185,129,${alpha * 0.6})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        // Reflektert fra veggen
+                        ctx.arc(wallX * 2 - 50, h/2, age + (wallX - 50), Math.PI - 0.5, Math.PI + 0.5);
+                        ctx.stroke();
+                    }
+                }
+                
+                // Piler som viser retning
+                ctx.strokeStyle = '#0ea5e9';
+                ctx.lineWidth = 2;
+                drawArrow(ctx, 100, h/2, wallX - 30, h/2 - 30);
+                ctx.strokeStyle = '#10b981';
+                drawArrow(ctx, wallX - 30, h/2 + 30, 80, h - 60);
+                
+                // Labels
+                ctx.font = '12px Arial';
+                ctx.fillStyle = '#0ea5e9';
+                ctx.fillText('Innkommende signal', w/2 - 50, 40);
+                ctx.fillStyle = '#10b981';
+                ctx.fillText('Reflektert signal', w/2 - 50, h - 15);
+                ctx.fillStyle = 'white';
+                ctx.fillText('VEGG', wallX + 10, h/2);
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        
+        function drawArrow(ctx, fromX, fromY, toX, toY) {
+            const headLen = 10;
+            const angle = Math.atan2(toY - fromY, toX - fromX);
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.lineTo(toX - headLen * Math.cos(angle - Math.PI/6), toY - headLen * Math.sin(angle - Math.PI/6));
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headLen * Math.cos(angle + Math.PI/6), toY - headLen * Math.sin(angle + Math.PI/6));
+            ctx.stroke();
+        }
+        
+        // DIFFRAKSJON - Forbedret
+        function initDiffractionCanvas() {
+            const canvas = document.getElementById('diffraction-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 250;
+            
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                const h = canvas.height;
+                const wallX = w * 0.4;
+                const gapSize = parseInt(document.getElementById('gap-size')?.value || 50);
+                const gapY = h / 2;
+                
+                // Vegg med åpning
+                ctx.fillStyle = 'rgba(100,116,139,0.9)';
+                ctx.fillRect(wallX - 10, 0, 20, gapY - gapSize/2);
+                ctx.fillRect(wallX - 10, gapY + gapSize/2, 20, h - gapY - gapSize/2);
+                
+                // Markér åpningen
+                ctx.strokeStyle = '#8b5cf6';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(wallX, gapY - gapSize/2);
+                ctx.lineTo(wallX, gapY + gapSize/2);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Plane bølger før åpning
+                const numWaves = 10;
+                for (let i = 0; i < numWaves; i++) {
+                    const x = wallX - 20 - ((t * 2 + i * 25) % 250);
+                    if (x > 20) {
+                        const alpha = 0.3 + 0.4 * (x / (wallX - 20));
+                        ctx.strokeStyle = `rgba(139,92,246,${alpha})`;
+                        ctx.lineWidth = 3;
+                        ctx.beginPath();
+                        ctx.moveTo(x, 30);
+                        ctx.lineTo(x, h - 30);
+                        ctx.stroke();
+                    }
+                }
+                
+                // Sirkulære bølger etter åpning (diffraksjon)
+                for (let i = 0; i < 8; i++) {
+                    const radius = ((t * 2 + i * 30) % 240);
+                    if (radius > 0) {
+                        const alpha = Math.max(0, 0.7 - radius / 300);
+                        ctx.strokeStyle = `rgba(139,92,246,${alpha})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        // Bølger sprer seg sirkulært fra åpningen
+                        ctx.arc(wallX + 10, gapY, radius, -Math.PI/2, Math.PI/2);
+                        ctx.stroke();
+                    }
+                }
+                
+                // Sender
+                ctx.fillStyle = '#8b5cf6';
+                ctx.beginPath();
+                ctx.arc(30, h/2, 20, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '16px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📡', 30, h/2 + 5);
+                
+                // Labels
+                ctx.font = '11px Arial';
+                ctx.fillStyle = 'white';
+                ctx.fillText('Plane bølger', 80, 20);
+                ctx.fillText('Bøyde bølger', w - 80, 20);
+                ctx.fillStyle = '#8b5cf6';
+                ctx.fillText('ÅPNING', wallX, h - 10);
+                
+                // Vis at bølger når "skyggeområdet"
+                ctx.fillStyle = 'rgba(16,185,129,0.3)';
+                ctx.beginPath();
+                ctx.moveTo(wallX + 10, gapY - gapSize/2);
+                ctx.lineTo(w - 20, 30);
+                ctx.lineTo(w - 20, h - 30);
+                ctx.lineTo(wallX + 10, gapY + gapSize/2);
+                ctx.closePath();
+                ctx.fill();
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        
+        // INTERFERENS - Forbedret
+        function initInterferenceCanvas() {
+            const canvas = document.getElementById('interference-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 280;
+            
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                const phase = (phaseShift / 180) * Math.PI;
+                
+                // Bølge 1
+                ctx.strokeStyle = '#0ea5e9';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                for (let x = 0; x < w; x++) {
+                    const y = 50 + Math.sin((x * 0.03) + t * 0.05) * 30;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                ctx.fillStyle = '#0ea5e9';
+                ctx.font = '12px Arial';
+                ctx.fillText('Bølge 1', 10, 25);
+                
+                // Bølge 2 (med faseforskyvning)
+                ctx.strokeStyle = '#f59e0b';
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                for (let x = 0; x < w; x++) {
+                    const y = 120 + Math.sin((x * 0.03) + t * 0.05 + phase) * 30;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                ctx.fillStyle = '#f59e0b';
+                ctx.fillText('Bølge 2 (forskjøvet ' + phaseShift + '°)', 10, 95);
+                
+                // Plusstegn
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('+', w/2, 155);
+                
+                // Separator linje
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 1;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                ctx.moveTo(0, 170);
+                ctx.lineTo(w, 170);
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Resulterende bølge
+                const isConstructive = phaseShift < 45 || phaseShift > 315;
+                const isDestructive = phaseShift > 135 && phaseShift < 225;
+                
+                ctx.strokeStyle = isConstructive ? '#10b981' : isDestructive ? '#ef4444' : '#f59e0b';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                for (let x = 0; x < w; x++) {
+                    const wave1 = Math.sin((x * 0.03) + t * 0.05) * 30;
+                    const wave2 = Math.sin((x * 0.03) + t * 0.05 + phase) * 30;
+                    const combined = wave1 + wave2;
+                    const y = 230 + combined * 0.8;
+                    if (x === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                
+                // Resultat label
+                ctx.fillStyle = isConstructive ? '#10b981' : isDestructive ? '#ef4444' : '#f59e0b';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'left';
+                const resultText = isConstructive ? '= FORSTERKET! (dobbel amplitude)' : 
+                                   isDestructive ? '= UTSLUKKET! (null amplitude)' : 
+                                   '= Delvis interferens';
+                ctx.fillText(resultText, 10, 195);
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        
+        // ABSORPSJON - Forbedret
+        function initAbsorptionCanvas() {
+            const canvas = document.getElementById('absorption-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            let t = 0;
+            
+            const materials = {
+                air: { absorption: 0.02, color: 'rgba(200,230,255,0.3)', name: 'Luft' },
+                wood: { absorption: 0.25, color: 'rgba(139,90,43,0.6)', name: 'Tre' },
+                concrete: { absorption: 0.5, color: 'rgba(128,128,128,0.7)', name: 'Betong' },
+                water: { absorption: 0.7, color: 'rgba(30,144,255,0.6)', name: 'Vann' },
+                metal: { absorption: 0.95, color: 'rgba(120,120,140,0.9)', name: 'Metall' }
+            };
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                const h = canvas.height;
+                const mat = materials[currentMaterial];
+                const matX = w * 0.4;
+                const matWidth = 60;
+                
+                // Sender
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath();
+                ctx.arc(40, h/2, 25, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '18px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📡', 40, h/2 + 6);
+                
+                // Materiale
+                ctx.fillStyle = mat.color;
+                ctx.fillRect(matX, 30, matWidth, h - 60);
+                ctx.strokeStyle = 'rgba(255,255,255,0.5)';
+                ctx.lineWidth = 2;
+                ctx.strokeRect(matX, 30, matWidth, h - 60);
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.fillText(mat.name, matX + matWidth/2, h - 15);
+                
+                // Mottaker
+                ctx.fillStyle = '#8b5cf6';
+                ctx.beginPath();
+                ctx.arc(w - 50, h/2, 25, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '18px Arial';
+                ctx.fillText('📱', w - 50, h/2 + 6);
+                
+                // Bølger før materiale (sterke)
+                for (let i = 0; i < 6; i++) {
+                    const x = 70 + ((t * 3 + i * 35) % (matX - 70));
+                    const alpha = 0.8;
+                    ctx.strokeStyle = `rgba(16,185,129,${alpha})`;
+                    ctx.lineWidth = 4;
+                    ctx.beginPath();
+                    for (let dy = -50; dy < 50; dy++) {
+                        const px = x + Math.sin(dy * 0.1 + t * 0.1) * 8;
+                        if (dy === -50) ctx.moveTo(px, h/2 + dy);
+                        else ctx.lineTo(px, h/2 + dy);
+                    }
+                    ctx.stroke();
+                }
+                
+                // Bølger etter materiale (svekket basert på absorpsjon)
+                const transmitted = 1 - mat.absorption;
+                for (let i = 0; i < 6; i++) {
+                    const baseX = (t * 3 + i * 35) % (matX - 70);
+                    const x = matX + matWidth + baseX * 0.8;
+                    if (x < w - 80 && transmitted > 0.05) {
+                        const alpha = transmitted * 0.8;
+                        const lineWidth = Math.max(1, 4 * transmitted);
+                        ctx.strokeStyle = `rgba(16,185,129,${alpha})`;
+                        ctx.lineWidth = lineWidth;
+                        ctx.beginPath();
+                        const amplitude = 8 * transmitted;
+                        for (let dy = -50 * transmitted; dy < 50 * transmitted; dy++) {
+                            const px = x + Math.sin(dy * 0.1 + t * 0.1) * amplitude;
+                            if (dy === -50 * transmitted) ctx.moveTo(px, h/2 + dy);
+                            else ctx.lineTo(px, h/2 + dy);
+                        }
+                        ctx.stroke();
+                    }
+                }
+                
+                // Signal styrke indikatorer
+                ctx.fillStyle = '#10b981';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('100%', 40, 30);
+                
+                const afterPercent = Math.round((1 - mat.absorption) * 100);
+                ctx.fillStyle = afterPercent > 50 ? '#10b981' : afterPercent > 20 ? '#f59e0b' : '#ef4444';
+                ctx.fillText(afterPercent + '%', w - 50, 30);
+                
+                // Absorbert energi
+                if (mat.absorption > 0.1) {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.font = '10px Arial';
+                    ctx.fillText('🔥 ' + Math.round(mat.absorption * 100) + '% absorbert', matX + matWidth/2, 20);
+                }
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        
+        // TO KILDER INTERFERENS - Ny
+        function initTwoSourceCanvas() {
+            const canvas = document.getElementById('two-source-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 300;
+            
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                const h = canvas.height;
+                const dist = parseInt(document.getElementById('source-dist')?.value || 100);
+                document.getElementById('source-dist-val').textContent = dist + 'px';
+                
+                const source1 = { x: w/2 - dist/2, y: h/2 };
+                const source2 = { x: w/2 + dist/2, y: h/2 };
+                
+                // Tegn interferensmønster
+                const imageData = ctx.createImageData(w, h);
+                const wavelength = 30;
+                
+                for (let y = 0; y < h; y++) {
+                    for (let x = 0; x < w; x++) {
+                        const d1 = Math.sqrt((x - source1.x)**2 + (y - source1.y)**2);
+                        const d2 = Math.sqrt((x - source2.x)**2 + (y - source2.y)**2);
+                        
+                        const phase1 = (d1 / wavelength + t * 0.05) * Math.PI * 2;
+                        const phase2 = (d2 / wavelength + t * 0.05) * Math.PI * 2;
+                        
+                        const wave1 = Math.sin(phase1);
+                        const wave2 = Math.sin(phase2);
+                        const combined = (wave1 + wave2) / 2;
+                        
+                        const idx = (y * w + x) * 4;
+                        
+                        if (combined > 0) {
+                            // Konstruktiv - grønn
+                            imageData.data[idx] = 16;
+                            imageData.data[idx + 1] = Math.floor(185 * combined);
+                            imageData.data[idx + 2] = Math.floor(129 * combined);
+                        } else {
+                            // Destruktiv - rød
+                            imageData.data[idx] = Math.floor(239 * Math.abs(combined));
+                            imageData.data[idx + 1] = Math.floor(68 * Math.abs(combined));
+                            imageData.data[idx + 2] = Math.floor(68 * Math.abs(combined));
+                        }
+                        imageData.data[idx + 3] = 150;
+                    }
+                }
+                ctx.putImageData(imageData, 0, 0);
+                
+                // Kilder
+                ctx.fillStyle = 'white';
+                ctx.beginPath();
+                ctx.arc(source1.x, source1.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.beginPath();
+                ctx.arc(source2.x, source2.y, 12, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = '#1e293b';
+                ctx.font = '10px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📡', source1.x, source1.y + 4);
+                ctx.fillText('📡', source2.x, source2.y + 4);
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+        
+        // STÅENDE BØLGER - Forbedret
+        function initStandingWaveCanvas() {
+            const canvas = document.getElementById('standing-wave-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                const h = canvas.height;
+                const midY = h / 2;
+                const freq = parseInt(document.getElementById('freq-slider')?.value || 3);
+                document.getElementById('freq-val').textContent = freq;
+                
+                const startX = 50;
+                const endX = w - 50;
+                const length = endX - startX;
+                
+                // Vegger
+                ctx.fillStyle = 'rgba(100,116,139,0.8)';
+                ctx.fillRect(startX - 15, midY - 60, 15, 120);
+                ctx.fillRect(endX, midY - 60, 15, 120);
+                
+                // Stående bølge
+                ctx.strokeStyle = '#8b5cf6';
+                ctx.lineWidth = 4;
+                ctx.beginPath();
+                
+                for (let x = startX; x <= endX; x++) {
+                    const normalizedX = (x - startX) / length;
+                    // Stående bølge = sin(kx) * cos(wt)
+                    const spatialPart = Math.sin(normalizedX * Math.PI * freq);
+                    const timePart = Math.cos(t * 0.08);
+                    const y = midY + spatialPart * timePart * 50;
+                    
+                    if (x === startX) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                }
+                ctx.stroke();
+                
+                // Envelope (maks amplitude)
+                ctx.strokeStyle = 'rgba(139,92,246,0.3)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.beginPath();
+                for (let x = startX; x <= endX; x++) {
+                    const normalizedX = (x - startX) / length;
+                    const amplitude = Math.abs(Math.sin(normalizedX * Math.PI * freq)) * 50;
+                    if (x === startX) ctx.moveTo(x, midY - amplitude);
+                    else ctx.lineTo(x, midY - amplitude);
+                }
+                ctx.stroke();
+                ctx.beginPath();
+                for (let x = startX; x <= endX; x++) {
+                    const normalizedX = (x - startX) / length;
+                    const amplitude = Math.abs(Math.sin(normalizedX * Math.PI * freq)) * 50;
+                    if (x === startX) ctx.moveTo(x, midY + amplitude);
+                    else ctx.lineTo(x, midY + amplitude);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+                
+                // Noder og buker
+                for (let i = 0; i <= freq; i++) {
+                    const nodeX = startX + (i / freq) * length;
+                    // Node
+                    ctx.fillStyle = '#ef4444';
+                    ctx.beginPath();
+                    ctx.arc(nodeX, midY, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'white';
+                    ctx.font = '8px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText('N', nodeX, midY + 3);
+                }
+                
+                for (let i = 0; i < freq; i++) {
+                    const bukX = startX + ((i + 0.5) / freq) * length;
+                    // Buk
+                    ctx.fillStyle = '#10b981';
+                    ctx.beginPath();
+                    ctx.arc(bukX, midY, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.fillStyle = 'white';
+                    ctx.font = '8px Arial';
+                    ctx.fillText('B', bukX, midY + 3);
+                }
+                
+                // Labels
+                ctx.font = '11px Arial';
+                ctx.fillStyle = '#ef4444';
+                ctx.fillText('N = Node (svakt)', startX + 30, h - 15);
+                ctx.fillStyle = '#10b981';
+                ctx.fillText('B = Buk (sterkt)', endX - 60, h - 15);
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ===== MOBILE ANIMATION =====
+        let mobileAction = 'call';
+        
+        function initMobileAnimation() {
+            const canvas = document.getElementById('mobile-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 280;
+            
+            let t = 0;
+            let phoneX = canvas.width * 0.15;
+            let dataPackets = [];
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                const h = canvas.height;
+                
+                // Bakgrunn med gradienter for celler
+                const towers = [
+                    { x: w * 0.2, y: 60, name: 'Mast A' },
+                    { x: w * 0.5, y: 60, name: 'Mast B' },
+                    { x: w * 0.8, y: 60, name: 'Mast C' }
+                ];
+                
+                // Tegn celle-områder (svakt)
+                towers.forEach((tower, i) => {
+                    const gradient = ctx.createRadialGradient(tower.x, tower.y + 50, 0, tower.x, tower.y + 50, 120);
+                    gradient.addColorStop(0, 'rgba(139,92,246,0.15)');
+                    gradient.addColorStop(1, 'rgba(139,92,246,0)');
+                    ctx.fillStyle = gradient;
+                    ctx.beginPath();
+                    ctx.arc(tower.x, tower.y + 50, 120, 0, Math.PI * 2);
+                    ctx.fill();
+                });
+                
+                // Tegn master
+                towers.forEach((tower, i) => {
+                    // Mastekropp
+                    ctx.fillStyle = '#64748b';
+                    ctx.fillRect(tower.x - 4, tower.y, 8, 70);
+                    
+                    // Antenner
+                    ctx.fillStyle = '#8b5cf6';
+                    ctx.beginPath();
+                    ctx.moveTo(tower.x - 25, tower.y + 5);
+                    ctx.lineTo(tower.x, tower.y - 20);
+                    ctx.lineTo(tower.x + 25, tower.y + 5);
+                    ctx.closePath();
+                    ctx.fill();
+                    
+                    // Radiobølger
+                    const waveIntensity = Math.sin(t * 0.1 + i) * 0.3 + 0.5;
+                    for (let r = 1; r <= 3; r++) {
+                        const radius = 30 + r * 25 + Math.sin(t * 0.1) * 5;
+                        ctx.strokeStyle = `rgba(139,92,246,${waveIntensity / r})`;
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+                        ctx.arc(tower.x, tower.y + 30, radius, 0.4 * Math.PI, 0.6 * Math.PI);
+                        ctx.stroke();
+                    }
+                    
+                    // Mast-label
+                    ctx.fillStyle = 'white';
+                    ctx.font = '10px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(tower.name, tower.x, tower.y + 85);
+                });
+                
+                // Internett-sky
+                ctx.fillStyle = 'rgba(16,185,129,0.3)';
+                ctx.beginPath();
+                ctx.arc(w/2, 20, 30, 0, Math.PI * 2);
+                ctx.arc(w/2 - 25, 25, 20, 0, Math.PI * 2);
+                ctx.arc(w/2 + 25, 25, 20, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.fillText('🌐 Internett', w/2, 25);
+                
+                // Fiber til master
+                ctx.strokeStyle = 'rgba(16,185,129,0.3)';
+                ctx.lineWidth = 2;
+                towers.forEach(tower => {
+                    ctx.beginPath();
+                    ctx.moveTo(tower.x, tower.y + 70);
+                    ctx.lineTo(tower.x, tower.y + 100);
+                    ctx.lineTo(w/2, 40);
+                    ctx.stroke();
+                });
+                
+                // Mobil bevegelse
+                if (mobileAction === 'handover') {
+                    phoneX += 1.5;
+                    if (phoneX > w * 0.85) phoneX = w * 0.15;
+                }
+                
+                // Tegn mobil
+                ctx.fillStyle = '#10b981';
+                ctx.beginPath();
+                ctx.roundRect(phoneX - 15, h - 70, 30, 50, 5);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.fillText('📱', phoneX, h - 38);
+                
+                // Finn nærmeste mast
+                let nearestTower = towers[0];
+                let nearestDist = Infinity;
+                towers.forEach(tower => {
+                    const dist = Math.abs(tower.x - phoneX);
+                    if (dist < nearestDist) {
+                        nearestDist = dist;
+                        nearestTower = tower;
+                    }
+                });
+                
+                // Tegn forbindelse til mast
+                ctx.strokeStyle = '#10b981';
+                ctx.lineWidth = 3;
+                ctx.setLineDash([]);
+                ctx.beginPath();
+                ctx.moveTo(phoneX, h - 70);
+                ctx.lineTo(nearestTower.x, nearestTower.y + 70);
+                ctx.stroke();
+                
+                // Data-pakker animasjon
+                if (mobileAction === 'call' || mobileAction === 'data') {
+                    if (t % 30 === 0) {
+                        dataPackets.push({
+                            x: phoneX,
+                            y: h - 70,
+                            targetX: nearestTower.x,
+                            targetY: nearestTower.y + 70,
+                            progress: 0
+                        });
+                    }
+                }
+                
+                // Tegn og oppdater pakker
+                dataPackets = dataPackets.filter(p => {
+                    p.progress += 0.03;
+                    if (p.progress >= 1) return false;
+                    
+                    const x = p.x + (p.targetX - p.x) * p.progress;
+                    const y = p.y + (p.targetY - p.y) * p.progress;
+                    
+                    ctx.fillStyle = mobileAction === 'call' ? '#f59e0b' : '#0ea5e9';
+                    ctx.beginPath();
+                    ctx.arc(x, y, 5, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    return true;
+                });
+                
+                // Handover-indikator
+                if (mobileAction === 'handover') {
+                    ctx.fillStyle = '#f59e0b';
+                    ctx.font = 'bold 12px Arial';
+                    ctx.fillText('🔄 Handover!', phoneX, h - 80);
+                }
+                
+                // Status
+                ctx.fillStyle = 'white';
+                ctx.font = '11px Arial';
+                ctx.textAlign = 'left';
+                const statusText = mobileAction === 'call' ? '📞 Samtale pågår...' : 
+                                   mobileAction === 'data' ? '🌐 Surfer på nett...' : 
+                                   '🚗 Beveger seg mellom master...';
+                ctx.fillText(statusText, 10, h - 10);
+                ctx.fillText('Koblet til: ' + nearestTower.name, 10, h - 25);
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+            
+            // Init cells canvas
+            initCellsCanvas();
+        }
+        
+        function initCellsCanvas() {
+            const canvas = document.getElementById('cells-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            let t = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                const h = canvas.height;
+                
+                // Tegn heksagonale celler
+                const cellSize = 60;
+                const cells = [
+                    { x: w * 0.25, y: h * 0.4, color: '#0ea5e9' },
+                    { x: w * 0.5, y: h * 0.4, color: '#8b5cf6' },
+                    { x: w * 0.75, y: h * 0.4, color: '#10b981' },
+                    { x: w * 0.375, y: h * 0.7, color: '#f59e0b' },
+                    { x: w * 0.625, y: h * 0.7, color: '#ef4444' }
+                ];
+                
+                // Tegn celler
+                cells.forEach((cell, i) => {
+                    // Heksagon celle
+                    ctx.fillStyle = cell.color + '30';
+                    ctx.strokeStyle = cell.color;
+                    ctx.lineWidth = 2;
+                    ctx.beginPath();
+                    for (let a = 0; a < 6; a++) {
+                        const angle = (a / 6) * Math.PI * 2 - Math.PI / 2;
+                        const x = cell.x + Math.cos(angle) * cellSize;
+                        const y = cell.y + Math.sin(angle) * cellSize;
+                        if (a === 0) ctx.moveTo(x, y);
+                        else ctx.lineTo(x, y);
+                    }
+                    ctx.closePath();
+                    ctx.fill();
+                    ctx.stroke();
+                    
+                    // Mast i senter
+                    ctx.fillStyle = cell.color;
+                    ctx.beginPath();
+                    ctx.arc(cell.x, cell.y, 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    // Pulserende signal
+                    const pulse = 20 + Math.sin(t * 0.1 + i) * 10;
+                    ctx.strokeStyle = cell.color + '60';
+                    ctx.lineWidth = 1;
+                    ctx.beginPath();
+                    ctx.arc(cell.x, cell.y, pulse, 0, Math.PI * 2);
+                    ctx.stroke();
+                });
+                
+                // Mobil som beveger seg
+                const phoneX = w * 0.2 + ((t * 1.5) % (w * 0.6));
+                const phoneY = h * 0.5 + Math.sin(t * 0.05) * 30;
+                
+                ctx.fillStyle = 'white';
+                ctx.font = '20px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('📱', phoneX, phoneY);
+                
+                // Label
+                ctx.fillStyle = 'white';
+                ctx.font = '11px Arial';
+                ctx.fillText('Celler overlapper for kontinuerlig dekning', w/2, h - 10);
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ===== CLOUD ANIMATION =====
+        function initCloudAnimation() {
+            const canvas = document.getElementById('cloud-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            let t = 0;
+            let packets = [];
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                const w = canvas.width;
+                
+                // User
+                ctx.fillStyle = 'rgba(16,185,129,0.3)';
+                ctx.beginPath();
+                ctx.arc(60, 100, 30, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '24px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('👤', 60, 108);
+                ctx.font = '11px Arial';
+                ctx.fillText('Du', 60, 145);
+                
+                // Cloud
+                ctx.fillStyle = 'rgba(139,92,246,0.3)';
+                ctx.beginPath();
+                ctx.arc(w/2, 80, 40, 0, Math.PI * 2);
+                ctx.arc(w/2 - 35, 90, 25, 0, Math.PI * 2);
+                ctx.arc(w/2 + 35, 90, 25, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = '28px Arial';
+                ctx.fillText('☁️', w/2, 95);
+                ctx.font = '11px Arial';
+                ctx.fillText('Skyen', w/2, 140);
+                
+                // Data center
+                ctx.fillStyle = 'rgba(245,158,11,0.3)';
+                ctx.fillRect(w - 100, 60, 80, 80);
+                ctx.fillStyle = 'white';
+                ctx.font = '32px Arial';
+                ctx.fillText('🏢', w - 60, 110);
+                ctx.font = '11px Arial';
+                ctx.fillText('Datasenter', w - 60, 155);
+                
+                // Server icons inside
+                ctx.font = '14px Arial';
+                ctx.fillText('🖥️🖥️', w - 60, 85);
+                
+                // Animated connection
+                const pulseAlpha = 0.3 + Math.sin(t * 0.1) * 0.2;
+                ctx.strokeStyle = `rgba(139,92,246,${pulseAlpha})`;
+                ctx.lineWidth = 3;
+                ctx.beginPath();
+                ctx.moveTo(90, 100);
+                ctx.lineTo(w/2 - 50, 90);
+                ctx.stroke();
+                ctx.beginPath();
+                ctx.moveTo(w/2 + 50, 90);
+                ctx.lineTo(w - 100, 100);
+                ctx.stroke();
+                
+                t++;
+                requestAnimationFrame(draw);
+            }
+            draw();
+        }
+
+        // ===== QUIZ =====
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+            quizAnswered = [];
+            quizScore = 0;
+            document.getElementById('quiz-result').classList.add('hidden');
+
+            quizQuestions.forEach((q, qIndex) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<h4 style="margin-bottom:12px">${qIndex + 1}. ${q.question}</h4>`;
+                
+                q.options.forEach((opt, oIndex) => {
+                    const option = document.createElement('div');
+                    option.className = 'quiz-option';
+                    option.textContent = opt;
+                    option.onclick = () => checkAnswer(qIndex, oIndex, option);
+                    card.appendChild(option);
+                });
+                
+                container.appendChild(card);
+            });
+        }
+
+        function checkAnswer(qIndex, oIndex, element) {
+            if (quizAnswered.includes(qIndex)) return;
+            quizAnswered.push(qIndex);
+            
+            const correct = quizQuestions[qIndex].correct;
+            const options = element.parentElement.querySelectorAll('.quiz-option');
+            
+            options.forEach((opt, i) => {
+                if (i === correct) opt.classList.add('correct');
+                else if (i === oIndex) opt.classList.add('wrong');
+                else opt.classList.add('disabled');
+            });
+            
+            if (oIndex === correct) quizScore++;
+            
+            if (quizAnswered.length === quizQuestions.length) {
+                setTimeout(() => {
+                    document.getElementById('quiz-result').classList.remove('hidden');
+                    document.getElementById('quiz-score').textContent = 
+                        `Du fikk ${quizScore} av ${quizQuestions.length} riktige!`;
+                }, 500);
+            }
+        }
+
+        function resetQuiz() {
+            initQuiz();
+        }
+
+        // ===== FLASHCARDS =====
+        function updateFlashcard() {
+            const card = flashcards[currentCard];
+            document.getElementById('card-front').textContent = card.front;
+            document.getElementById('card-back').textContent = card.back;
+            document.getElementById('flashcard').classList.remove('flipped');
+            document.getElementById('card-progress').textContent = `Kort ${currentCard + 1} av ${flashcards.length}`;
+            document.getElementById('card-progress-bar').style.width = `${((currentCard + 1) / flashcards.length) * 100}%`;
+            document.getElementById('known-count').textContent = `Du kan: ${knownCards.length} av ${flashcards.length}`;
+        }
+
+        function flipCard() {
+            document.getElementById('flashcard').classList.toggle('flipped');
+        }
+
+        function nextCard() {
+            currentCard = (currentCard + 1) % flashcards.length;
+            updateFlashcard();
+        }
+
+        function prevCard() {
+            currentCard = (currentCard - 1 + flashcards.length) % flashcards.length;
+            updateFlashcard();
+        }
+
+        function markKnown() {
+            if (!knownCards.includes(currentCard)) {
+                knownCards.push(currentCard);
+                document.getElementById('known-count').textContent = `Du kan: ${knownCards.length} av ${flashcards.length}`;
+            }
+            nextCard();
+        }
+
+        // ===== IP LOOKUP =====
+        function showPublicIP() {
+            document.getElementById('public-ip').innerHTML = '<span style="opacity:0.7">Laster...</span>';
+            // Simulated - real would use an API
+            setTimeout(() => {
+                const fakeIP = `${84 + Math.floor(Math.random()*20)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}.${Math.floor(Math.random()*255)}`;
+                document.getElementById('public-ip').innerHTML = `<span style="color:#0ea5e9">${fakeIP}</span>`;
+            }, 500);
+        }
+
+        // ===== NOTES & HOMEWORK SAVING =====
+        function saveAllNotes() {
+            const data = {
+                name: document.getElementById('hw-name')?.value || '',
+                network: document.getElementById('hw-network')?.value || document.getElementById('notes-network')?.value || '',
+                wifi: document.getElementById('hw-wifi')?.value || document.getElementById('notes-wifi')?.value || '',
+                waves: document.getElementById('hw-waves')?.value || document.getElementById('notes-waves')?.value || '',
+                mobile: document.getElementById('hw-mobile')?.value || document.getElementById('notes-mobile')?.value || '',
+                cloud: document.getElementById('hw-cloud')?.value || document.getElementById('notes-cloud')?.value || '',
+                path: document.getElementById('hw-path')?.value || ''
+            };
+            localStorage.setItem('okt3_notes', JSON.stringify(data));
+        }
+
+        function loadAllNotes() {
+            try {
+                const saved = localStorage.getItem('okt3_notes');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    // Load into homework fields
+                    if (document.getElementById('hw-name')) document.getElementById('hw-name').value = data.name || '';
+                    if (document.getElementById('hw-network')) document.getElementById('hw-network').value = data.network || '';
+                    if (document.getElementById('hw-wifi')) document.getElementById('hw-wifi').value = data.wifi || '';
+                    if (document.getElementById('hw-waves')) document.getElementById('hw-waves').value = data.waves || '';
+                    if (document.getElementById('hw-mobile')) document.getElementById('hw-mobile').value = data.mobile || '';
+                    if (document.getElementById('hw-cloud')) document.getElementById('hw-cloud').value = data.cloud || '';
+                    if (document.getElementById('hw-path')) document.getElementById('hw-path').value = data.path || '';
+                    // Also load into notes fields if they exist
+                    if (document.getElementById('notes-network')) document.getElementById('notes-network').value = data.network || '';
+                    if (document.getElementById('notes-wifi')) document.getElementById('notes-wifi').value = data.wifi || '';
+                    if (document.getElementById('notes-waves')) document.getElementById('notes-waves').value = data.waves || '';
+                    if (document.getElementById('notes-mobile')) document.getElementById('notes-mobile').value = data.mobile || '';
+                    if (document.getElementById('notes-cloud')) document.getElementById('notes-cloud').value = data.cloud || '';
+                }
+            } catch(e) {
+                console.log('Kunne ikke laste lagrede notater');
+            }
+        }
+        
+        // Sync notes fields to homework fields
+        function syncNotesToHomework() {
+            const fields = ['network', 'wifi', 'waves', 'mobile', 'cloud'];
+            fields.forEach(f => {
+                const noteEl = document.getElementById('notes-' + f);
+                const hwEl = document.getElementById('hw-' + f);
+                if (noteEl && hwEl && noteEl.value && !hwEl.value) {
+                    hwEl.value = noteEl.value;
+                }
+            });
+        }
+
+        function exportToWord() {
+            syncNotesToHomework();
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel, AlignmentType } = docx;
+            
+            const studentName = document.getElementById('hw-name')?.value || "Elev";
+            const date = new Date().toLocaleDateString('no-NO');
+            
+            const network = document.getElementById('hw-network')?.value || '(Ikke besvart)';
+            const wifi = document.getElementById('hw-wifi')?.value || '(Ikke besvart)';
+            const waves = document.getElementById('hw-waves')?.value || '(Ikke besvart)';
+            const mobile = document.getElementById('hw-mobile')?.value || '(Ikke besvart)';
+            const cloud = document.getElementById('hw-cloud')?.value || '(Ikke besvart)';
+            const path = document.getElementById('hw-path')?.value || '(Ikke besvart)';
+            
+            function textToParagraphs(text) {
+                return text.split('\n').map(line => 
+                    new Paragraph({ children: [new TextRun({ text: line || ' ', size: 24 })] })
+                );
+            }
+            
+            const doc = new Document({
+                styles: { default: { document: { run: { font: "Arial", size: 24 } } } },
+                sections: [{
+                    properties: { page: { margin: { top: 1440, right: 1440, bottom: 1440, left: 1440 } } },
+                    children: [
+                        new Paragraph({ heading: HeadingLevel.TITLE, alignment: AlignmentType.CENTER,
+                            children: [new TextRun({ text: "Hjemmeoppgave - Økt 3", bold: true, size: 48 })] }),
+                        new Paragraph({ alignment: AlignmentType.CENTER,
+                            children: [new TextRun({ text: "Nettverk og Internett", size: 28, color: "666666" })] }),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        new Paragraph({ children: [new TextRun({ text: "Navn: ", bold: true }), new TextRun(studentName)] }),
+                        new Paragraph({ children: [new TextRun({ text: "Dato: ", bold: true }), new TextRun(date)] }),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        new Paragraph({ heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "1. Hjemmenettverk", bold: true, size: 32, color: "8b5cf6" })] }),
+                        ...textToParagraphs(network),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        new Paragraph({ heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "2. WiFi - 2.4 GHz vs 5 GHz", bold: true, size: 32, color: "8b5cf6" })] }),
+                        ...textToParagraphs(wifi),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        new Paragraph({ heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "3. Bølgefenomener", bold: true, size: 32, color: "8b5cf6" })] }),
+                        ...textToParagraphs(waves),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        new Paragraph({ heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "4. Mobilnett", bold: true, size: 32, color: "8b5cf6" })] }),
+                        ...textToParagraphs(mobile),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        new Paragraph({ heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "5. Skytjenester", bold: true, size: 32, color: "8b5cf6" })] }),
+                        ...textToParagraphs(cloud),
+                        new Paragraph({ children: [new TextRun("")] }),
+                        
+                        new Paragraph({ heading: HeadingLevel.HEADING_1,
+                            children: [new TextRun({ text: "6. Ekstraoppgave: Beskriv veien", bold: true, size: 32, color: "8b5cf6" })] }),
+                        ...textToParagraphs(path)
+                    ]
+                }]
+            });
+            
+            Packer.toBlob(doc).then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Hjemmeoppgave_Okt3_${studentName.replace(/\s+/g, '_')}_${date.replace(/\./g, '-')}.docx`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+            });
+        }
+
+        function exportHomework() {
+            syncNotesToHomework();
+            const studentName = document.getElementById('hw-name')?.value || "Elev";
+            const date = new Date().toLocaleDateString('no-NO');
+            let content = `HJEMMEOPPGAVE - ØKT 3: NETTVERK OG INTERNETT\n`;
+            content += `Navn: ${studentName}\nDato: ${date}\n${'='.repeat(50)}\n\n`;
+            content += `1. HJEMMENETTVERK:\n${document.getElementById('hw-network')?.value || '(Ikke besvart)'}\n\n`;
+            content += `2. WIFI - 2.4 GHz VS 5 GHz:\n${document.getElementById('hw-wifi')?.value || '(Ikke besvart)'}\n\n`;
+            content += `3. BØLGEFENOMENER:\n${document.getElementById('hw-waves')?.value || '(Ikke besvart)'}\n\n`;
+            content += `4. MOBILNETT:\n${document.getElementById('hw-mobile')?.value || '(Ikke besvart)'}\n\n`;
+            content += `5. SKYTJENESTER:\n${document.getElementById('hw-cloud')?.value || '(Ikke besvart)'}\n\n`;
+            content += `6. BESKRIV VEIEN:\n${document.getElementById('hw-path')?.value || '(Ikke besvart)'}\n`;
+            
+            const blob = new Blob([content], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `hjemmeoppgave_okt3_${studentName.replace(/\s+/g, '_')}_${date.replace(/\./g, '-')}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
+
+        function copyHomework() {
+            syncNotesToHomework();
+            const studentName = document.getElementById('hw-name')?.value || "Elev";
+            let content = `HJEMMEOPPGAVE ØKT 3 - ${studentName}\n\n`;
+            content += `HJEMMENETTVERK:\n${document.getElementById('hw-network')?.value || '(Ikke besvart)'}\n\n`;
+            content += `WIFI:\n${document.getElementById('hw-wifi')?.value || '(Ikke besvart)'}\n\n`;
+            content += `BØLGEFENOMENER:\n${document.getElementById('hw-waves')?.value || '(Ikke besvart)'}\n\n`;
+            content += `MOBILNETT:\n${document.getElementById('hw-mobile')?.value || '(Ikke besvart)'}\n\n`;
+            content += `SKYTJENESTER:\n${document.getElementById('hw-cloud')?.value || '(Ikke besvart)'}\n\n`;
+            content += `BESKRIV VEIEN:\n${document.getElementById('hw-path')?.value || '(Ikke besvart)'}\n`;
+            
+            navigator.clipboard.writeText(content).then(() => {
+                alert('Kopiert til utklippstavle!');
+            });
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', function() {
+            updateFlashcard();
+            loadAllNotes();
+            
+            // Auto-save all notes fields
+            const noteFields = ['hw-name', 'hw-path', 'hw-network', 'hw-wifi', 'hw-waves', 'hw-mobile', 'hw-cloud',
+                               'notes-network', 'notes-wifi', 'notes-waves', 'notes-mobile', 'notes-cloud'];
+            noteFields.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.addEventListener('input', saveAllNotes);
+            });
+        });
+    </script>
+</body>
+</html>
