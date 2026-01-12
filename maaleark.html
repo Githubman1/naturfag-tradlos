@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Måleark: Bølger og Trådløs Kommunikasjon - VG1 Naturfag</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #1e3a5f 0%, #2d5a87 100%);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 20px 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 { font-size: 24px; margin-bottom: 8px; }
+        .header p { opacity: 0.8; }
+        
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .card h2 { 
+            font-size: 20px; 
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid rgba(255,255,255,0.2);
+        }
+        .card h3 { font-size: 16px; margin: 16px 0 8px 0; color: #fbbf24; }
+        
+        .card.blue { border-left: 4px solid #0ea5e9; }
+        .card.green { border-left: 4px solid #10b981; }
+        .card.orange { border-left: 4px solid #f59e0b; }
+        .card.purple { border-left: 4px solid #8b5cf6; }
+        .card.red { border-left: 4px solid #ef4444; }
+        
+        .checklist {
+            list-style: none;
+            padding: 0;
+        }
+        .checklist li {
+            padding: 12px 16px;
+            margin: 8px 0;
+            background: rgba(255,255,255,0.05);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .checklist li:hover {
+            background: rgba(255,255,255,0.1);
+        }
+        .checklist li.checked {
+            background: rgba(16,185,129,0.2);
+            border-left: 3px solid #10b981;
+        }
+        .checklist li.checked .checkbox {
+            background: #10b981;
+            border-color: #10b981;
+        }
+        .checklist li.checked .checkbox::after {
+            content: '✓';
+            color: white;
+            font-size: 14px;
+        }
+        .checkbox {
+            width: 24px;
+            height: 24px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+            margin-top: 12px;
+        }
+        .concept {
+            background: rgba(255,255,255,0.08);
+            padding: 12px;
+            border-radius: 8px;
+        }
+        .concept strong {
+            color: #fbbf24;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .concept span {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .formula-box {
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-family: 'Times New Roman', serif;
+            font-size: 20px;
+            text-align: center;
+        }
+        
+        .progress-bar {
+            background: rgba(255,255,255,0.1);
+            border-radius: 10px;
+            height: 20px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #10b981, #34d399);
+            border-radius: 10px;
+            transition: width 0.5s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .tip-box {
+            background: rgba(251,191,36,0.15);
+            border: 1px solid rgba(251,191,36,0.3);
+            border-radius: 8px;
+            padding: 12px 16px;
+            margin: 12px 0;
+            font-size: 14px;
+        }
+        .tip-box strong { color: #fbbf24; }
+        
+        .practice-q {
+            background: rgba(255,255,255,0.05);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+        }
+        .practice-q p {
+            margin-bottom: 12px;
+            font-weight: 500;
+        }
+        .practice-q .answer {
+            background: rgba(16,185,129,0.2);
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+        }
+        .practice-q .answer.show {
+            display: block;
+        }
+        .show-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .show-btn:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        
+        .print-btn {
+            background: #10b981;
+            border: none;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            margin: 8px;
+        }
+        .print-btn:hover {
+            background: #059669;
+        }
+        
+        .score-display {
+            font-size: 48px;
+            font-weight: bold;
+            text-align: center;
+            color: #10b981;
+        }
+        
+        @media print {
+            body { background: white; color: black; }
+            .card { border: 1px solid #ccc; break-inside: avoid; }
+            .no-print { display: none; }
+            .checklist li { border: 1px solid #ddd; }
+            .checkbox { border-color: #333; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📋 Måleark: Bølger og Trådløs Kommunikasjon</h1>
+        <p>VG1 Naturfag • Forberedelse til prøve</p>
+    </header>
+    
+    <main class="main">
+        <!-- PROGRESS -->
+        <div class="card">
+            <h2>📊 Din fremgang</h2>
+            <p>Kryss av etter hvert som du føler deg trygg på hvert tema:</p>
+            <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill" style="width: 0%">0%</div>
+            </div>
+            <p style="text-align: center; font-size: 14px; opacity: 0.7;">
+                <span id="checked-count">0</span> av <span id="total-count">0</span> læringsmål
+            </p>
+        </div>
+
+        <!-- DEL 1: BØLGER -->
+        <div class="card blue">
+            <h2>🌊 Del 1: Bølger og svingninger</h2>
+            
+            <h3>Læringsmål - Jeg kan:</h3>
+            <ul class="checklist" id="list-waves">
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare hva en svingning er</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare hva en bølge er og hvordan den overfører energi</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Definere frekvens (Hz) og periode (s)</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Definere bølgelengde (λ) og amplitude</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Bruke formelen v = f × λ</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare forskjellen på transversale og longitudinale bølger</li>
+            </ul>
+            
+            <h3>Nøkkelbegreper</h3>
+            <div class="concept-grid">
+                <div class="concept">
+                    <strong>Frekvens (f)</strong>
+                    <span>Antall svingninger per sekund. Måles i Hz.</span>
+                </div>
+                <div class="concept">
+                    <strong>Periode (T)</strong>
+                    <span>Tid for én svingning. T = 1/f</span>
+                </div>
+                <div class="concept">
+                    <strong>Bølgelengde (λ)</strong>
+                    <span>Avstand mellom to bølgetopper. Måles i meter.</span>
+                </div>
+                <div class="concept">
+                    <strong>Amplitude</strong>
+                    <span>Maks utslag fra likevekt. Bestemmer styrke/lydstyrke.</span>
+                </div>
+            </div>
+            
+            <h3>Viktig formel</h3>
+            <div class="formula-box">
+                v = f × λ
+                <br><span style="font-size: 14px;">(hastighet = frekvens × bølgelengde)</span>
+            </div>
+            
+            <div class="tip-box">
+                <strong>💡 Huskeregel:</strong> Høy frekvens = kort bølgelengde. Lav frekvens = lang bølgelengde. (Når hastigheten er konstant)
+            </div>
+        </div>
+
+        <!-- DEL 2: MEKANISKE OG EM BØLGER -->
+        <div class="card orange">
+            <h2>⚡ Del 2: Mekaniske og elektromagnetiske bølger</h2>
+            
+            <h3>Læringsmål - Jeg kan:</h3>
+            <ul class="checklist" id="list-em">
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare forskjellen på mekaniske og elektromagnetiske bølger</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Gi eksempler på mekaniske bølger (lyd, vannbølger)</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare at lydbølger trenger et medium</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Navngi delene av det elektromagnetiske spekteret</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare at alle EM-bølger har samme hastighet (c = 3×10⁸ m/s)</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare sammenhengen mellom frekvens og energi i EM-stråling</li>
+            </ul>
+            
+            <h3>EM-spekteret (lav → høy frekvens)</h3>
+            <div style="background: linear-gradient(90deg, #ef4444, #f59e0b, #eab308, #22c55e, #0ea5e9, #6366f1, #8b5cf6); padding: 16px; border-radius: 8px; margin: 12px 0; text-align: center;">
+                Radio → Mikro → Infrarød → <strong>Synlig lys</strong> → UV → Røntgen → Gamma
+            </div>
+            
+            <div class="concept-grid">
+                <div class="concept">
+                    <strong>Mekaniske bølger</strong>
+                    <span>Trenger medium (lyd, vann). Kan ikke gå i vakuum.</span>
+                </div>
+                <div class="concept">
+                    <strong>EM-bølger</strong>
+                    <span>Trenger IKKE medium. Går i vakuum med lysets hastighet.</span>
+                </div>
+            </div>
+            
+            <div class="tip-box">
+                <strong>💡 Prøvetips:</strong> Husk rekkefølgen med "Ring Mor I dag, Ser UV-Rødt Gamma" (Radio, Mikrobølger, Infrarød, Synlig, UV, Røntgen, Gamma)
+            </div>
+        </div>
+
+        <!-- DEL 3: BØLGEFENOMENER -->
+        <div class="card purple">
+            <h2>🔮 Del 3: Bølgefenomener</h2>
+            
+            <h3>Læringsmål - Jeg kan:</h3>
+            <ul class="checklist" id="list-phenomena">
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare refleksjon av bølger</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare brytning (refraksjon) av bølger</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare diffraksjon (bøying rundt hindringer)</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare interferens (konstruktiv og destruktiv)</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare absorpsjon av bølger</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Gi praktiske eksempler på disse fenomenene</li>
+            </ul>
+            
+            <h3>Nøkkelbegreper</h3>
+            <div class="concept-grid">
+                <div class="concept">
+                    <strong>Refleksjon</strong>
+                    <span>Bølgen spretter tilbake fra overflate. Eks: ekko, speil.</span>
+                </div>
+                <div class="concept">
+                    <strong>Brytning</strong>
+                    <span>Bølgen endrer retning ved overgang mellom medier.</span>
+                </div>
+                <div class="concept">
+                    <strong>Diffraksjon</strong>
+                    <span>Bølgen bøyer seg rundt hindringer/gjennom åpninger.</span>
+                </div>
+                <div class="concept">
+                    <strong>Interferens</strong>
+                    <span>Bølger møtes og forsterker/utslukker hverandre.</span>
+                </div>
+            </div>
+            
+            <div class="tip-box">
+                <strong>💡 Eksempel:</strong> WiFi kan gå rundt hjørner pga. diffraksjon, men signalet svekkes gjennom vegger pga. absorpsjon!
+            </div>
+        </div>
+
+        <!-- DEL 4: TRÅDLØS KOMMUNIKASJON -->
+        <div class="card green">
+            <h2>📡 Del 4: Trådløs kommunikasjon</h2>
+            
+            <h3>Læringsmål - Jeg kan:</h3>
+            <ul class="checklist" id="list-wireless">
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare prinsippet bak trådløs kommunikasjon (sender → signal → mottaker)</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare forskjellen på analog og digital signaloverføring</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare hva modulasjon er</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare hvordan WiFi fungerer (2.4 GHz vs 5 GHz)</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare hvordan mobilnettet fungerer (basestasjoner, handover)</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Nevne fordeler med 5G over 4G</li>
+                <li onclick="toggleCheck(this)"><div class="checkbox"></div>Forklare grunnleggende om kryptering</li>
+            </ul>
+            
+            <h3>Nøkkelbegreper</h3>
+            <div class="concept-grid">
+                <div class="concept">
+                    <strong>Analog signal</strong>
+                    <span>Kontinuerlig signal. Kan ha uendelig mange verdier.</span>
+                </div>
+                <div class="concept">
+                    <strong>Digitalt signal</strong>
+                    <span>Bare 0 og 1. Mer robust mot støy.</span>
+                </div>
+                <div class="concept">
+                    <strong>Modulasjon</strong>
+                    <span>Endre bærebølgen for å kode informasjon.</span>
+                </div>
+                <div class="concept">
+                    <strong>Protokoll</strong>
+                    <span>Regler for hvordan enheter kommuniserer.</span>
+                </div>
+            </div>
+            
+            <h3>WiFi-frekvenser</h3>
+            <div class="concept-grid">
+                <div class="concept">
+                    <strong>2.4 GHz</strong>
+                    <span>Lengre rekkevidde, bedre gjennom vegger, tregere</span>
+                </div>
+                <div class="concept">
+                    <strong>5 GHz</strong>
+                    <span>Kortere rekkevidde, raskere hastighet</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- FLASHCARDS -->
+        <div class="card" style="border-left: 4px solid #ec4899;">
+            <h2>🃏 Flashcards - Øv på begreper</h2>
+            <p>Klikk på kortet for å se svaret. Øv til du kan alle!</p>
+            
+            <div style="text-align: center; margin: 24px 0;">
+                <div id="flashcard" onclick="flipFlashcard()" style="
+                    width: 100%;
+                    max-width: 400px;
+                    height: 200px;
+                    margin: 0 auto;
+                    cursor: pointer;
+                    perspective: 1000px;
+                ">
+                    <div id="flashcard-inner" style="
+                        position: relative;
+                        width: 100%;
+                        height: 100%;
+                        transition: transform 0.6s;
+                        transform-style: preserve-3d;
+                    ">
+                        <div id="card-front" style="
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            backface-visibility: hidden;
+                            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+                            border-radius: 16px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 22px;
+                            font-weight: bold;
+                            padding: 20px;
+                            text-align: center;
+                        "></div>
+                        <div id="card-back" style="
+                            position: absolute;
+                            width: 100%;
+                            height: 100%;
+                            backface-visibility: hidden;
+                            background: linear-gradient(135deg, #10b981, #059669);
+                            border-radius: 16px;
+                            display: flex;
+                            align-items: center;
+                            justify-content: center;
+                            font-size: 16px;
+                            padding: 20px;
+                            transform: rotateY(180deg);
+                            text-align: center;
+                        "></div>
+                    </div>
+                </div>
+                
+                <p id="fc-progress" style="margin-top: 16px; opacity: 0.7;">Kort 1 av 20</p>
+                
+                <div style="display: flex; gap: 12px; justify-content: center; margin-top: 16px; flex-wrap: wrap;">
+                    <button class="show-btn" onclick="prevFlashcard()">← Forrige</button>
+                    <button class="show-btn" onclick="markKnown()" style="background: rgba(16,185,129,0.3);">✓ Kan dette!</button>
+                    <button class="show-btn" onclick="nextFlashcard()">Neste →</button>
+                </div>
+                
+                <div style="margin-top: 16px;">
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 8px; height: 8px; overflow: hidden;">
+                        <div id="fc-progress-bar" style="height: 100%; background: #ec4899; transition: width 0.3s; width: 5%;"></div>
+                    </div>
+                    <p id="fc-known" style="font-size: 14px; margin-top: 8px;">Du kan: 0 av 20</p>
+                </div>
+                
+                <button class="show-btn" onclick="shuffleCards()" style="margin-top: 12px;">🔀 Stokk kortene</button>
+            </div>
+        </div>
+
+        <!-- KOBLE BEGREP -->
+        <div class="card" style="border-left: 4px solid #f59e0b;">
+            <h2>🔗 Koble begrep med forklaring</h2>
+            <p>Dra begrepet til riktig forklaring (eller klikk for å velge):</p>
+            
+            <div id="match-game" style="margin-top: 16px;">
+                <div id="match-terms" style="display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 16px;"></div>
+                <div id="match-defs"></div>
+            </div>
+            
+            <div id="match-result" style="margin-top: 16px; display: none;"></div>
+            <button class="show-btn" onclick="resetMatchGame()" style="margin-top: 12px;">🔄 Prøv på nytt</button>
+        </div>
+
+        <!-- ØVINGSOPPGAVER -->
+        <div class="card red">
+            <h2>✏️ Øvingsoppgaver</h2>
+            <p>Test deg selv! Klikk for å se fasit.</p>
+            
+            <div class="practice-q">
+                <p><strong>1.</strong> En radiosender sender på 100 MHz. Hva er bølgelengden? (c = 3×10⁸ m/s)</p>
+                <button class="show-btn" onclick="toggleAnswer(this)">Vis svar</button>
+                <div class="answer">
+                    λ = v/f = (3×10⁸ m/s) / (100×10⁶ Hz) = <strong>3 meter</strong>
+                </div>
+            </div>
+            
+            <div class="practice-q">
+                <p><strong>2.</strong> Hvorfor kan du høre noen som roper rundt et hjørne, selv om du ikke kan se dem?</p>
+                <button class="show-btn" onclick="toggleAnswer(this)">Vis svar</button>
+                <div class="answer">
+                    Pga. <strong>diffraksjon</strong> - lydbølgene bøyer seg rundt hjørnet. Lydbølger har relativt lang bølgelengde sammenlignet med hjørnet.
+                </div>
+            </div>
+            
+            <div class="practice-q">
+                <p><strong>3.</strong> Hvorfor er det ingen lyd i verdensrommet?</p>
+                <button class="show-btn" onclick="toggleAnswer(this)">Vis svar</button>
+                <div class="answer">
+                    Lyd er en <strong>mekanisk bølge</strong> som trenger et medium (luft, vann, fast stoff) for å bevege seg. I verdensrommet er det vakuum - ingen partikler som kan vibrere.
+                </div>
+            </div>
+            
+            <div class="practice-q">
+                <p><strong>4.</strong> Forklar hvorfor 2.4 GHz WiFi har bedre rekkevidde enn 5 GHz.</p>
+                <button class="show-btn" onclick="toggleAnswer(this)">Vis svar</button>
+                <div class="answer">
+                    <strong>Lavere frekvens = lengre bølgelengde.</strong> Lengre bølger difrakterer (bøyer) bedre rundt hindringer og absorberes mindre av vegger. Derfor når 2.4 GHz lenger, men er tregere.
+                </div>
+            </div>
+            
+            <div class="practice-q">
+                <p><strong>5.</strong> Hva er forskjellen på analog og digital signaloverføring?</p>
+                <button class="show-btn" onclick="toggleAnswer(this)">Vis svar</button>
+                <div class="answer">
+                    <strong>Analog:</strong> Kontinuerlig signal med uendelig mange verdier. Sårbar for støy.<br>
+                    <strong>Digital:</strong> Bare 0 og 1 (av/på). Robust mot støy, kan feiljekkes, enkel å kopiere perfekt.
+                </div>
+            </div>
+            
+            <div class="practice-q">
+                <p><strong>6.</strong> Hvorfor er 5G raskere enn 4G?</p>
+                <button class="show-btn" onclick="toggleAnswer(this)">Vis svar</button>
+                <div class="answer">
+                    5G bruker <strong>høyere frekvenser</strong> (opptil mmWave) som kan bære mer data. Har også <strong>lavere latens</strong> (1-10 ms vs 30-50 ms) og støtter flere samtidige enheter.
+                </div>
+            </div>
+        </div>
+
+        <!-- BUTTONS -->
+        <div class="card no-print" style="text-align: center;">
+            <h2>🛠️ Verktøy</h2>
+            <button class="print-btn" onclick="window.print()">🖨️ Skriv ut måleark</button>
+            <button class="print-btn" onclick="resetAll()" style="background: #6366f1;">🔄 Nullstill alle kryss</button>
+            <button class="print-btn" onclick="saveProgress()" style="background: #f59e0b;">💾 Lagre fremgang</button>
+        </div>
+        
+        <!-- LINK TIL ØKTER -->
+        <div class="card no-print" style="text-align: center;">
+            <h2>📚 Øv mer i det interaktive systemet</h2>
+            <p style="margin-bottom: 16px;">Gå tilbake til øktene for animasjoner, simuleringer og quiz:</p>
+            <a href="index.html" class="print-btn" style="text-decoration: none; display: inline-block;">🎓 Gå til læringssystemet</a>
+        </div>
+    </main>
+
+    <script>
+        function toggleCheck(element) {
+            element.classList.toggle('checked');
+            updateProgress();
+            saveProgress();
+        }
+        
+        function toggleAnswer(btn) {
+            const answer = btn.nextElementSibling;
+            answer.classList.toggle('show');
+            btn.textContent = answer.classList.contains('show') ? 'Skjul svar' : 'Vis svar';
+        }
+        
+        function updateProgress() {
+            const total = document.querySelectorAll('.checklist li').length;
+            const checked = document.querySelectorAll('.checklist li.checked').length;
+            const percent = Math.round((checked / total) * 100);
+            
+            document.getElementById('progress-fill').style.width = percent + '%';
+            document.getElementById('progress-fill').textContent = percent + '%';
+            document.getElementById('checked-count').textContent = checked;
+            document.getElementById('total-count').textContent = total;
+        }
+        
+        function resetAll() {
+            if (confirm('Er du sikker på at du vil nullstille alle kryss?')) {
+                document.querySelectorAll('.checklist li').forEach(li => {
+                    li.classList.remove('checked');
+                });
+                updateProgress();
+                localStorage.removeItem('maaleark_progress');
+            }
+        }
+        
+        function saveProgress() {
+            const checked = [];
+            document.querySelectorAll('.checklist li').forEach((li, i) => {
+                if (li.classList.contains('checked')) checked.push(i);
+            });
+            localStorage.setItem('maaleark_progress', JSON.stringify(checked));
+        }
+        
+        function loadProgress() {
+            const saved = localStorage.getItem('maaleark_progress');
+            if (saved) {
+                const checked = JSON.parse(saved);
+                document.querySelectorAll('.checklist li').forEach((li, i) => {
+                    if (checked.includes(i)) li.classList.add('checked');
+                });
+            }
+            updateProgress();
+        }
+        
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProgress();
+            initFlashcards();
+            initMatchGame();
+        });
+        
+        // ===== FLASHCARDS =====
+        const flashcardData = [
+            { term: 'Frekvens', def: 'Antall svingninger per sekund. Måles i Hertz (Hz).' },
+            { term: 'Periode', def: 'Tiden det tar for én hel svingning. T = 1/f' },
+            { term: 'Bølgelengde (λ)', def: 'Avstanden mellom to bølgetopper. Måles i meter.' },
+            { term: 'Amplitude', def: 'Maksimalt utslag fra likevekt. Bestemmer styrke/energi.' },
+            { term: 'Transversal bølge', def: 'Svingning vinkelrett på bevegelsesretning. Eks: lys, tau.' },
+            { term: 'Longitudinal bølge', def: 'Svingning parallelt med bevegelsesretning. Eks: lyd.' },
+            { term: 'Mekanisk bølge', def: 'Bølge som trenger medium. Eks: lyd, vannbølger.' },
+            { term: 'EM-bølge', def: 'Elektromagnetisk bølge. Trenger ikke medium, går i vakuum.' },
+            { term: 'Refleksjon', def: 'Bølgen spretter tilbake fra en overflate. Eks: ekko, speil.' },
+            { term: 'Brytning (refraksjon)', def: 'Bølgen endrer retning ved overgang mellom medier.' },
+            { term: 'Diffraksjon', def: 'Bølgen bøyer seg rundt hindringer eller gjennom åpninger.' },
+            { term: 'Interferens', def: 'Bølger møtes og forsterker eller utslukker hverandre.' },
+            { term: 'Absorpsjon', def: 'Bølgen mister energi når den går gjennom et materiale.' },
+            { term: 'Modulasjon', def: 'Endre en bærebølge for å kode informasjon.' },
+            { term: 'Analog signal', def: 'Kontinuerlig signal med uendelig mange verdier.' },
+            { term: 'Digitalt signal', def: 'Signal med bare to verdier: 0 og 1.' },
+            { term: 'Protokoll', def: 'Sett med regler for hvordan enheter kommuniserer.' },
+            { term: 'Kryptering', def: 'Gjøre data uleselig for andre ved hjelp av en nøkkel.' },
+            { term: 'IoT', def: 'Internet of Things - hverdagslige ting koblet til internett.' },
+            { term: 'Latens', def: 'Forsinkelse i signaloverføring. Måles i millisekunder.' }
+        ];
+        
+        let currentFC = 0;
+        let knownFC = [];
+        let fcFlipped = false;
+        let shuffledCards = [...flashcardData];
+        
+        function initFlashcards() {
+            updateFlashcard();
+        }
+        
+        function updateFlashcard() {
+            document.getElementById('card-front').textContent = shuffledCards[currentFC].term;
+            document.getElementById('card-back').textContent = shuffledCards[currentFC].def;
+            document.getElementById('flashcard-inner').style.transform = 'rotateY(0deg)';
+            fcFlipped = false;
+            document.getElementById('fc-progress').textContent = `Kort ${currentFC + 1} av ${shuffledCards.length}`;
+            document.getElementById('fc-progress-bar').style.width = `${((currentFC + 1) / shuffledCards.length) * 100}%`;
+            document.getElementById('fc-known').textContent = `Du kan: ${knownFC.length} av ${shuffledCards.length}`;
+        }
+        
+        function flipFlashcard() {
+            fcFlipped = !fcFlipped;
+            document.getElementById('flashcard-inner').style.transform = fcFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+        }
+        
+        function nextFlashcard() {
+            currentFC = (currentFC + 1) % shuffledCards.length;
+            updateFlashcard();
+        }
+        
+        function prevFlashcard() {
+            currentFC = (currentFC - 1 + shuffledCards.length) % shuffledCards.length;
+            updateFlashcard();
+        }
+        
+        function markKnown() {
+            if (!knownFC.includes(currentFC)) knownFC.push(currentFC);
+            document.getElementById('fc-known').textContent = `Du kan: ${knownFC.length} av ${shuffledCards.length}`;
+            nextFlashcard();
+        }
+        
+        function shuffleCards() {
+            shuffledCards = [...flashcardData].sort(() => Math.random() - 0.5);
+            currentFC = 0;
+            knownFC = [];
+            updateFlashcard();
+        }
+        
+        // ===== MATCH GAME =====
+        const matchPairs = [
+            { term: 'Frekvens', def: 'Antall svingninger per sekund' },
+            { term: 'Bølgelengde', def: 'Avstand mellom to bølgetopper' },
+            { term: 'Diffraksjon', def: 'Bølger bøyer rundt hindringer' },
+            { term: 'Interferens', def: 'Bølger forsterker/utslukker hverandre' },
+            { term: 'Refleksjon', def: 'Bølger spretter tilbake' },
+            { term: 'Absorpsjon', def: 'Bølger mister energi i materiale' }
+        ];
+        
+        let selectedTerm = null;
+        let matchedCount = 0;
+        
+        function initMatchGame() {
+            const termsDiv = document.getElementById('match-terms');
+            const defsDiv = document.getElementById('match-defs');
+            termsDiv.innerHTML = '';
+            defsDiv.innerHTML = '';
+            selectedTerm = null;
+            matchedCount = 0;
+            document.getElementById('match-result').style.display = 'none';
+            
+            // Shuffle terms
+            const shuffledTerms = [...matchPairs].sort(() => Math.random() - 0.5);
+            const shuffledDefs = [...matchPairs].sort(() => Math.random() - 0.5);
+            
+            shuffledTerms.forEach((pair, i) => {
+                const btn = document.createElement('button');
+                btn.className = 'match-term';
+                btn.textContent = pair.term;
+                btn.dataset.term = pair.term;
+                btn.style.cssText = 'padding: 10px 16px; border-radius: 8px; border: 2px solid #8b5cf6; background: rgba(139,92,246,0.2); color: white; cursor: pointer; font-size: 14px;';
+                btn.onclick = () => selectTerm(btn);
+                termsDiv.appendChild(btn);
+            });
+            
+            shuffledDefs.forEach((pair, i) => {
+                const div = document.createElement('div');
+                div.className = 'match-def';
+                div.dataset.term = pair.term;
+                div.textContent = pair.def;
+                div.style.cssText = 'padding: 12px 16px; margin: 8px 0; border-radius: 8px; border: 2px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05); cursor: pointer; font-size: 14px;';
+                div.onclick = () => selectDef(div);
+                defsDiv.appendChild(div);
+            });
+        }
+        
+        function selectTerm(btn) {
+            if (btn.classList.contains('matched')) return;
+            document.querySelectorAll('.match-term').forEach(b => b.style.borderColor = '#8b5cf6');
+            btn.style.borderColor = '#fbbf24';
+            selectedTerm = btn.dataset.term;
+        }
+        
+        function selectDef(div) {
+            if (!selectedTerm || div.classList.contains('matched')) return;
+            
+            if (div.dataset.term === selectedTerm) {
+                // Correct!
+                div.style.borderColor = '#10b981';
+                div.style.background = 'rgba(16,185,129,0.2)';
+                div.classList.add('matched');
+                
+                const termBtn = document.querySelector(`.match-term[data-term="${selectedTerm}"]`);
+                termBtn.style.borderColor = '#10b981';
+                termBtn.style.background = 'rgba(16,185,129,0.2)';
+                termBtn.classList.add('matched');
+                
+                matchedCount++;
+                selectedTerm = null;
+                
+                if (matchedCount === matchPairs.length) {
+                    document.getElementById('match-result').style.display = 'block';
+                    document.getElementById('match-result').innerHTML = '<div style="background: rgba(16,185,129,0.2); padding: 16px; border-radius: 8px; text-align: center;"><strong>🎉 Alle riktig!</strong></div>';
+                }
+            } else {
+                // Wrong - flash red
+                div.style.borderColor = '#ef4444';
+                setTimeout(() => {
+                    div.style.borderColor = 'rgba(255,255,255,0.2)';
+                }, 500);
+            }
+        }
+        
+        function resetMatchGame() {
+            initMatchGame();
+        }
+    </script>
+</body>
+</html>
