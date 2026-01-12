@@ -1,0 +1,2166 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Økt 4: Sikkerhet og Fremtiden - VG1 Naturfag</title>
+    <script src="https://unpkg.com/docx@8.0.0/build/index.umd.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+        
+        .header {
+            background: rgba(0,0,0,0.3);
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .header h1 { font-size: 20px; color: #10b981; }
+        .back-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-decoration: none;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.2); }
+        
+        nav {
+            background: rgba(0,0,0,0.2);
+            padding: 12px;
+            overflow-x: auto;
+            white-space: nowrap;
+        }
+        .nav-inner {
+            display: flex;
+            gap: 8px;
+            min-width: max-content;
+        }
+        .nav-btn {
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: white;
+            padding: 10px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            transition: all 0.2s;
+        }
+        .nav-btn:hover { background: rgba(16,185,129,0.3); }
+        .nav-btn.active { background: #10b981; }
+        .nav-btn.done { border: 2px solid #10b981; }
+        
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 24px;
+        }
+        .section { display: none; }
+        .section.active { display: block; }
+        
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            margin-bottom: 20px;
+            border: 1px solid rgba(255,255,255,0.1);
+        }
+        .card h2 { font-size: 24px; margin-bottom: 16px; }
+        .card h3 { font-size: 18px; margin-bottom: 12px; color: #e2e8f0; }
+        .card h4 { font-size: 16px; margin-bottom: 8px; }
+        .card p { opacity: 0.9; margin-bottom: 12px; }
+        .card.green { border-left: 4px solid #10b981; }
+        .card.purple { border-left: 4px solid #8b5cf6; }
+        .card.blue { border-left: 4px solid #0ea5e9; }
+        .card.orange { border-left: 4px solid #f59e0b; }
+        .card.red { border-left: 4px solid #ef4444; }
+        
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .btn-green { background: #10b981; color: white; }
+        .btn-green:hover { background: #059669; }
+        .btn-purple { background: #8b5cf6; color: white; }
+        .btn-orange { background: #f59e0b; color: white; }
+        .btn-blue { background: #0ea5e9; color: white; }
+        .btn-ghost { background: rgba(255,255,255,0.1); color: white; }
+        .btn-ghost:hover { background: rgba(255,255,255,0.2); }
+        
+        .input, .textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border-radius: 8px;
+            border: 2px solid rgba(255,255,255,0.2);
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-size: 16px;
+        }
+        .input:focus, .textarea:focus {
+            outline: none;
+            border-color: #10b981;
+        }
+        .textarea { min-height: 100px; resize: vertical; font-family: inherit; }
+        
+        .canvas-container {
+            background: #1e293b;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 16px 0;
+        }
+        canvas { width: 100%; display: block; }
+        
+        .tag {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 13px;
+            margin: 4px;
+        }
+        .tag.green { background: rgba(16,185,129,0.3); color: #34d399; }
+        .tag.purple { background: rgba(139,92,246,0.3); color: #a78bfa; }
+        .tag.blue { background: rgba(14,165,233,0.3); color: #38bdf8; }
+        .tag.orange { background: rgba(245,158,11,0.3); color: #fbbf24; }
+        .tag.red { background: rgba(239,68,68,0.3); color: #f87171; }
+        
+        .info-box {
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.3);
+            border-radius: 12px;
+            padding: 16px;
+            margin: 16px 0;
+        }
+        .info-box.warning {
+            background: rgba(245,158,11,0.1);
+            border-color: rgba(245,158,11,0.3);
+        }
+        .info-box.danger {
+            background: rgba(239,68,68,0.1);
+            border-color: rgba(239,68,68,0.3);
+        }
+        
+        .strength-meter {
+            height: 10px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 5px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+        .strength-fill {
+            height: 100%;
+            transition: all 0.3s;
+            border-radius: 5px;
+        }
+        
+        .encryption-display {
+            font-family: 'Courier New', monospace;
+            background: rgba(0,0,0,0.3);
+            padding: 16px;
+            border-radius: 8px;
+            margin: 12px 0;
+            font-size: 18px;
+            letter-spacing: 2px;
+            min-height: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .key-display {
+            display: flex;
+            gap: 4px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: 16px 0;
+        }
+        .key-char {
+            width: 36px;
+            height: 36px;
+            background: rgba(139,92,246,0.3);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: monospace;
+            font-size: 14px;
+        }
+        .key-char.highlight { background: #8b5cf6; }
+        
+        .slider-container {
+            margin: 16px 0;
+        }
+        .slider {
+            width: 100%;
+            height: 8px;
+            -webkit-appearance: none;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            outline: none;
+        }
+        .slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 24px;
+            height: 24px;
+            background: #10b981;
+            border-radius: 50%;
+            cursor: pointer;
+        }
+        
+        .device-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 12px;
+            margin: 16px 0;
+        }
+        .device {
+            background: rgba(255,255,255,0.05);
+            border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .device:hover { border-color: rgba(255,255,255,0.4); }
+        .device.on {
+            border-color: #10b981;
+            background: rgba(16,185,129,0.2);
+        }
+        .device-icon { font-size: 32px; margin-bottom: 8px; }
+        .device-name { font-size: 14px; margin-bottom: 4px; }
+        .device-status { font-size: 12px; opacity: 0.7; }
+        
+        .attack-log {
+            background: rgba(0,0,0,0.4);
+            border-radius: 8px;
+            padding: 12px;
+            font-family: monospace;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        .attack-log .line {
+            padding: 4px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .attack-log .line.success { color: #10b981; }
+        .attack-log .line.fail { color: #ef4444; }
+        .attack-log .line.warning { color: #f59e0b; }
+        
+        .comparison-bars {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            margin: 16px 0;
+        }
+        .comp-bar-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 4px;
+            font-size: 14px;
+        }
+        .comp-bar {
+            height: 24px;
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+        .comp-bar-fill {
+            height: 100%;
+            border-radius: 12px;
+            transition: width 1s ease-out;
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            padding-right: 8px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 50%;
+            top: 0;
+            bottom: 0;
+            width: 4px;
+            background: rgba(255,255,255,0.2);
+            transform: translateX(-50%);
+        }
+        .timeline-item {
+            display: flex;
+            margin-bottom: 30px;
+            position: relative;
+        }
+        .timeline-item:nth-child(odd) { flex-direction: row; }
+        .timeline-item:nth-child(even) { flex-direction: row-reverse; }
+        .timeline-content {
+            width: 45%;
+            background: rgba(255,255,255,0.05);
+            padding: 16px;
+            border-radius: 12px;
+        }
+        .timeline-dot {
+            position: absolute;
+            left: 50%;
+            top: 20px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            transform: translateX(-50%);
+        }
+        
+        @media (max-width: 600px) {
+            .timeline::before { left: 20px; }
+            .timeline-item { flex-direction: column !important; }
+            .timeline-content { width: 100%; margin-left: 50px; }
+            .timeline-dot { left: 20px; }
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>🔐 Økt 4: Sikkerhet og Fremtiden</h1>
+        <a href="index.html" class="back-btn">← Tilbake</a>
+    </header>
+    
+    <nav>
+        <div class="nav-inner">
+            <button class="nav-btn active" onclick="showSection('intro')">📖 Intro</button>
+            <button class="nav-btn" onclick="showSection('crypto')">🔐 Kryptering</button>
+            <button class="nav-btn" onclick="showSection('passwords')">🔑 Passord</button>
+            <button class="nav-btn" onclick="showSection('attacks')">⚔️ Angrep</button>
+            <button class="nav-btn" onclick="showSection('privacy')">👁️ Personvern</button>
+            <button class="nav-btn" onclick="showSection('5g')">📱 5G/6G</button>
+            <button class="nav-btn" onclick="showSection('iot')">🏠 IoT</button>
+            <button class="nav-btn" onclick="showSection('future')">🔮 Fremtiden</button>
+            <button class="nav-btn" onclick="showSection('flashcards')">🃏 Flashcards</button>
+            <button class="nav-btn" onclick="showSection('quiz')">📝 Quiz</button>
+            <button class="nav-btn" onclick="showSection('homework')">📄 Oppgave</button>
+        </div>
+    </nav>
+    
+    <main class="main">
+        <!-- INTRO -->
+        <div id="section-intro" class="section active">
+            <div class="card">
+                <h2>🔐 Sikkerhet og Fremtiden</h2>
+                <p style="font-size: 18px;">I denne økten lærer vi hvordan vi holder informasjon trygg på internett, og hva fremtidens teknologi bringer.</p>
+            </div>
+            
+            <div class="card green">
+                <h3>🎯 Læringsmål</h3>
+                <p>Etter denne økten skal du kunne:</p>
+                <ul style="padding-left: 20px; margin-top: 12px;">
+                    <li>Forklare hvordan kryptering beskytter data</li>
+                    <li>Lage sterke passord og forstå 2FA</li>
+                    <li>Gjenkjenne vanlige cyberangrep</li>
+                    <li>Forstå personvern og digitalt fotavtrykk</li>
+                    <li>Beskrive forskjellen mellom 4G, 5G og 6G</li>
+                    <li>Forklare hva IoT (tingenes internett) er</li>
+                </ul>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Visste du?</strong><br>
+                Hver dag sendes over 300 milliarder e-poster globalt. Uten kryptering kunne hvem som helst lese dem!
+            </div>
+            
+            <div class="card">
+                <h3>📚 Oversikt over emner</h3>
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div style="background: rgba(139,92,246,0.2); padding: 16px; border-radius: 12px;">
+                        <h4>🔐 Kryptering</h4>
+                        <p style="font-size: 14px;">Hvordan gjøre meldinger uleselige for andre</p>
+                    </div>
+                    <div style="background: rgba(16,185,129,0.2); padding: 16px; border-radius: 12px;">
+                        <h4>🔑 Passord</h4>
+                        <p style="font-size: 14px;">Sterke passord og tofaktor</p>
+                    </div>
+                    <div style="background: rgba(239,68,68,0.2); padding: 16px; border-radius: 12px;">
+                        <h4>⚔️ Angrep</h4>
+                        <p style="font-size: 14px;">Phishing, hacking, forsvar</p>
+                    </div>
+                    <div style="background: rgba(14,165,233,0.2); padding: 16px; border-radius: 12px;">
+                        <h4>📱 Fremtiden</h4>
+                        <p style="font-size: 14px;">5G, 6G, IoT, smarte hjem</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('crypto'); markDone('intro')">Start: Kryptering →</button>
+            </div>
+        </div>
+
+        <!-- KRYPTERING -->
+        <div id="section-crypto" class="section">
+            <div class="card">
+                <h2>🔐 Kryptering</h2>
+                <p style="font-size: 17px;">Kryptering gjør meldinger om til "hemmelig kode" som bare mottakeren kan lese.</p>
+            </div>
+            
+            <div class="card blue">
+                <h3>🤔 Hvorfor kryptering?</h3>
+                <p>Når du sender en melding på internett, passerer den gjennom mange datamaskiner:</p>
+                <div class="canvas-container" style="padding: 20px;">
+                    <canvas id="message-journey" height="150"></canvas>
+                </div>
+                <p><strong>Uten kryptering:</strong> Alle mellommenn kan lese meldingen din!</p>
+                <p><strong>Med kryptering:</strong> Meldingen er som en låst boks - bare mottakeren har nøkkelen.</p>
+            </div>
+            
+            <div class="card purple">
+                <h3>🎮 Prøv selv: Caesar-kryptering</h3>
+                <p>En av de eldste krypteringsmetodene! Hver bokstav flyttes et visst antall plasser i alfabetet.</p>
+                
+                <div class="slider-container">
+                    <label>Nøkkel (antall plasser): <strong id="caesar-key-display">3</strong></label>
+                    <input type="range" class="slider" id="caesar-key" min="1" max="25" value="3" oninput="updateCaesar()">
+                </div>
+                
+                <div class="key-display" id="alphabet-display"></div>
+                
+                <div style="margin-top: 20px;">
+                    <label>Din melding:</label>
+                    <input type="text" class="input" id="caesar-input" placeholder="Skriv en melding..." oninput="updateCaesar()" value="HEMMELIG">
+                </div>
+                
+                <div style="margin-top: 16px;">
+                    <p style="opacity: 0.7;">Kryptert melding:</p>
+                    <div class="encryption-display" id="caesar-output">KHPPHOLJ</div>
+                </div>
+                
+                <div class="info-box" style="margin-top: 16px;">
+                    <strong>📜 Historisk fakta:</strong> Julius Caesar brukte denne metoden for å sende hemmelige militære meldinger for over 2000 år siden!
+                </div>
+            </div>
+            
+            <div class="card green">
+                <h3>🔒 Moderne kryptering: AES</h3>
+                <p>I dag bruker vi mye sterkere kryptering. AES (Advanced Encryption Standard) er standarden:</p>
+                
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div>
+                        <h4>Caesar (gammelt)</h4>
+                        <ul style="font-size: 14px; padding-left: 20px;">
+                            <li>26 mulige nøkler</li>
+                            <li>Knekkes på sekunder</li>
+                            <li>Brukt for 2000 år siden</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>AES-256 (moderne)</h4>
+                        <ul style="font-size: 14px; padding-left: 20px;">
+                            <li>2²⁵⁶ mulige nøkler</li>
+                            <li>Umulig å knekke</li>
+                            <li>Brukes av banker, myndigheter</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="info-box" style="margin-top: 16px;">
+                    <strong>🤯 Hvor mange nøkler er 2²⁵⁶?</strong><br>
+                    Det er flere enn antall atomer i universet! Selv med verdens raskeste superdatamaskin ville det ta lenger enn universets alder å prøve alle.
+                </div>
+            </div>
+            
+            <div class="card orange">
+                <h3>🔑 Symmetrisk vs Asymmetrisk</h3>
+                
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div style="background: rgba(245,158,11,0.2); padding: 16px; border-radius: 12px;">
+                        <h4>🔐 Symmetrisk</h4>
+                        <p style="font-size: 14px;">Samme nøkkel låser og åpner</p>
+                        <p style="font-size: 13px; opacity: 0.8;">Problem: Hvordan dele nøkkelen trygt?</p>
+                        <p style="font-size: 13px; margin-top: 8px;">Eksempel: AES, WiFi-passord</p>
+                    </div>
+                    <div style="background: rgba(139,92,246,0.2); padding: 16px; border-radius: 12px;">
+                        <h4>🔓🔐 Asymmetrisk</h4>
+                        <p style="font-size: 14px;">To nøkler: offentlig + privat</p>
+                        <p style="font-size: 13px; opacity: 0.8;">Alle kan kryptere, bare du kan dekryptere</p>
+                        <p style="font-size: 13px; margin-top: 8px;">Eksempel: HTTPS, e-post</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card">
+                <h3>🌐 HTTPS - Kryptering du bruker hver dag</h3>
+                <p>Når du ser 🔒 i nettleseren, er forbindelsen kryptert med HTTPS:</p>
+                <div class="canvas-container" style="padding: 20px;">
+                    <canvas id="https-demo" height="180"></canvas>
+                </div>
+                <button class="btn btn-blue" onclick="animateHTTPS()">▶️ Se hvordan HTTPS fungerer</button>
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('passwords'); markDone('crypto')">Neste: Passord →</button>
+            </div>
+        </div>
+
+        <!-- PASSORD -->
+        <div id="section-passwords" class="section">
+            <div class="card">
+                <h2>🔑 Passord og autentisering</h2>
+                <p style="font-size: 17px;">Et sterkt passord er din første forsvarslinje mot hackere.</p>
+            </div>
+            
+            <div class="card purple">
+                <h3>💪 Test passordstyrken din</h3>
+                <p>Skriv inn et passord for å se hvor sterkt det er:</p>
+                
+                <input type="text" class="input" id="password-test" placeholder="Skriv et testpassord..." oninput="checkPasswordStrength()">
+                
+                <div class="strength-meter">
+                    <div class="strength-fill" id="strength-fill" style="width: 0%; background: #ef4444;"></div>
+                </div>
+                
+                <div id="strength-text" style="font-weight: bold; margin-bottom: 12px;">Skriv et passord for å teste</div>
+                
+                <div id="password-feedback" style="font-size: 14px;"></div>
+                
+                <div id="crack-time" style="margin-top: 12px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px; display: none;">
+                    <strong>⏱️ Tid å knekke:</strong> <span id="crack-time-value"></span>
+                </div>
+            </div>
+            
+            <div class="card green">
+                <h3>✅ Oppskrift på sterkt passord</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4 style="color: #10b981;">✓ Gjør dette</h4>
+                        <ul style="padding-left: 20px; font-size: 14px;">
+                            <li>Minst 12 tegn</li>
+                            <li>Bland STORE og små bokstaver</li>
+                            <li>Bruk tall og symboler (!@#$)</li>
+                            <li>Bruk passordbehandler</li>
+                            <li>Unikt passord per tjeneste</li>
+                            <li>Bruk passfrase: "MinKattSpiser3Fisker!"</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4 style="color: #ef4444;">✗ Unngå dette</h4>
+                        <ul style="padding-left: 20px; font-size: 14px;">
+                            <li>Navn, fødselsdato, kjælenavn</li>
+                            <li>Vanlige ord (passord123, qwerty)</li>
+                            <li>Samme passord overalt</li>
+                            <li>For korte passord (&lt;8 tegn)</li>
+                            <li>Dele passord med andre</li>
+                            <li>Skrive ned på post-it lapper</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card blue">
+                <h3>🔐 Tofaktorautentisering (2FA)</h3>
+                <p>To bevis på at du er deg - mye sikrere!</p>
+                
+                <div class="canvas-container" style="padding: 20px;">
+                    <canvas id="2fa-demo" height="200"></canvas>
+                </div>
+                <button class="btn btn-blue" onclick="animate2FA()">▶️ Se hvordan 2FA fungerer</button>
+                
+                <div class="grid-2" style="margin-top: 20px;">
+                    <div class="info-box">
+                        <strong>1️⃣ Noe du VET</strong><br>
+                        Passord, PIN-kode
+                    </div>
+                    <div class="info-box">
+                        <strong>2️⃣ Noe du HAR</strong><br>
+                        Mobil, sikkerhetsnøkkel
+                    </div>
+                </div>
+                
+                <p style="margin-top: 16px;"><strong>Typer 2FA:</strong></p>
+                <ul style="padding-left: 20px; font-size: 14px;">
+                    <li><strong>SMS-kode</strong> - Bra, men kan hackes</li>
+                    <li><strong>Autentiserings-app</strong> (Google Authenticator) - Bedre!</li>
+                    <li><strong>Fysisk sikkerhetsnøkkel</strong> - Best, men koster penger</li>
+                    <li><strong>Biometri</strong> - Fingeravtrykk, ansikt</li>
+                </ul>
+            </div>
+            
+            <div class="info-box warning">
+                <strong>⚠️ Viktig!</strong> Selv med 2FA må du ha et sterkt passord. 2FA er et ekstra lag, ikke en erstatning!
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('attacks'); markDone('passwords')">Neste: Cyberangrep →</button>
+            </div>
+        </div>
+
+        <!-- ANGREP -->
+        <div id="section-attacks" class="section">
+            <div class="card">
+                <h2>⚔️ Cyberangrep og forsvar</h2>
+                <p style="font-size: 17px;">Kjenn fienden! Ved å forstå hvordan hackere jobber, kan du beskytte deg.</p>
+            </div>
+            
+            <div class="card red">
+                <h3>🎣 Phishing - Sosial manipulering</h3>
+                <p>Phishing er når angripere utgir seg for å være noen du stoler på.</p>
+                
+                <div style="background: rgba(0,0,0,0.3); padding: 20px; border-radius: 12px; margin: 16px 0;">
+                    <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+                        <span style="font-size: 24px;">📧</span>
+                        <div>
+                            <strong>Fra: support@banken-norge.com</strong><br>
+                            <span style="font-size: 13px; color: #ef4444;">⚠️ Falsk! Ekte bank bruker @dnb.no eller @nordea.no</span>
+                        </div>
+                    </div>
+                    <div style="background: white; color: black; padding: 16px; border-radius: 8px;">
+                        <p><strong>Din konto er blokkert!</strong></p>
+                        <p style="font-size: 14px;">Klikk her for å verifisere: <span style="color: blue; text-decoration: underline;">www.dnb-sikkerhet.fake.com/login</span></p>
+                        <p style="font-size: 13px; color: #ef4444; margin-top: 8px;">⚠️ Falsk lenke! Ekte URL er www.dnb.no</p>
+                    </div>
+                </div>
+                
+                <h4>🛡️ Slik oppdager du phishing:</h4>
+                <ul style="padding-left: 20px; font-size: 14px;">
+                    <li>Sjekk avsenderadressen nøye</li>
+                    <li>Hold musepekeren over lenker før du klikker</li>
+                    <li>Banker ber ALDRI om passord via e-post</li>
+                    <li>Dårlig språk/grammatikk er rødt flagg</li>
+                    <li>Haster det veldig? Vær skeptisk!</li>
+                </ul>
+            </div>
+            
+            <div class="card orange">
+                <h3>💥 Brute Force - Prøv alle kombinasjoner</h3>
+                <p>Hackere kan prøve millioner av passord per sekund!</p>
+                
+                <div style="margin: 16px 0;">
+                    <label>Velg et passord å "knekke":</label>
+                    <select class="input" id="brute-password" style="margin-top: 8px;">
+                        <option value="abc">abc (3 tegn)</option>
+                        <option value="hemmelig">hemmelig (8 tegn)</option>
+                        <option value="Passord123">Passord123 (10 tegn)</option>
+                        <option value="Kj#9mP2$xL">Kj#9mP2$xL (10 komplekst)</option>
+                    </select>
+                </div>
+                
+                <button class="btn btn-orange" onclick="startBruteForce()">⚔️ Start angrep</button>
+                
+                <div class="attack-log" id="brute-log" style="margin-top: 16px;">
+                    <div class="line">Klar til angrep...</div>
+                </div>
+                
+                <div id="brute-result" style="margin-top: 12px; display: none;"></div>
+            </div>
+            
+            <div class="card purple">
+                <h3>🦠 Malware - Ondsinnet programvare</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4>🔒 Ransomware</h4>
+                        <p style="font-size: 14px;">Låser filene dine, krever løsepenger</p>
+                    </div>
+                    <div>
+                        <h4>🕵️ Spyware</h4>
+                        <p style="font-size: 14px;">Overvåker alt du gjør</p>
+                    </div>
+                    <div>
+                        <h4>🐴 Trojaner</h4>
+                        <p style="font-size: 14px;">Ser ufarlig ut, men er skadelig</p>
+                    </div>
+                    <div>
+                        <h4>🐛 Virus</h4>
+                        <p style="font-size: 14px;">Sprer seg selv til andre filer</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card green">
+                <h3>🛡️ Slik beskytter du deg</h3>
+                <ol style="padding-left: 20px;">
+                    <li><strong>Hold programvare oppdatert</strong> - Oppdateringer fikser sikkerhetshull</li>
+                    <li><strong>Bruk antivirus</strong> - Windows Defender er gratis og bra</li>
+                    <li><strong>Vær skeptisk</strong> - Ikke klikk på ukjente lenker/vedlegg</li>
+                    <li><strong>Ta backup</strong> - Beskytt mot ransomware</li>
+                    <li><strong>Bruk VPN på offentlig WiFi</strong> - Krypterer trafikken din</li>
+                </ol>
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('privacy'); markDone('attacks')">Neste: Personvern →</button>
+            </div>
+        </div>
+
+        <!-- PERSONVERN -->
+        <div id="section-privacy" class="section">
+            <div class="card">
+                <h2>👁️ Personvern på nett</h2>
+                <p style="font-size: 17px;">Hvem følger med på hva du gjør? Mer enn du tror!</p>
+            </div>
+            
+            <div class="card red">
+                <h3>🍪 Cookies og sporing</h3>
+                <p>Cookies er små datafiler som nettsider lagrer på datamaskinen din.</p>
+                
+                <div class="canvas-container" style="padding: 20px;">
+                    <canvas id="tracking-canvas" height="250"></canvas>
+                </div>
+                <button class="btn btn-orange" onclick="animateTracking()">👁️ Se hvem som sporer deg</button>
+                
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div style="background: rgba(16,185,129,0.2); padding: 12px; border-radius: 8px;">
+                        <h4 style="color: #10b981;">✓ Nødvendige cookies</h4>
+                        <p style="font-size: 13px;">Husker innlogging, handlekurv, språkvalg</p>
+                    </div>
+                    <div style="background: rgba(239,68,68,0.2); padding: 12px; border-radius: 8px;">
+                        <h4 style="color: #ef4444;">✗ Sporings-cookies</h4>
+                        <p style="font-size: 13px;">Følger deg på tvers av nettsider for reklame</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card orange">
+                <h3>👣 Ditt digitale fotavtrykk</h3>
+                <p>Alt du gjør på nett etterlater spor som kan samles:</p>
+                
+                <div style="display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0;">
+                    <span class="tag orange">Søkehistorikk</span>
+                    <span class="tag orange">Likes og delinger</span>
+                    <span class="tag orange">Kommentarer</span>
+                    <span class="tag orange">Bilder</span>
+                    <span class="tag orange">Plasseringsdata</span>
+                    <span class="tag orange">Kjøpshistorikk</span>
+                    <span class="tag orange">Venner</span>
+                    <span class="tag orange">Musikksmak</span>
+                </div>
+                
+                <div class="info-box warning">
+                    <strong>🤔 Tenk over dette:</strong> Arbeidsgivere og universiteter søker ofte opp kandidater på sosiale medier. Det du poster i dag kan påvirke fremtiden din!
+                </div>
+            </div>
+            
+            <div class="card green">
+                <h3>🛡️ Beskytt personvernet ditt</h3>
+                <ol style="padding-left: 20px;">
+                    <li><strong>Bruk privat modus</strong> - Lagrer ikke historikk lokalt</li>
+                    <li><strong>VPN</strong> - Skjuler IP-adressen din</li>
+                    <li><strong>Blokker sporere</strong> - Bruk uBlock Origin eller lignende</li>
+                    <li><strong>Les personvernerklæringer</strong> - Vet hva du godtar</li>
+                    <li><strong>Begrens deling</strong> - Tenk før du poster</li>
+                    <li><strong>Bruk DuckDuckGo</strong> - Søkemotor som ikke sporer</li>
+                </ol>
+            </div>
+            
+            <div class="card purple">
+                <h3>⚖️ GDPR - Dine rettigheter</h3>
+                <p>I Europa (inkludert Norge) har du sterke rettigheter:</p>
+                <ul style="padding-left: 20px; margin-top: 12px;">
+                    <li><strong>Innsyn</strong> - Be om å se alle data de har om deg</li>
+                    <li><strong>Sletting</strong> - "Retten til å bli glemt"</li>
+                    <li><strong>Portabilitet</strong> - Ta med data til annen tjeneste</li>
+                    <li><strong>Protest</strong> - Nekte markedsføring</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('5g'); markDone('privacy')">Neste: 5G/6G →</button>
+            </div>
+        </div>
+
+        <!-- 5G/6G -->
+        <div id="section-5g" class="section">
+            <div class="card">
+                <h2>📱 5G og 6G - Fremtidens mobilnett</h2>
+                <p style="font-size: 17px;">Raskere, smartere, overalt!</p>
+            </div>
+            
+            <div class="card blue">
+                <h3>⚡ Generasjoner av mobilnett</h3>
+                <div class="canvas-container" style="padding: 20px;">
+                    <canvas id="generations-canvas" height="200"></canvas>
+                </div>
+                <button class="btn btn-blue" onclick="animateGenerations()">▶️ Se utviklingen</button>
+            </div>
+            
+            <div class="card">
+                <h3>📊 4G vs 5G - Sammenligning</h3>
+                
+                <div class="comparison-bars">
+                    <div>
+                        <div class="comp-bar-label">
+                            <span>Hastighet</span>
+                            <span id="speed-compare"></span>
+                        </div>
+                        <div class="comp-bar">
+                            <div class="comp-bar-fill" id="bar-4g-speed" style="width: 0%; background: #0ea5e9;">4G</div>
+                        </div>
+                        <div class="comp-bar" style="margin-top: 4px;">
+                            <div class="comp-bar-fill" id="bar-5g-speed" style="width: 0%; background: #10b981;">5G</div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <div class="comp-bar-label">
+                            <span>Latens (forsinkelse)</span>
+                            <span>Lavere er bedre</span>
+                        </div>
+                        <div class="comp-bar">
+                            <div class="comp-bar-fill" id="bar-4g-latency" style="width: 0%; background: #0ea5e9;">4G: 50ms</div>
+                        </div>
+                        <div class="comp-bar" style="margin-top: 4px;">
+                            <div class="comp-bar-fill" id="bar-5g-latency" style="width: 0%; background: #10b981;">5G: 1ms</div>
+                        </div>
+                    </div>
+                </div>
+                <button class="btn btn-green" onclick="animateComparison()">📊 Sammenlign</button>
+            </div>
+            
+            <div class="card orange">
+                <h3>📥 Hva betyr det i praksis?</h3>
+                <table style="width: 100%; border-collapse: collapse; margin-top: 12px;">
+                    <tr style="background: rgba(255,255,255,0.1);">
+                        <th style="padding: 12px; text-align: left;">Last ned</th>
+                        <th style="padding: 12px;">4G</th>
+                        <th style="padding: 12px;">5G</th>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px;">Film (5 GB)</td>
+                        <td style="padding: 12px; text-align: center;">~7 min</td>
+                        <td style="padding: 12px; text-align: center; color: #10b981;">~4 sek</td>
+                    </tr>
+                    <tr style="background: rgba(255,255,255,0.05);">
+                        <td style="padding: 12px;">Spilloppdatering (50 GB)</td>
+                        <td style="padding: 12px; text-align: center;">~70 min</td>
+                        <td style="padding: 12px; text-align: center; color: #10b981;">~40 sek</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 12px;">Musikkalbum (100 MB)</td>
+                        <td style="padding: 12px; text-align: center;">~8 sek</td>
+                        <td style="padding: 12px; text-align: center; color: #10b981;">Umiddelbart</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="card purple">
+                <h3>🔮 6G - Fremtiden (2030+)</h3>
+                <p>Forskere jobber allerede med neste generasjon:</p>
+                
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div style="background: rgba(139,92,246,0.2); padding: 16px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 32px;">⚡</div>
+                        <strong>100x raskere</strong>
+                        <p style="font-size: 13px;">Opp til 1 Tbps</p>
+                    </div>
+                    <div style="background: rgba(139,92,246,0.2); padding: 16px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 32px;">🧠</div>
+                        <strong>AI-integrert</strong>
+                        <p style="font-size: 13px;">Nettverket tenker selv</p>
+                    </div>
+                    <div style="background: rgba(139,92,246,0.2); padding: 16px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 32px;">👻</div>
+                        <strong>Hologrammer</strong>
+                        <p style="font-size: 13px;">3D-videosamtaler</p>
+                    </div>
+                    <div style="background: rgba(139,92,246,0.2); padding: 16px; border-radius: 12px; text-align: center;">
+                        <div style="font-size: 32px;">🌍</div>
+                        <strong>Overalt</strong>
+                        <p style="font-size: 13px;">Satellitter, droner, under vann</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('iot'); markDone('5g')">Neste: IoT →</button>
+            </div>
+        </div>
+
+        <!-- IoT -->
+        <div id="section-iot" class="section">
+            <div class="card">
+                <h2>🏠 IoT - Tingenes Internett</h2>
+                <p style="font-size: 17px;">Når hverdagslige ting kobles til internett og snakker sammen.</p>
+            </div>
+            
+            <div class="card blue">
+                <h3>🤔 Hva er IoT?</h3>
+                <p><strong>Internet of Things</strong> = Gjenstander som er koblet til internett og kan sende/motta data.</p>
+                
+                <div class="info-box" style="margin-top: 16px;">
+                    <strong>📊 Tall fra 2024:</strong> Over 15 milliarder IoT-enheter globalt. I 2030 forventes det 30+ milliarder!
+                </div>
+            </div>
+            
+            <div class="card green">
+                <h3>🏠 Prøv et smart hjem!</h3>
+                <p>Klikk på enhetene for å styre dem:</p>
+                
+                <div class="device-grid" id="smart-home">
+                    <div class="device" onclick="toggleDevice(this, 'light')">
+                        <div class="device-icon" id="light-icon">💡</div>
+                        <div class="device-name">Lys</div>
+                        <div class="device-status" id="light-status">AV</div>
+                    </div>
+                    <div class="device" onclick="toggleDevice(this, 'heat')">
+                        <div class="device-icon">🌡️</div>
+                        <div class="device-name">Varme</div>
+                        <div class="device-status" id="heat-status">20°C</div>
+                    </div>
+                    <div class="device" onclick="toggleDevice(this, 'camera')">
+                        <div class="device-icon" id="camera-icon">📷</div>
+                        <div class="device-name">Kamera</div>
+                        <div class="device-status" id="camera-status">AV</div>
+                    </div>
+                    <div class="device" onclick="toggleDevice(this, 'lock')">
+                        <div class="device-icon" id="lock-icon">🔓</div>
+                        <div class="device-name">Lås</div>
+                        <div class="device-status" id="lock-status">ÅPEN</div>
+                    </div>
+                    <div class="device" onclick="toggleDevice(this, 'speaker')">
+                        <div class="device-icon" id="speaker-icon">🔇</div>
+                        <div class="device-name">Høyttaler</div>
+                        <div class="device-status" id="speaker-status">AV</div>
+                    </div>
+                    <div class="device" onclick="toggleDevice(this, 'fridge')">
+                        <div class="device-icon">🧊</div>
+                        <div class="device-name">Kjøleskap</div>
+                        <div class="device-status" id="fridge-status">4°C</div>
+                    </div>
+                </div>
+                
+                <div id="smart-home-status" style="margin-top: 16px; padding: 12px; background: rgba(0,0,0,0.2); border-radius: 8px;">
+                    <strong>📊 Status:</strong> <span id="devices-on">0</span> enheter på
+                </div>
+            </div>
+            
+            <div class="card orange">
+                <h3>🌍 IoT i samfunnet</h3>
+                <div class="grid-2">
+                    <div>
+                        <h4>🏙️ Smarte byer</h4>
+                        <ul style="font-size: 14px; padding-left: 20px;">
+                            <li>Trafikklys som tilpasser seg</li>
+                            <li>Søppelkasser som sier fra når de er fulle</li>
+                            <li>Parkering med ledige plasser</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>🏥 Helse</h4>
+                        <ul style="font-size: 14px; padding-left: 20px;">
+                            <li>Smartklokker som måler puls</li>
+                            <li>Insulinpumper</li>
+                            <li>Fjernkonsultasjon med lege</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>🌾 Landbruk</h4>
+                        <ul style="font-size: 14px; padding-left: 20px;">
+                            <li>Sensorer i jorda</li>
+                            <li>Automatisk vanning</li>
+                            <li>Droner som overvåker avlinger</li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h4>🚗 Transport</h4>
+                        <ul style="font-size: 14px; padding-left: 20px;">
+                            <li>Selvkjørende biler</li>
+                            <li>Kollektivtrafikk i sanntid</li>
+                            <li>Elsparkesykler med GPS</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card red">
+                <h3>⚠️ IoT og sikkerhet</h3>
+                <p>Flere enheter = flere innganger for hackere!</p>
+                
+                <div class="info-box danger" style="margin-top: 12px;">
+                    <strong>🎯 Ekte eksempel:</strong> I 2016 ble millioner av IoT-enheter (kameraer, rutere) hacket og brukt til å angripe store nettsider som Twitter og Netflix.
+                </div>
+                
+                <h4 style="margin-top: 16px;">🛡️ Slik beskytter du IoT:</h4>
+                <ul style="padding-left: 20px; font-size: 14px;">
+                    <li>Endre standardpassord på alle enheter</li>
+                    <li>Hold firmware oppdatert</li>
+                    <li>Bruk separat WiFi-nettverk for IoT</li>
+                    <li>Slå av enheter du ikke bruker</li>
+                </ul>
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('future'); markDone('iot')">Neste: Fremtiden →</button>
+            </div>
+        </div>
+
+        <!-- FREMTIDEN -->
+        <div id="section-future" class="section">
+            <div class="card">
+                <h2>🔮 Fremtidens teknologi</h2>
+                <p style="font-size: 17px;">Hva kommer etter 5G og dagens internett?</p>
+            </div>
+            
+            <div class="card purple">
+                <h3>📅 Teknologi-tidslinje</h3>
+                <div class="canvas-container" style="padding: 20px;">
+                    <canvas id="future-timeline" height="300"></canvas>
+                </div>
+            </div>
+            
+            <div class="card green">
+                <h3>🚀 Spennende teknologier som kommer</h3>
+                
+                <div class="grid-2" style="margin-top: 16px;">
+                    <div style="background: rgba(16,185,129,0.2); padding: 20px; border-radius: 12px;">
+                        <h4>🧠 Hjerne-datamaskin grensesnitt</h4>
+                        <p style="font-size: 14px;">Styr datamaskinen med tankene. Neuralink tester allerede på mennesker!</p>
+                    </div>
+                    <div style="background: rgba(139,92,246,0.2); padding: 20px; border-radius: 12px;">
+                        <h4>👻 Holografisk kommunikasjon</h4>
+                        <p style="font-size: 14px;">3D-projeksjoner av mennesker. Møter uten å reise.</p>
+                    </div>
+                    <div style="background: rgba(14,165,233,0.2); padding: 20px; border-radius: 12px;">
+                        <h4>🔐 Kvantekryptering</h4>
+                        <p style="font-size: 14px;">Umulig å hacke basert på fysikkens lover.</p>
+                    </div>
+                    <div style="background: rgba(245,158,11,0.2); padding: 20px; border-radius: 12px;">
+                        <h4>🌐 Satellitt-internett</h4>
+                        <p style="font-size: 14px;">Internett overalt på jorden. Starlink har 6000+ satellitter!</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card blue">
+                <h3>🤔 Etiske spørsmål</h3>
+                <p>Med ny teknologi kommer nye utfordringer:</p>
+                
+                <ul style="padding-left: 20px; margin-top: 12px;">
+                    <li><strong>Personvern:</strong> Hvor mye overvåkning er greit?</li>
+                    <li><strong>AI:</strong> Hvem har ansvaret når AI tar feil?</li>
+                    <li><strong>Digital ulikhet:</strong> Ikke alle har tilgang til ny teknologi</li>
+                    <li><strong>Arbeidsplasser:</strong> Vil roboter ta over jobbene våre?</li>
+                    <li><strong>Miljø:</strong> Datasentre bruker mye strøm</li>
+                </ul>
+            </div>
+            
+            <div class="card orange">
+                <h3>💭 Tenk over dette</h3>
+                <p>Hvilken teknologi tror du vil påvirke livet ditt mest de neste 10 årene?</p>
+                <textarea class="textarea" id="future-thoughts" placeholder="Skriv dine tanker her..."></textarea>
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('quiz'); markDone('future')">Neste: Quiz →</button>
+            </div>
+        </div>
+
+        <!-- QUIZ -->
+        <div id="section-quiz" class="section">
+            <div class="card">
+                <h2>📝 Avsluttende quiz</h2>
+                <p>Test hva du har lært!</p>
+            </div>
+            
+            <div id="quiz-container"></div>
+            
+            <div id="quiz-result" class="card green" style="display: none;">
+                <h3>🎉 Quiz fullført!</h3>
+                <p id="quiz-score"></p>
+                <button class="btn btn-purple" onclick="initQuiz()" style="margin-top: 12px;">🔄 Ta quizen på nytt</button>
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('flashcards'); markDone('quiz')">Neste: Flashcards →</button>
+            </div>
+        </div>
+
+        <!-- FLASHCARDS -->
+        <div id="section-flashcards" class="section">
+            <div class="card">
+                <h2>🃏 Flashcards - Øv på begreper</h2>
+                <p>Klikk på kortet for å se svaret. Øv til du kan alle!</p>
+            </div>
+            
+            <div class="card" style="text-align: center;">
+                <div id="flashcard-container" style="perspective: 1000px; margin: 20px 0;">
+                    <div id="flashcard" style="width: 100%; max-width: 400px; height: 200px; margin: 0 auto; position: relative; transform-style: preserve-3d; transition: transform 0.6s; cursor: pointer;" onclick="flipCard()">
+                        <div id="card-front" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: linear-gradient(135deg, #8b5cf6, #6366f1); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 20px; font-weight: bold; padding: 20px; text-align: center;"></div>
+                        <div id="card-back" style="position: absolute; width: 100%; height: 100%; backface-visibility: hidden; background: linear-gradient(135deg, #10b981, #059669); border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 18px; padding: 20px; transform: rotateY(180deg); text-align: center;"></div>
+                    </div>
+                </div>
+                
+                <p id="card-progress" style="opacity: 0.7; margin-bottom: 12px;">Kort 1 av 12</p>
+                
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-ghost" onclick="prevCard()">← Forrige</button>
+                    <button class="btn btn-green" onclick="markKnown()">✓ Kan dette!</button>
+                    <button class="btn btn-ghost" onclick="nextCard()">Neste →</button>
+                </div>
+                
+                <div style="margin-top: 16px;">
+                    <div style="background: rgba(255,255,255,0.1); border-radius: 8px; height: 8px; overflow: hidden;">
+                        <div id="card-progress-bar" style="height: 100%; background: #10b981; transition: width 0.3s;"></div>
+                    </div>
+                    <p id="known-count" style="font-size: 14px; margin-top: 8px;">Du kan: 0 av 12</p>
+                </div>
+            </div>
+            
+            <div class="info-box">
+                <strong>💡 Tips:</strong> Øv på kortene flere ganger. Forskning viser at aktiv gjenkalling (å prøve å huske) er mye mer effektivt enn bare å lese!
+            </div>
+            
+            <div style="text-align: right; margin-top: 24px;">
+                <button class="btn btn-green" onclick="showSection('homework'); markDone('flashcards')">Neste: Hjemmeoppgave →</button>
+            </div>
+        </div>
+
+        <!-- HJEMMEOPPGAVE -->
+        <div id="section-homework" class="section">
+            <div class="card">
+                <h2>📄 Hjemmeoppgave</h2>
+                <p>Svar på spørsmålene under. Du kan eksportere svarene til Word når du er ferdig.</p>
+            </div>
+            
+            <div class="card">
+                <label><strong>Ditt navn:</strong></label>
+                <input type="text" class="input" id="hw-name" placeholder="Skriv navnet ditt..." oninput="saveHomework()" style="margin-top: 8px;">
+            </div>
+            
+            <div class="card purple">
+                <h3>1. Kryptering</h3>
+                <p>Forklar med egne ord hva kryptering er og hvorfor det er viktig. Gi et eksempel på hvor du bruker kryptering i hverdagen.</p>
+                <textarea class="textarea" id="hw-crypto" placeholder="Skriv svaret ditt her..." oninput="saveHomework()"></textarea>
+            </div>
+            
+            <div class="card green">
+                <h3>2. Sterke passord</h3>
+                <p>Lag tre eksempler på sterke passord (ikke bruk ekte passord!). Forklar hvorfor de er sterke.</p>
+                <textarea class="textarea" id="hw-password" placeholder="Skriv svaret ditt her..." oninput="saveHomework()"></textarea>
+            </div>
+            
+            <div class="card orange">
+                <h3>3. Phishing</h3>
+                <p>Beskriv hvordan du ville gjenkjenne en phishing-e-post. Nevn minst 3 tegn på at en e-post kan være falsk.</p>
+                <textarea class="textarea" id="hw-phishing" placeholder="Skriv svaret ditt her..." oninput="saveHomework()"></textarea>
+            </div>
+            
+            <div class="card blue">
+                <h3>4. IoT i hjemmet</h3>
+                <p>Nevn 5 IoT-enheter du har eller kunne tenke deg å ha hjemme. Hva er fordeler og ulemper med smarte hjem?</p>
+                <textarea class="textarea" id="hw-iot" placeholder="Skriv svaret ditt her..." oninput="saveHomework()"></textarea>
+            </div>
+            
+            <div class="card red">
+                <h3>5. Personvern og fremtid</h3>
+                <p>Hva tenker du om personvern i fremtiden? Er du bekymret for overvåkning, eller synes du fordelene veier opp? Begrunn svaret ditt.</p>
+                <textarea class="textarea" id="hw-future" placeholder="Skriv svaret ditt her..." oninput="saveHomework()"></textarea>
+            </div>
+            
+            <div class="card" style="text-align: center;">
+                <h3>📥 Eksporter besvarelsen</h3>
+                <p style="margin-bottom: 16px;">Last ned svarene dine som Word-dokument:</p>
+                <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                    <button class="btn btn-purple" onclick="exportToWord()">📄 Last ned Word (.docx)</button>
+                    <button class="btn btn-ghost" onclick="exportToText()">📝 Last ned tekst (.txt)</button>
+                </div>
+            </div>
+            
+            <div class="card green" style="text-align: center;">
+                <h2>🎉 Gratulerer!</h2>
+                <p>Du har fullført Økt 4: Sikkerhet og Fremtiden!</p>
+                <p style="margin-top: 12px;">Du har lært om kryptering, passord, cyberangrep, personvern, 5G/6G og IoT.</p>
+                <a href="index.html" class="btn btn-green" style="display: inline-block; margin-top: 16px; text-decoration: none;">← Tilbake til oversikten</a>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // ===== NAVIGATION =====
+        const sections = ['intro', 'crypto', 'passwords', 'attacks', 'privacy', '5g', 'iot', 'future', 'quiz', 'flashcards', 'homework'];
+        const doneSections = new Set();
+        
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.getElementById('section-' + id).classList.add('active');
+            
+            document.querySelectorAll('.nav-btn').forEach((btn, i) => {
+                btn.classList.remove('active');
+                if (sections[i] === id) btn.classList.add('active');
+            });
+            
+            window.scrollTo(0, 0);
+            
+            // Initialize section-specific content
+            if (id === 'crypto') initCrypto();
+            if (id === 'quiz') initQuiz();
+            if (id === 'future') initFutureTimeline();
+            if (id === 'flashcards') initFlashcards();
+            if (id === 'homework') loadHomework();
+        }
+        
+        function markDone(id) {
+            doneSections.add(id);
+            const idx = sections.indexOf(id);
+            if (idx >= 0) {
+                document.querySelectorAll('.nav-btn')[idx].classList.add('done');
+            }
+        }
+
+        // ===== CAESAR CIPHER =====
+        function initCrypto() {
+            updateCaesar();
+            initMessageJourney();
+        }
+        
+        function updateCaesar() {
+            const key = parseInt(document.getElementById('caesar-key').value);
+            document.getElementById('caesar-key-display').textContent = key;
+            
+            const input = document.getElementById('caesar-input').value.toUpperCase();
+            let output = '';
+            
+            for (let char of input) {
+                if (char >= 'A' && char <= 'Z') {
+                    const code = ((char.charCodeAt(0) - 65 + key) % 26) + 65;
+                    output += String.fromCharCode(code);
+                } else if (char >= 'Æ' && char <= 'Ø' || char === 'Å') {
+                    output += char; // Keep Norwegian chars
+                } else {
+                    output += char;
+                }
+            }
+            
+            document.getElementById('caesar-output').textContent = output || '...';
+            
+            // Update alphabet display
+            const alphabetDiv = document.getElementById('alphabet-display');
+            alphabetDiv.innerHTML = '';
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            for (let i = 0; i < 26; i++) {
+                const div = document.createElement('div');
+                div.className = 'key-char';
+                const shifted = alphabet[(i + key) % 26];
+                div.innerHTML = `<span style="opacity:0.5">${alphabet[i]}</span>→${shifted}`;
+                div.style.fontSize = '10px';
+                alphabetDiv.appendChild(div);
+            }
+        }
+        
+        // ===== MESSAGE JOURNEY ANIMATION =====
+        function initMessageJourney() {
+            const canvas = document.getElementById('message-journey');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 150;
+            
+            const w = canvas.width;
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, w, 150);
+            
+            // Draw nodes
+            const nodes = [
+                { x: 50, label: '📱 Du', color: '#10b981' },
+                { x: w * 0.3, label: '🏢 ISP', color: '#f59e0b' },
+                { x: w * 0.5, label: '🌐 Server', color: '#f59e0b' },
+                { x: w * 0.7, label: '🏢 ISP', color: '#f59e0b' },
+                { x: w - 50, label: '👤 Mottaker', color: '#10b981' }
+            ];
+            
+            // Draw lines
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 2;
+            ctx.beginPath();
+            ctx.moveTo(nodes[0].x, 75);
+            for (let i = 1; i < nodes.length; i++) {
+                ctx.lineTo(nodes[i].x, 75);
+            }
+            ctx.stroke();
+            
+            // Draw nodes
+            nodes.forEach(node => {
+                ctx.fillStyle = node.color;
+                ctx.beginPath();
+                ctx.arc(node.x, 75, 20, 0, Math.PI * 2);
+                ctx.fill();
+                
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(node.label, node.x, 115);
+            });
+        }
+
+        // ===== HTTPS ANIMATION =====
+        let httpsAnimating = false;
+        function animateHTTPS() {
+            if (httpsAnimating) return;
+            httpsAnimating = true;
+            
+            const canvas = document.getElementById('https-demo');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 180;
+            
+            const w = canvas.width;
+            let step = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, w, 180);
+                
+                // Computer
+                ctx.fillStyle = '#0ea5e9';
+                ctx.fillRect(30, 60, 60, 40);
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('Din PC', 60, 120);
+                
+                // Server
+                ctx.fillStyle = '#10b981';
+                ctx.fillRect(w - 90, 60, 60, 40);
+                ctx.fillText('Server', w - 60, 120);
+                
+                // Line
+                ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(90, 80);
+                ctx.lineTo(w - 90, 80);
+                ctx.stroke();
+                
+                const steps = [
+                    { x: 120, text: '1. Hei! Jeg vil ha sikker forbindelse 🔐', color: '#0ea5e9' },
+                    { x: w/2 - 50, text: '2. Her er mitt sertifikat 📜', color: '#10b981' },
+                    { x: w/2, text: '3. OK! Her er en hemmelig nøkkel 🔑', color: '#0ea5e9' },
+                    { x: w - 150, text: '4. Nå er alt kryptert! ✅', color: '#8b5cf6' }
+                ];
+                
+                for (let i = 0; i <= Math.min(step, steps.length - 1); i++) {
+                    const s = steps[i];
+                    ctx.fillStyle = s.color;
+                    ctx.beginPath();
+                    ctx.arc(s.x, 80, 10, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = 'white';
+                    ctx.font = '11px Arial';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(s.text, 100, 30 + i * 20);
+                }
+                
+                step++;
+                if (step <= steps.length + 5) {
+                    setTimeout(draw, 800);
+                } else {
+                    httpsAnimating = false;
+                }
+            }
+            draw();
+        }
+
+        // ===== PASSWORD STRENGTH =====
+        function checkPasswordStrength() {
+            const password = document.getElementById('password-test').value;
+            const fill = document.getElementById('strength-fill');
+            const text = document.getElementById('strength-text');
+            const feedback = document.getElementById('password-feedback');
+            const crackDiv = document.getElementById('crack-time');
+            const crackValue = document.getElementById('crack-time-value');
+            
+            let score = 0;
+            let tips = [];
+            
+            if (password.length >= 8) score += 20;
+            else tips.push('Bruk minst 8 tegn');
+            
+            if (password.length >= 12) score += 20;
+            else if (password.length >= 8) tips.push('Enda bedre med 12+ tegn');
+            
+            if (/[a-z]/.test(password) && /[A-Z]/.test(password)) score += 20;
+            else tips.push('Bland store og små bokstaver');
+            
+            if (/\d/.test(password)) score += 20;
+            else tips.push('Legg til tall');
+            
+            if (/[!@#$%^&*(),.?":{}|<>]/.test(password)) score += 20;
+            else tips.push('Legg til symboler (!@#$)');
+            
+            // Common password check
+            const common = ['password', 'passord', '123456', 'qwerty', 'abc123'];
+            if (common.some(c => password.toLowerCase().includes(c))) {
+                score = Math.max(0, score - 40);
+                tips.unshift('⚠️ Unngå vanlige passord!');
+            }
+            
+            fill.style.width = score + '%';
+            
+            if (score < 40) {
+                fill.style.background = '#ef4444';
+                text.textContent = '😰 Svakt passord';
+                text.style.color = '#ef4444';
+            } else if (score < 70) {
+                fill.style.background = '#f59e0b';
+                text.textContent = '😐 Middels passord';
+                text.style.color = '#f59e0b';
+            } else {
+                fill.style.background = '#10b981';
+                text.textContent = '💪 Sterkt passord!';
+                text.style.color = '#10b981';
+            }
+            
+            feedback.innerHTML = tips.length > 0 ? 
+                '<strong>Tips:</strong> ' + tips.join(' • ') : 
+                '✅ Bra jobba!';
+            
+            // Crack time estimate
+            if (password.length > 0) {
+                crackDiv.style.display = 'block';
+                const charset = ((/[a-z]/.test(password) ? 26 : 0) + 
+                               (/[A-Z]/.test(password) ? 26 : 0) + 
+                               (/\d/.test(password) ? 10 : 0) + 
+                               (/[!@#$%^&*(),.?":{}|<>]/.test(password) ? 20 : 0)) || 26;
+                const combinations = Math.pow(charset, password.length);
+                const guessesPerSec = 10000000000; // 10 billion
+                const seconds = combinations / guessesPerSec;
+                
+                let timeStr;
+                if (seconds < 1) timeStr = 'Umiddelbart ⚠️';
+                else if (seconds < 60) timeStr = Math.round(seconds) + ' sekunder';
+                else if (seconds < 3600) timeStr = Math.round(seconds / 60) + ' minutter';
+                else if (seconds < 86400) timeStr = Math.round(seconds / 3600) + ' timer';
+                else if (seconds < 31536000) timeStr = Math.round(seconds / 86400) + ' dager';
+                else if (seconds < 31536000 * 1000) timeStr = Math.round(seconds / 31536000) + ' år';
+                else timeStr = 'Millioner av år ✅';
+                
+                crackValue.textContent = timeStr;
+            } else {
+                crackDiv.style.display = 'none';
+            }
+        }
+
+        // ===== 2FA ANIMATION =====
+        let twoFAAnimating = false;
+        function animate2FA() {
+            if (twoFAAnimating) return;
+            twoFAAnimating = true;
+            
+            const canvas = document.getElementById('2fa-demo');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            const w = canvas.width;
+            let step = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, w, 200);
+                
+                const stages = [
+                    { text: '1. Du skriver passord', icon: '🔑', y: 50 },
+                    { text: '2. Server sjekker passord ✓', icon: '✓', y: 80 },
+                    { text: '3. SMS-kode sendes til mobilen', icon: '📱', y: 110 },
+                    { text: '4. Du skriver inn koden', icon: '🔢', y: 140 },
+                    { text: '5. Innlogget! 🎉', icon: '✅', y: 170 }
+                ];
+                
+                for (let i = 0; i <= Math.min(step, stages.length - 1); i++) {
+                    const s = stages[i];
+                    ctx.fillStyle = i === step ? '#10b981' : 'rgba(255,255,255,0.7)';
+                    ctx.font = '14px Arial';
+                    ctx.textAlign = 'left';
+                    ctx.fillText(s.text, 50, s.y);
+                    ctx.font = '20px Arial';
+                    ctx.fillText(s.icon, 20, s.y);
+                }
+                
+                step++;
+                if (step <= stages.length + 2) {
+                    setTimeout(draw, 1000);
+                } else {
+                    twoFAAnimating = false;
+                }
+            }
+            draw();
+        }
+
+        // ===== BRUTE FORCE SIMULATION =====
+        let bruteRunning = false;
+        function startBruteForce() {
+            if (bruteRunning) return;
+            bruteRunning = true;
+            
+            const password = document.getElementById('brute-password').value;
+            const log = document.getElementById('brute-log');
+            const result = document.getElementById('brute-result');
+            
+            log.innerHTML = '<div class="line">🔓 Starter brute force angrep...</div>';
+            result.style.display = 'none';
+            
+            const attempts = ['aaa', 'abc', 'password', '123456', 'qwerty', 'admin'];
+            let i = 0;
+            let found = false;
+            
+            function tryNext() {
+                if (i < attempts.length && !found) {
+                    const attempt = attempts[i];
+                    const match = attempt === password;
+                    
+                    log.innerHTML += `<div class="line ${match ? 'success' : 'fail'}">
+                        Prøver: "${attempt}" ${match ? '✓ FUNNET!' : '✗'}
+                    </div>`;
+                    log.scrollTop = log.scrollHeight;
+                    
+                    if (match) {
+                        found = true;
+                        result.style.display = 'block';
+                        result.innerHTML = `<div class="info-box danger">
+                            <strong>⚠️ Passord knekt!</strong><br>
+                            Passordet "${password}" ble funnet på ${i + 1} forsøk.<br>
+                            <em>Med en ekte datamaskin som prøver milliarder per sekund ville dette tatt mikrosekunder!</em>
+                        </div>`;
+                        bruteRunning = false;
+                    }
+                    i++;
+                    setTimeout(tryNext, 500);
+                } else if (!found) {
+                    // Simulate more complex password
+                    log.innerHTML += `<div class="line warning">... prøvde ${i} enkle passord ...</div>`;
+                    log.innerHTML += `<div class="line warning">... fortsetter med ordbok-angrep ...</div>`;
+                    
+                    setTimeout(() => {
+                        if (password.length > 8) {
+                            log.innerHTML += `<div class="line success">⏱️ Passordet er for sterkt! Gir opp etter simulert 1 million forsøk.</div>`;
+                            result.style.display = 'block';
+                            result.innerHTML = `<div class="info-box">
+                                <strong>✅ Godt passord!</strong><br>
+                                Et komplekst passord som "${password}" tar lang tid å knekke.
+                            </div>`;
+                        } else {
+                            log.innerHTML += `<div class="line success">✓ FUNNET etter ~${Math.pow(26, password.length)} forsøk</div>`;
+                            result.style.display = 'block';
+                            result.innerHTML = `<div class="info-box warning">
+                                <strong>⚠️ Kort passord!</strong><br>
+                                Selv med kun bokstaver har "${password}" bare ${Math.pow(26, password.length).toLocaleString()} mulige kombinasjoner.
+                            </div>`;
+                        }
+                        bruteRunning = false;
+                    }, 1500);
+                }
+            }
+            
+            setTimeout(tryNext, 500);
+        }
+
+        // ===== TRACKING ANIMATION =====
+        let trackingAnimating = false;
+        function animateTracking() {
+            if (trackingAnimating) return;
+            trackingAnimating = true;
+            
+            const canvas = document.getElementById('tracking-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 250;
+            
+            const w = canvas.width;
+            const h = 250;
+            const trackers = [
+                { name: 'Google', color: '#ea4335' },
+                { name: 'Facebook', color: '#1877f2' },
+                { name: 'Amazon', color: '#ff9900' },
+                { name: 'Reklame A', color: '#8b5cf6' },
+                { name: 'Analyse B', color: '#10b981' },
+                { name: 'Sosiale C', color: '#ec4899' }
+            ];
+            
+            let step = 0;
+            let visibleTrackers = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, w, h);
+                
+                // Center - You
+                ctx.fillStyle = '#0ea5e9';
+                ctx.beginPath();
+                ctx.arc(w/2, h/2, 40, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText('DU', w/2, h/2 + 5);
+                
+                // Website you're visiting
+                ctx.fillStyle = '#10b981';
+                ctx.fillRect(w/2 - 40, 20, 80, 30);
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                ctx.fillText('nettbutikk.no', w/2, 40);
+                
+                // Line from you to website
+                ctx.strokeStyle = 'rgba(16,185,129,0.5)';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.moveTo(w/2, h/2 - 40);
+                ctx.lineTo(w/2, 50);
+                ctx.stroke();
+                
+                // Trackers
+                for (let i = 0; i < Math.min(visibleTrackers, trackers.length); i++) {
+                    const angle = (i / trackers.length) * Math.PI * 2 - Math.PI/2;
+                    const x = w/2 + Math.cos(angle) * 100;
+                    const y = h/2 + Math.sin(angle) * 80;
+                    
+                    // Line
+                    ctx.strokeStyle = trackers[i].color;
+                    ctx.lineWidth = 2;
+                    ctx.setLineDash([5, 5]);
+                    ctx.beginPath();
+                    ctx.moveTo(w/2, h/2);
+                    ctx.lineTo(x, y);
+                    ctx.stroke();
+                    ctx.setLineDash([]);
+                    
+                    // Tracker circle
+                    ctx.fillStyle = trackers[i].color;
+                    ctx.beginPath();
+                    ctx.arc(x, y, 25, 0, Math.PI * 2);
+                    ctx.fill();
+                    
+                    ctx.fillStyle = 'white';
+                    ctx.font = '10px Arial';
+                    ctx.fillText(trackers[i].name, x, y + 4);
+                }
+                
+                // Status text
+                ctx.fillStyle = 'white';
+                ctx.font = '12px Arial';
+                if (visibleTrackers < trackers.length) {
+                    ctx.fillText(`Oppdager sporere... ${visibleTrackers} av ${trackers.length}`, w/2, h - 20);
+                } else {
+                    ctx.fillStyle = '#ef4444';
+                    ctx.fillText(`⚠️ ${trackers.length} selskaper ser at du besøker denne siden!`, w/2, h - 20);
+                }
+                
+                if (step < trackers.length + 5) {
+                    if (step >= 2) visibleTrackers = Math.min(step - 1, trackers.length);
+                    step++;
+                    setTimeout(draw, 400);
+                } else {
+                    trackingAnimating = false;
+                }
+            }
+            draw();
+        }
+
+        // ===== 5G COMPARISON =====
+        function animateComparison() {
+            const bar4gSpeed = document.getElementById('bar-4g-speed');
+            const bar5gSpeed = document.getElementById('bar-5g-speed');
+            const bar4gLatency = document.getElementById('bar-4g-latency');
+            const bar5gLatency = document.getElementById('bar-5g-latency');
+            
+            // Reset
+            bar4gSpeed.style.width = '0%';
+            bar5gSpeed.style.width = '0%';
+            bar4gLatency.style.width = '0%';
+            bar5gLatency.style.width = '0%';
+            
+            setTimeout(() => {
+                bar4gSpeed.style.width = '10%';
+                bar4gSpeed.textContent = '4G: 100 Mbps';
+                bar5gSpeed.style.width = '100%';
+                bar5gSpeed.textContent = '5G: 1000 Mbps';
+                
+                bar4gLatency.style.width = '100%';
+                bar4gLatency.textContent = '4G: 50ms';
+                bar5gLatency.style.width = '2%';
+                bar5gLatency.textContent = '5G: 1ms';
+            }, 100);
+        }
+
+        // ===== GENERATIONS ANIMATION =====
+        function animateGenerations() {
+            const canvas = document.getElementById('generations-canvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 200;
+            
+            const w = canvas.width;
+            const generations = [
+                { name: '2G', year: '1991', speed: '0.1 Mbps', color: '#94a3b8', height: 20 },
+                { name: '3G', year: '2001', speed: '2 Mbps', color: '#0ea5e9', height: 40 },
+                { name: '4G', year: '2009', speed: '100 Mbps', color: '#8b5cf6', height: 80 },
+                { name: '5G', year: '2019', speed: '1000 Mbps', color: '#10b981', height: 140 },
+                { name: '6G', year: '2030?', speed: '1 Tbps', color: '#f59e0b', height: 180 }
+            ];
+            
+            let progress = 0;
+            
+            function draw() {
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(0, 0, w, 200);
+                
+                const barWidth = (w - 100) / generations.length - 20;
+                const baseY = 190;
+                
+                generations.forEach((gen, i) => {
+                    const x = 50 + i * (barWidth + 20);
+                    const targetHeight = gen.height * Math.min(progress / 100, 1);
+                    
+                    // Bar
+                    ctx.fillStyle = gen.color;
+                    ctx.fillRect(x, baseY - targetHeight, barWidth, targetHeight);
+                    
+                    // Label
+                    ctx.fillStyle = 'white';
+                    ctx.font = 'bold 14px Arial';
+                    ctx.textAlign = 'center';
+                    ctx.fillText(gen.name, x + barWidth/2, baseY - targetHeight - 25);
+                    ctx.font = '10px Arial';
+                    ctx.fillText(gen.year, x + barWidth/2, baseY - targetHeight - 10);
+                    ctx.fillText(gen.speed, x + barWidth/2, baseY + 15);
+                });
+                
+                if (progress < 100) {
+                    progress += 3;
+                    requestAnimationFrame(draw);
+                }
+            }
+            
+            progress = 0;
+            draw();
+        }
+
+        // ===== SMART HOME =====
+        const deviceStates = {};
+        function toggleDevice(element, device) {
+            deviceStates[device] = !deviceStates[device];
+            element.classList.toggle('on');
+            
+            const statusEl = document.getElementById(device + '-status');
+            const iconEl = document.getElementById(device + '-icon');
+            
+            if (device === 'light') {
+                statusEl.textContent = deviceStates[device] ? 'PÅ' : 'AV';
+                if (iconEl) iconEl.textContent = deviceStates[device] ? '💡' : '🔌';
+            } else if (device === 'heat') {
+                statusEl.textContent = deviceStates[device] ? '23°C' : '20°C';
+            } else if (device === 'camera') {
+                statusEl.textContent = deviceStates[device] ? 'OPPTAK' : 'AV';
+                if (iconEl) iconEl.textContent = deviceStates[device] ? '🔴' : '📷';
+            } else if (device === 'lock') {
+                statusEl.textContent = deviceStates[device] ? 'LÅST' : 'ÅPEN';
+                if (iconEl) iconEl.textContent = deviceStates[device] ? '🔒' : '🔓';
+            } else if (device === 'speaker') {
+                statusEl.textContent = deviceStates[device] ? 'SPILLER' : 'AV';
+                if (iconEl) iconEl.textContent = deviceStates[device] ? '🔊' : '🔇';
+            } else if (device === 'fridge') {
+                statusEl.textContent = deviceStates[device] ? '2°C' : '4°C';
+            }
+            
+            // Update count
+            const onCount = Object.values(deviceStates).filter(v => v).length;
+            document.getElementById('devices-on').textContent = onCount;
+        }
+
+        // ===== FUTURE TIMELINE =====
+        function initFutureTimeline() {
+            const canvas = document.getElementById('future-timeline');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.offsetWidth;
+            canvas.height = 300;
+            
+            const w = canvas.width;
+            const h = 300;
+            
+            ctx.fillStyle = '#1e293b';
+            ctx.fillRect(0, 0, w, h);
+            
+            const milestones = [
+                { year: '2020', tech: '5G', desc: 'Ultra-rask mobil', color: '#10b981' },
+                { year: '2024', tech: 'AI Boom', desc: 'ChatGPT, Gemini', color: '#0ea5e9' },
+                { year: '2025', tech: 'WiFi 7', desc: '40 Gbps', color: '#8b5cf6' },
+                { year: '2030', tech: '6G', desc: '1 Tbps, hologram', color: '#f59e0b' },
+                { year: '2035', tech: 'Kvante-nett', desc: 'Umulig å hacke', color: '#ec4899' }
+            ];
+            
+            // Timeline line
+            ctx.strokeStyle = 'rgba(255,255,255,0.3)';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(50, h/2);
+            ctx.lineTo(w - 50, h/2);
+            ctx.stroke();
+            
+            milestones.forEach((m, i) => {
+                const x = 80 + (i / (milestones.length - 1)) * (w - 160);
+                
+                // Dot
+                ctx.fillStyle = m.color;
+                ctx.beginPath();
+                ctx.arc(x, h/2, 15, 0, Math.PI * 2);
+                ctx.fill();
+                
+                // Text above/below alternating
+                const above = i % 2 === 0;
+                ctx.fillStyle = 'white';
+                ctx.font = 'bold 14px Arial';
+                ctx.textAlign = 'center';
+                ctx.fillText(m.year, x, above ? h/2 - 50 : h/2 + 60);
+                ctx.font = 'bold 12px Arial';
+                ctx.fillStyle = m.color;
+                ctx.fillText(m.tech, x, above ? h/2 - 35 : h/2 + 75);
+                ctx.font = '10px Arial';
+                ctx.fillStyle = 'rgba(255,255,255,0.7)';
+                ctx.fillText(m.desc, x, above ? h/2 - 22 : h/2 + 88);
+            });
+        }
+
+        // ===== QUIZ =====
+        const quizQuestions = [
+            {
+                question: 'Hva gjør kryptering?',
+                options: ['Sletter data', 'Gjør data uleselig for andre', 'Komprimerer data', 'Sender data raskere'],
+                correct: 1
+            },
+            {
+                question: 'Hva er et sterkt passord?',
+                options: ['passord123', 'Kj#9mP2$xL', 'minbursdag', 'qwerty'],
+                correct: 1
+            },
+            {
+                question: 'Hva er phishing?',
+                options: ['En type fisk', 'Falske e-poster/nettsider for å stjele info', 'En søkemotor', 'En type antivirus'],
+                correct: 1
+            },
+            {
+                question: 'Hva betyr 2FA?',
+                options: ['To filtyper tillatt', 'To faktorer for autentisering', 'To forskjellige antivirus', 'To faste adresser'],
+                correct: 1
+            },
+            {
+                question: 'Hvor mye raskere er 5G enn 4G (ca.)?',
+                options: ['2x', '5x', '10x', '100x'],
+                correct: 2
+            },
+            {
+                question: 'Hva er IoT?',
+                options: ['Internet of Things', 'Input/Output Transfer', 'International Online Technology', 'Integrated Operating Terminal'],
+                correct: 0
+            },
+            {
+                question: 'Hva beskytter GDPR?',
+                options: ['Datamaskiner mot virus', 'Dine personopplysninger', 'WiFi-nettverket', 'E-postservere'],
+                correct: 1
+            },
+            {
+                question: 'Når forventes 6G å lanseres?',
+                options: ['2025', '2027', '2030+', '2050'],
+                correct: 2
+            }
+        ];
+        
+        let quizAnswered = [];
+        let quizScore = 0;
+        
+        function initQuiz() {
+            const container = document.getElementById('quiz-container');
+            container.innerHTML = '';
+            quizAnswered = [];
+            quizScore = 0;
+            document.getElementById('quiz-result').style.display = 'none';
+            
+            quizQuestions.forEach((q, qIndex) => {
+                const card = document.createElement('div');
+                card.className = 'card';
+                card.innerHTML = `<h4 style="margin-bottom: 12px;">${qIndex + 1}. ${q.question}</h4>`;
+                
+                q.options.forEach((opt, oIndex) => {
+                    const btn = document.createElement('button');
+                    btn.className = 'btn btn-ghost';
+                    btn.style.display = 'block';
+                    btn.style.width = '100%';
+                    btn.style.marginBottom = '8px';
+                    btn.style.textAlign = 'left';
+                    btn.textContent = opt;
+                    btn.onclick = () => checkQuizAnswer(qIndex, oIndex, card);
+                    card.appendChild(btn);
+                });
+                
+                container.appendChild(card);
+            });
+        }
+        
+        function checkQuizAnswer(qIndex, oIndex, card) {
+            if (quizAnswered.includes(qIndex)) return;
+            quizAnswered.push(qIndex);
+            
+            const correct = quizQuestions[qIndex].correct;
+            const buttons = card.querySelectorAll('.btn');
+            
+            buttons.forEach((btn, i) => {
+                btn.disabled = true;
+                if (i === correct) {
+                    btn.style.background = 'rgba(16,185,129,0.5)';
+                    btn.style.borderColor = '#10b981';
+                } else if (i === oIndex && i !== correct) {
+                    btn.style.background = 'rgba(239,68,68,0.5)';
+                    btn.style.borderColor = '#ef4444';
+                }
+            });
+            
+            if (oIndex === correct) quizScore++;
+            
+            if (quizAnswered.length === quizQuestions.length) {
+                setTimeout(() => {
+                    document.getElementById('quiz-result').style.display = 'block';
+                    document.getElementById('quiz-score').textContent = 
+                        `Du fikk ${quizScore} av ${quizQuestions.length} riktige!`;
+                }, 500);
+            }
+        }
+
+        // ===== FLASHCARDS =====
+        const flashcards = [
+            { front: 'Kryptering', back: 'Å gjøre data uleselig for andre ved hjelp av en matematisk algoritme og en nøkkel' },
+            { front: 'AES-256', back: 'Advanced Encryption Standard med 256-bit nøkkel. Brukes av banker og myndigheter.' },
+            { front: 'Symmetrisk kryptering', back: 'Samme nøkkel brukes til å kryptere og dekryptere' },
+            { front: 'Asymmetrisk kryptering', back: 'To nøkler: offentlig (kryptere) og privat (dekryptere)' },
+            { front: '2FA', back: 'Tofaktorautentisering - krever to bevis for å logge inn (noe du vet + noe du har)' },
+            { front: 'Phishing', back: 'Svindelforsøk via falske e-poster eller nettsider for å stjele passord/info' },
+            { front: 'Brute force', back: 'Angrep som prøver alle mulige passordkombinasjoner' },
+            { front: 'GDPR', back: 'EUs personvernforordning som gir deg rett til innsyn, sletting og kontroll over egne data' },
+            { front: '5G', back: 'Femte generasjon mobilnett. 10-100x raskere enn 4G, latens 1-10 ms' },
+            { front: '6G', back: 'Sjette generasjon mobilnett (kommer ~2030). Opp til 1 Tbps, hologrammer, AI-integrert' },
+            { front: 'IoT', back: 'Internet of Things - hverdagslige gjenstander koblet til internett' },
+            { front: 'Cookies', back: 'Små datafiler nettsider lagrer på datamaskinen din for å huske innstillinger eller spore deg' }
+        ];
+        
+        let currentCard = 0;
+        let knownCards = [];
+        let cardFlipped = false;
+        
+        function initFlashcards() {
+            currentCard = 0;
+            knownCards = [];
+            cardFlipped = false;
+            updateFlashcard();
+        }
+        
+        function updateFlashcard() {
+            const card = flashcards[currentCard];
+            document.getElementById('card-front').textContent = card.front;
+            document.getElementById('card-back').textContent = card.back;
+            document.getElementById('flashcard').style.transform = 'rotateY(0deg)';
+            cardFlipped = false;
+            document.getElementById('card-progress').textContent = `Kort ${currentCard + 1} av ${flashcards.length}`;
+            document.getElementById('card-progress-bar').style.width = `${((currentCard + 1) / flashcards.length) * 100}%`;
+            document.getElementById('known-count').textContent = `Du kan: ${knownCards.length} av ${flashcards.length}`;
+        }
+        
+        function flipCard() {
+            cardFlipped = !cardFlipped;
+            document.getElementById('flashcard').style.transform = cardFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)';
+        }
+        
+        function nextCard() {
+            currentCard = (currentCard + 1) % flashcards.length;
+            updateFlashcard();
+        }
+        
+        function prevCard() {
+            currentCard = (currentCard - 1 + flashcards.length) % flashcards.length;
+            updateFlashcard();
+        }
+        
+        function markKnown() {
+            if (!knownCards.includes(currentCard)) {
+                knownCards.push(currentCard);
+            }
+            document.getElementById('known-count').textContent = `Du kan: ${knownCards.length} av ${flashcards.length}`;
+            nextCard();
+        }
+
+        // ===== HOMEWORK SAVE/LOAD =====
+        function saveHomework() {
+            const data = {
+                name: document.getElementById('hw-name')?.value || '',
+                crypto: document.getElementById('hw-crypto')?.value || '',
+                password: document.getElementById('hw-password')?.value || '',
+                phishing: document.getElementById('hw-phishing')?.value || '',
+                iot: document.getElementById('hw-iot')?.value || '',
+                future: document.getElementById('hw-future')?.value || ''
+            };
+            localStorage.setItem('okt4_homework', JSON.stringify(data));
+        }
+        
+        function loadHomework() {
+            try {
+                const saved = localStorage.getItem('okt4_homework');
+                if (saved) {
+                    const data = JSON.parse(saved);
+                    if (document.getElementById('hw-name')) document.getElementById('hw-name').value = data.name || '';
+                    if (document.getElementById('hw-crypto')) document.getElementById('hw-crypto').value = data.crypto || '';
+                    if (document.getElementById('hw-password')) document.getElementById('hw-password').value = data.password || '';
+                    if (document.getElementById('hw-phishing')) document.getElementById('hw-phishing').value = data.phishing || '';
+                    if (document.getElementById('hw-iot')) document.getElementById('hw-iot').value = data.iot || '';
+                    if (document.getElementById('hw-future')) document.getElementById('hw-future').value = data.future || '';
+                }
+            } catch(e) { console.log('Kunne ikke laste lagrede svar'); }
+        }
+
+        // ===== WORD EXPORT =====
+        function exportToWord() {
+            const { Document, Packer, Paragraph, TextRun, HeadingLevel } = docx;
+            
+            const name = document.getElementById('hw-name')?.value || 'Elev';
+            const crypto = document.getElementById('hw-crypto')?.value || '';
+            const password = document.getElementById('hw-password')?.value || '';
+            const phishing = document.getElementById('hw-phishing')?.value || '';
+            const iot = document.getElementById('hw-iot')?.value || '';
+            const future = document.getElementById('hw-future')?.value || '';
+            
+            const doc = new Document({
+                sections: [{
+                    properties: {},
+                    children: [
+                        new Paragraph({
+                            text: 'Økt 4: Sikkerhet og Fremtiden',
+                            heading: HeadingLevel.HEADING_1
+                        }),
+                        new Paragraph({
+                            children: [
+                                new TextRun({ text: 'Navn: ', bold: true }),
+                                new TextRun(name)
+                            ]
+                        }),
+                        new Paragraph({
+                            children: [
+                                new TextRun({ text: 'Dato: ', bold: true }),
+                                new TextRun(new Date().toLocaleDateString('nb-NO'))
+                            ]
+                        }),
+                        new Paragraph({ text: '' }),
+                        
+                        new Paragraph({
+                            text: '1. Kryptering',
+                            heading: HeadingLevel.HEADING_2
+                        }),
+                        new Paragraph({ text: crypto || '(Ikke besvart)' }),
+                        new Paragraph({ text: '' }),
+                        
+                        new Paragraph({
+                            text: '2. Sterke passord',
+                            heading: HeadingLevel.HEADING_2
+                        }),
+                        new Paragraph({ text: password || '(Ikke besvart)' }),
+                        new Paragraph({ text: '' }),
+                        
+                        new Paragraph({
+                            text: '3. Phishing',
+                            heading: HeadingLevel.HEADING_2
+                        }),
+                        new Paragraph({ text: phishing || '(Ikke besvart)' }),
+                        new Paragraph({ text: '' }),
+                        
+                        new Paragraph({
+                            text: '4. IoT i hjemmet',
+                            heading: HeadingLevel.HEADING_2
+                        }),
+                        new Paragraph({ text: iot || '(Ikke besvart)' }),
+                        new Paragraph({ text: '' }),
+                        
+                        new Paragraph({
+                            text: '5. Personvern og fremtid',
+                            heading: HeadingLevel.HEADING_2
+                        }),
+                        new Paragraph({ text: future || '(Ikke besvart)' })
+                    ]
+                }]
+            });
+            
+            Packer.toBlob(doc).then(blob => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Økt4_Sikkerhet_${name.replace(/\s+/g, '_')}.docx`;
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        }
+        
+        function exportToText() {
+            const name = document.getElementById('hw-name')?.value || 'Elev';
+            const crypto = document.getElementById('hw-crypto')?.value || '';
+            const password = document.getElementById('hw-password')?.value || '';
+            const phishing = document.getElementById('hw-phishing')?.value || '';
+            const iot = document.getElementById('hw-iot')?.value || '';
+            const future = document.getElementById('hw-future')?.value || '';
+            
+            const text = `ØKT 4: SIKKERHET OG FREMTIDEN
+================================
+Navn: ${name}
+Dato: ${new Date().toLocaleDateString('nb-NO')}
+
+1. KRYPTERING
+${crypto || '(Ikke besvart)'}
+
+2. STERKE PASSORD
+${password || '(Ikke besvart)'}
+
+3. PHISHING
+${phishing || '(Ikke besvart)'}
+
+4. IOT I HJEMMET
+${iot || '(Ikke besvart)'}
+
+5. PERSONVERN OG FREMTID
+${future || '(Ikke besvart)'}
+`;
+            
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Økt4_Sikkerhet_${name.replace(/\s+/g, '_')}.txt`;
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ===== INIT =====
+        document.addEventListener('DOMContentLoaded', () => {
+            // Load any saved homework data
+        });
+    </script>
+</body>
+</html>
