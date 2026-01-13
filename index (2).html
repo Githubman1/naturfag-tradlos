@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trådløs kommunikasjon - VG1 Naturfag</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .header {
+            background: rgba(0,0,0,0.4);
+            padding: 24px;
+            text-align: center;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 8px;
+        }
+        .header p {
+            opacity: 0.7;
+            font-size: 16px;
+        }
+        .main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 32px 24px;
+        }
+        .intro {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .intro h2 {
+            font-size: 22px;
+            margin-bottom: 12px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+        }
+        .card {
+            background: rgba(255,255,255,0.05);
+            border-radius: 16px;
+            padding: 24px;
+            transition: all 0.3s;
+            text-decoration: none;
+            color: white;
+            display: block;
+        }
+        .card.available:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .card.locked {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        .card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+        }
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .card-subtitle {
+            font-size: 14px;
+            opacity: 0.7;
+        }
+        .card-desc {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 16px;
+            line-height: 1.5;
+        }
+        .card-topics {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .topic {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+        .status {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 12px;
+        }
+        .status.ready { background: rgba(16,185,129,0.2); color: #10b981; }
+        .status.coming { background: rgba(255,255,255,0.1); color: rgba(255,255,255,0.5); }
+        
+        /* Økt-farger */
+        .okt1 .card-icon { background: rgba(14,165,233,0.2); }
+        .okt1 .card-title { color: #0ea5e9; }
+        .okt1 .topic { background: rgba(14,165,233,0.2); color: #0ea5e9; }
+        .okt1.available { border: 2px solid #0ea5e9; }
+        
+        .okt2 .card-icon { background: rgba(245,158,11,0.2); }
+        .okt2 .card-title { color: #f59e0b; }
+        .okt2 .topic { background: rgba(245,158,11,0.2); color: #f59e0b; }
+        .okt2.available { border: 2px solid #f59e0b; }
+        
+        .okt3 .card-icon { background: rgba(139,92,246,0.2); }
+        .okt3 .card-title { color: #8b5cf6; }
+        .okt3 .topic { background: rgba(139,92,246,0.2); color: #8b5cf6; }
+        .okt3.available { border: 2px solid #8b5cf6; }
+        
+        .okt4 .card-icon { background: rgba(16,185,129,0.2); }
+        .okt4 .card-title { color: #10b981; }
+        .okt4 .topic { background: rgba(16,185,129,0.2); color: #10b981; }
+        .okt4.available { border: 2px solid #10b981; }
+        
+        .footer {
+            text-align: center;
+            padding: 24px;
+            opacity: 0.5;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <h1>📡 Trådløs kommunikasjon</h1>
+        <p>VG1 Naturfag • 4 dobbelttimer</p>
+    </header>
+    
+    <main class="main">
+        <div class="intro">
+            <h2>Velg en økt</h2>
+            <p>Klikk på en økt for å starte</p>
+        </div>
+        
+        <div class="grid">
+            <!-- ØKT 1 -->
+            <a href="okt1.html" class="card okt1 available">
+                <div class="card-header">
+                    <div class="card-icon">🌊</div>
+                    <div>
+                        <div class="card-title">Økt 1: Bølger og EM-stråling</div>
+                        <div class="card-subtitle">Dobbelttime (90 min)</div>
+                    </div>
+                </div>
+                <p class="card-desc">
+                    Grunnleggende om bølger, lyd, lys og det elektromagnetiske spekteret. 
+                    Hvorfor går WiFi gjennom vegger?
+                </p>
+                <div class="card-topics">
+                    <span class="topic">Bølger</span>
+                    <span class="topic">EM-spekteret</span>
+                    <span class="topic">Frekvens</span>
+                    <span class="topic">Bølgelengde</span>
+                </div>
+                <div class="status ready">✓ Klar - Klikk for å starte</div>
+            </a>
+            
+            <!-- ØKT 2 -->
+            <a href="okt2.html" class="card okt2 available">
+                <div class="card-header">
+                    <div class="card-icon">📡</div>
+                    <div>
+                        <div class="card-title">Økt 2: Kommunikasjonssystem</div>
+                        <div class="card-subtitle">Dobbelttime (90 min)</div>
+                    </div>
+                </div>
+                <p class="card-desc">
+                    Hvordan sender vi informasjon trådløst? Analog vs digital, 
+                    modulasjon, binær koding og protokoller.
+                </p>
+                <div class="card-topics">
+                    <span class="topic">Sender/Mottaker</span>
+                    <span class="topic">Digital/Analog</span>
+                    <span class="topic">Binær</span>
+                    <span class="topic">Protokoller</span>
+                </div>
+                <div class="status ready">✓ Klar - Klikk for å starte</div>
+            </a>
+            
+            <!-- ØKT 3 -->
+            <a href="okt3.html" class="card okt3 available">
+                <div class="card-header">
+                    <div class="card-icon">🌐</div>
+                    <div>
+                        <div class="card-title">Økt 3: Nettverk og internett</div>
+                        <div class="card-subtitle">Dobbelttime (90 min)</div>
+                    </div>
+                </div>
+                <p class="card-desc">
+                    Hvordan fungerer internett? WiFi, rutere, IP-adresser, 
+                    og hvordan data finner veien.
+                </p>
+                <div class="card-topics">
+                    <span class="topic">WiFi</span>
+                    <span class="topic">Rutere</span>
+                    <span class="topic">IP-adresser</span>
+                    <span class="topic">DNS</span>
+                </div>
+                <div class="status ready">✓ Klar - Klikk for å starte</div>
+            </a>
+            
+            <!-- ØKT 4 -->
+            <a href="okt4.html" class="card okt4 available">
+                <div class="card-header">
+                    <div class="card-icon">🔐</div>
+                    <div>
+                        <div class="card-title">Økt 4: Sikkerhet og Fremtiden</div>
+                        <div class="card-subtitle">Dobbelttime (90 min)</div>
+                    </div>
+                </div>
+                <p class="card-desc">
+                    Kryptering, passord, cyberangrep, personvern, 5G/6G og IoT.
+                </p>
+                <div class="card-topics">
+                    <span class="topic">Kryptering</span>
+                    <span class="topic">Passord</span>
+                    <span class="topic">5G/6G</span>
+                    <span class="topic">IoT</span>
+                </div>
+                <div class="status ready">✓ Klar - Klikk for å starte</div>
+            </a>
+        </div>
+    </main>
+    
+    <!-- MÅLEARK -->
+    <div style="max-width: 900px; margin: 0 auto; padding: 0 24px 32px;">
+        <a href="maaleark.html" style="display: block; background: linear-gradient(135deg, #ec4899, #f59e0b); border-radius: 16px; padding: 24px; text-decoration: none; color: white; text-align: center;">
+            <div style="font-size: 32px; margin-bottom: 8px;">📋</div>
+            <div style="font-size: 20px; font-weight: bold;">Måleark til prøve</div>
+            <div style="opacity: 0.9; margin-top: 8px;">Læringsmål, flashcards og øvingsoppgaver</div>
+        </a>
+    </div>
+    
+    <footer class="footer">
+        VG1 Naturfag • Trådløs kommunikasjon
+    </footer>
+</body>
+</html>
